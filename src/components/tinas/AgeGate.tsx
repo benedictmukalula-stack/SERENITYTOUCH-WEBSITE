@@ -33,10 +33,10 @@ export default function AgeGate() {
             </div>
 
             <h1 className="text-3xl md:text-4xl font-semibold heading-display mb-3 text-white">
-              Tina&apos;s Sanctuary
+              Serenity Touch Spa
             </h1>
             <p className="text-[11px] tracking-[0.2em] text-gold/40 mb-8 heading-display uppercase">
-              Exclusive Wellness Sanctuary
+              Premium Wellness Spa
             </p>
 
             <div className="surface-raised rounded-2xl p-8 mb-6">
@@ -53,7 +53,7 @@ export default function AgeGate() {
                   onClick={() => setAgeVerified(true)}
                   className="w-full btn-pink py-3.5 text-sm font-semibold cursor-pointer"
                 >
-                  I am 18 or older — Enter Sanctuary
+                  I am 18 or older — Enter Spa
                 </button>
                 <button
                   onClick={() => {
@@ -69,7 +69,7 @@ export default function AgeGate() {
             </div>
 
             <p className="text-[10px] text-gold/30 leading-relaxed">
-              R18 &middot; Tina&apos;s Sanctuary is a wellness facility. All services require clients to be 18 years or older.
+              R18 &middot; Serenity Touch Spa is a wellness facility. All services require clients to be 18 years or older.
               By proceeding, you agree to our terms of service and privacy policy.
             </p>
           </motion.div>

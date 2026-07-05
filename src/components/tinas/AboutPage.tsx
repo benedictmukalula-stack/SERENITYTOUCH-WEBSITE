@@ -27,8 +27,8 @@ export default function AboutPage() {
     <div>
       <section className="pt-32 pb-16 section-dark">
         <div className="container-tinas text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">About Tina&apos;s Sanctuary</motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">A private wellness sanctuary dedicated to delivering the finest therapeutic experience in Lusaka.</motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">About Serenity Touch Spa</motion.h1>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">A private wellness spa dedicated to delivering the finest therapeutic experience in Lusaka.</motion.p>
         </div>
       </section>
 
@@ -37,9 +37,9 @@ export default function AboutPage() {
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold mb-8 heading-display">Our Story</motion.h2>
             <motion.div variants={fadeUp} custom={1} className="space-y-5 text-pink-glow/45 body-serif font-light leading-relaxed">
-              <p>Tina&apos;s Sanctuary was founded with a singular vision: to create a private, luxurious wellness space where the finest therapeutic practices meet personalized care. Located in the heart of Ibex Hill, Lusaka, our sanctuary represents more than a spa — it&apos;s a refuge for those seeking genuine transformation.</p>
-              <p>Every detail has been carefully considered, from the silk-draped treatment suites to the in-house blended oils. We believe that true wellness comes from rituals composed specifically for you — treatments that honor your body, respect your time, and celebrate your commitment to self-care.</p>
-              <p>Our team of internationally certified therapists brings decades of combined experience and an unwavering commitment to excellence. We don&apos;t just provide treatments; we craft personalized rituals that leave you feeling transformed, renewed, and deeply cared for.</p>
+              <p>Serenity Touch Spa was founded with a singular vision: to create a private, luxurious wellness space where the finest therapeutic practices meet personalized care. Located in the heart of Ibex Hill, Lusaka, our spa represents more than a spa — it&apos;s a refuge for those seeking genuine transformation.</p>
+              <p>Every detail has been carefully considered, from the silk-draped treatment suites to the in-house blended oils. We believe that true wellness comes from treatments designed specifically for you — treatments that honor your body, respect your time, and celebrate your commitment to self-care.</p>
+              <p>Our team of internationally certified therapists brings decades of combined experience and an unwavering commitment to excellence. We don&apos;t just provide treatments; we craft personalized treatments that leave you feeling transformed, renewed, and deeply cared for.</p>
             </motion.div>
           </motion.div>
         </div>
@@ -67,7 +67,7 @@ export default function AboutPage() {
       <section className="section-padding section-dark">
         <div className="container-tinas max-w-4xl">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="relative rounded-2xl overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=1200&q=80" alt="Tina's Sanctuary interior" className="w-full h-[400px] md:h-[500px] object-cover" />
+            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=1200&q=80" alt="Serenity Touch Spa interior" className="w-full h-[400px] md:h-[500px] object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508]/90 via-black/30 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
               <blockquote className="text-white text-xl md:text-2xl heading-display leading-relaxed max-w-2xl">
@@ -104,7 +104,7 @@ export default function AboutPage() {
       <section className="section-padding section-dark">
         <div className="container-tinas text-center">
           <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-4xl md:text-5xl font-bold mb-6 heading-display">Begin Your Transformation</motion.h2>
-          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif font-light text-pink-glow/35 leading-relaxed">Experience the sanctuary that&apos;s changing how Lusaka approaches wellness.</motion.p>
+          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif font-light text-pink-glow/35 leading-relaxed">Experience the spa that&apos;s changing how Lusaka approaches wellness.</motion.p>
           <motion.button initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={2} onClick={() => navigate('contact')} className="btn-outline-pink px-8 py-3.5 text-sm font-semibold cursor-pointer">Book Your First Session</motion.button>
         </div>
       </section>

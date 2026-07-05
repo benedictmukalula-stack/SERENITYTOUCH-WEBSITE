@@ -15,17 +15,23 @@ const fadeUp = {
 const contactInfo = [
   { icon: MapPin, label: 'Address', value: '183 Ibex Hill, Lusaka, Zambia', link: null },
   { icon: Phone, label: 'Phone', value: '+260 572 782 539', link: 'tel:+260572782539' },
-  { icon: Mail, label: 'Email', value: 'info@tinassanctuary.zm', link: 'mailto:info@tinassanctuary.zm' },
+  { icon: MessageCircle, label: 'WhatsApp', value: '+260 761 404 555', link: 'https://wa.me/260761404555' },
+  { icon: Mail, label: 'Email', value: 'info@serenitytouch.co.zm', link: 'mailto:info@serenitytouch.co.zm' },
   { icon: Clock, label: 'Hours', value: 'Mon-Fri: 9AM-6PM\nSat: 10AM-5PM\nSun: Closed', link: null },
 ];
 
 const serviceOptions = [
+  { value: 'headscalp', label: 'Head & Scalp Massage (30 min) — K400' },
+  { value: 'foot', label: 'Foot Massage (45 min) — K500' },
+  { value: 'backneck', label: 'Back, Neck & Shoulder (45 min) — K600' },
   { value: 'swedish', label: 'Swedish Massage (60 min) — K800' },
   { value: 'deeptissue', label: 'Deep Tissue Massage (90 min) — K1,200' },
-  { value: 'hotstone', label: 'Hot Stone Therapy (75 min) — K1,000' },
-  { value: 'aromatherapy', label: 'Aromatherapy Treatment (60 min) — K900' },
-  { value: 'couples', label: 'Couples Massage (90 min) — K2,000' },
+  { value: 'thai', label: 'Thai Massage (90 min) — K1,100' },
+  { value: 'aromatherapy', label: 'Aromatherapy Massage (60 min) — K900' },
   { value: 'reflexology', label: 'Reflexology (60 min) — K850' },
+  { value: 'pregnancy', label: 'Pregnancy Massage (60 min) — K900' },
+  { value: 'fullbody', label: 'Full Body Massage (90 min) — K1,000' },
+  { value: 'couples', label: 'Couples Massage (90 min) — K2,000' },
 ];
 
 const therapistOptions = [
@@ -38,27 +44,27 @@ const therapistOptions = [
 
 const calloutZones = [
   { id: 'zone1', label: 'Ibex Hill & Surrounds', desc: 'Within 5km radius', fee: 200, areas: 'Ibex Hill, Woodlands, Kabulonga' },
-  { id: 'zone2', label: 'Lusaka Central', desc: '5–15km from sanctuary', fee: 350, areas: 'CBD, Northmead, Rhodes Park, Longacres' },
-  { id: 'zone3', label: 'Greater Lusaka', desc: '15–30km from sanctuary', fee: 500, areas: 'Manda Hill, East Park, Chelstone, Roma' },
+  { id: 'zone2', label: 'Lusaka Central', desc: '5–15km from spa', fee: 350, areas: 'CBD, Northmead, Rhodes Park, Longacres' },
+  { id: 'zone3', label: 'Greater Lusaka', desc: '15–30km from spa', fee: 500, areas: 'Manda Hill, East Park, Chelstone, Roma' },
   { id: 'zone4', label: 'Outside Lusaka', desc: '30km+ — custom quote', fee: 0, areas: 'Kabwe, Chongwe, Kafue, etc.' },
 ];
 
-const servicePrices: Record<string, number> = { swedish: 800, deeptissue: 1200, hotstone: 1000, aromatherapy: 900, couples: 2000, reflexology: 850 };
+const servicePrices: Record<string, number> = { headscalp: 400, foot: 500, backneck: 600, swedish: 800, deeptissue: 1200, thai: 1100, aromatherapy: 900, reflexology: 850, pregnancy: 900, fullbody: 1000, couples: 2000 };
 
 const paymentMethods = [
   { id: 'mobile_money', label: 'Mobile Money', icon: Smartphone, desc: 'MTN Mobile Money, Airtel Money, Zamtel' },
   { id: 'bank_transfer', label: 'Bank EFT', icon: Building2, desc: 'Direct bank transfer' },
   { id: 'card', label: 'Card Payment', icon: CreditCard, desc: 'Visa, Mastercard (online)' },
-  { id: 'cash', label: 'Pay at Sanctuary', icon: MapPin, desc: 'Cash on arrival' },
+  { id: 'cash', label: 'Pay at Spa', icon: MapPin, desc: 'Cash on arrival' },
 ];
 
 const faqs = [
   { q: 'How do I book an appointment?', a: 'You can book through this form, call us at +260 572 782 539, or message us on WhatsApp. Members can also use our WhatsApp concierge line for priority booking.' },
   { q: 'What is your cancellation policy?', a: 'Cancellations made 24 hours in advance receive a full refund. Cancellations within 24 hours are subject to a 50% fee. No-shows will be charged in full.' },
   { q: 'Do you offer membership plans?', a: 'Yes! We offer three membership tiers: Silver (K800/mo), Gold (K1,600/mo), and Platinum (K3,200/mo). Each includes different benefits and service inclusions.' },
-  { q: 'Are your therapists certified?', a: "Yes, every therapist at Tina's Sanctuary is internationally certified and continually trained in the latest therapeutic techniques." },
+  { q: 'Are your therapists certified?', a: "Yes, every therapist at Serenity Touch Spa is internationally certified and continually trained in the latest therapeutic techniques." },
   { q: 'What should I bring to my appointment?', a: 'Just bring yourself! We provide all linens, oils, and amenities. Arrive 10 minutes early to complete a brief wellness consultation.' },
-  { q: 'What payment methods do you accept?', a: 'We accept MTN Mobile Money, Airtel Money, Zamtel, bank EFT, Visa/Mastercard, and cash payments at the sanctuary.' },
+  { q: 'What payment methods do you accept?', a: 'We accept MTN Mobile Money, Airtel Money, Zamtel, bank EFT, Visa/Mastercard, and cash payments at the spa.' },
 ];
 
 function getServiceLabel(val: string) { return serviceOptions.find(s => s.value === val)?.label || val; }
@@ -72,10 +78,10 @@ function getCalloutLabel(val: string) {
 
 function buildWhatsAppMessage(data: typeof defaultFormData): string {
   const lines = [
-    `*Tina's Sanctuary — Booking Request*`, ``,
+    `*Serenity Touch Spa — Booking Request*`, ``,
     `*Name:* ${data.name}`, `*Email:* ${data.email}`, `*Phone:* ${data.phone || 'Not provided'}`,
     `*Date:* ${data.date}`, `*Service:* ${getServiceLabel(data.service)}`,
-    `*Booking Type:* ${data.bookingType === 'callout' ? 'Call-Out Service' : 'In-Sanctuary'}`,
+    `*Booking Type:* ${data.bookingType === 'callout' ? 'Call-Out Service' : 'In-Spa'}`,
   ];
   if (data.bookingType === 'callout') {
     lines.push(`*Call-Out Zone:* ${getCalloutLabel(data.calloutZone)}`);
@@ -117,7 +123,7 @@ export default function ContactPage() {
 
   const handleWhatsAppBooking = () => {
     const msg = buildWhatsAppMessage(formData);
-    window.open(`https://wa.me/260572782539?text=${msg}`, '_blank');
+    window.open(`https://wa.me/260761404555?text=${msg}`, '_blank');
   };
 
   return (
@@ -125,7 +131,7 @@ export default function ContactPage() {
       <section className="pt-32 pb-16 section-dark">
         <div className="container-tinas text-center">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">Get in <span className="text-pink-brand">Touch</span></motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">Ready to surrender to the experience? Book your first session with us.</motion.p>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">Ready to relax to the experience? Book your first session with us.</motion.p>
         </div>
       </section>
 
@@ -231,7 +237,7 @@ export default function ContactPage() {
                         <div>
                           <label className="block text-sm font-semibold text-white mb-2">Service *</label>
                           <select name="service" value={formData.service} onChange={handleChange} required className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-[#0a0508] focus:outline-none focus:border-gold text-sm text-white transition">
-                            <option value="">Select a ritual</option>
+                            <option value="">Select a treatment</option>
                             {serviceOptions.map((opt) => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}
                           </select>
                         </div>
@@ -243,7 +249,7 @@ export default function ContactPage() {
                         </div>
                       </div>
 
-                      {/* Booking Type — In-Sanctuary vs Call-Out */}
+                      {/* Booking Type — In-Spa vs Call-Out */}
                       <div>
                         <label className="block text-sm font-semibold text-white mb-3">Booking Location</label>
                         <div className="grid grid-cols-2 gap-3">
@@ -256,7 +262,7 @@ export default function ContactPage() {
                             }`}
                           >
                             <Home className={`w-5 h-5 mb-2 ${formData.bookingType === 'in_sanctuary' ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
-                            <p className={`text-sm font-semibold ${formData.bookingType === 'in_sanctuary' ? 'text-pink-brand' : 'text-pink-glow/45'}`}>In-Sanctuary</p>
+                            <p className={`text-sm font-semibold ${formData.bookingType === 'in_sanctuary' ? 'text-pink-brand' : 'text-pink-glow/45'}`}>In-Spa</p>
                             <p className="text-[11px] text-gold/40 mt-1 leading-tight">Visit us at Ibex Hill</p>
                           </button>
                           <button type="button"
@@ -391,7 +397,7 @@ export default function ContactPage() {
                               <p className="text-xs font-semibold text-pink-brand tracking-wider">BANK TRANSFER DETAILS</p>
                               <div className="grid sm:grid-cols-2 gap-3 text-sm">
                                 <div><span className="text-gold/50 text-xs">Bank:</span><p className="text-white font-medium">Stanbic Bank Zambia</p></div>
-                                <div><span className="text-gold/50 text-xs">Account Name:</span><p className="text-white font-medium">Tina&apos;s Sanctuary Ltd</p></div>
+                                <div><span className="text-gold/50 text-xs">Account Name:</span><p className="text-white font-medium">Serenity Touch Spa Ltd</p></div>
                                 <div><span className="text-gold/50 text-xs">Account Number:</span><p className="text-white font-medium font-mono">9030-XXXX-XXXX</p></div>
                                 <div><span className="text-gold/50 text-xs">Branch:</span><p className="text-white font-medium">Ibex Hill, Lusaka</p></div>
                               </div>
@@ -465,7 +471,7 @@ export default function ContactPage() {
       <section className="section-padding gradient-sexy">
         <div className="container-tinas text-center">
           <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-4xl md:text-5xl font-bold mb-6 heading-display">We look forward to <span className="text-gradient-sexy">welcoming</span> you</motion.h2>
-          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif text-pink-glow/35 leading-relaxed font-light">Experience the transformation that awaits you at Tina&apos;s Sanctuary.</motion.p>
+          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif text-pink-glow/35 leading-relaxed font-light">Experience the transformation that awaits you at Serenity Touch Spa.</motion.p>
         </div>
       </section>
     </div>

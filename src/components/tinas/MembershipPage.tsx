@@ -14,13 +14,13 @@ const fadeUp = {
 };
 
 const plans = [
-  { name: 'Silver', tagline: 'A taste of indulgence', price: 'K800', icon: Sparkles, gradient: 'from-gray-400 to-gray-500', features: ['1 sensual massage per month', '10% off additional services', 'Priority booking', 'Birthday treat', 'Access to member lounge', 'Monthly wellness newsletter'], popular: false },
+  { name: 'Silver', tagline: 'A taste of relaxation', price: 'K800', icon: Sparkles, gradient: 'from-gray-400 to-gray-500', features: ['1 therapeutic massage per month', '10% off additional services', 'Priority booking', 'Birthday treat', 'Access to member lounge', 'Monthly wellness newsletter'], popular: false },
   { name: 'Gold', tagline: 'For the devoted', price: 'K1,600', icon: Crown, gradient: 'from-pink-brand to-pink-deep', features: ['2 massages per month', '20% off all services', 'VIP booking', 'Free aromatherapy upgrade', 'Quarterly wellness consult', 'Guest privileges', 'WhatsApp concierge', 'Exclusive events access'], popular: true },
-  { name: 'Platinum', tagline: 'The ultimate surrender', price: 'K3,200', icon: Crown, gradient: 'from-gold to-pink-hot', features: ['Unlimited massages', '30% off everything', '24/7 concierge', 'Personal wellness plan', 'Private therapy suite', 'Monthly spa day', 'Home visit service', 'Airport pickup', 'Priority WhatsApp line', 'Annual retreat invitation'], popular: false },
+  { name: 'Platinum', tagline: 'The ultimate relax', price: 'K3,200', icon: Crown, gradient: 'from-gold to-pink-hot', features: ['Unlimited massages', '30% off everything', '24/7 concierge', 'Personal wellness plan', 'Private therapy suite', 'Monthly spa day', 'Home visit service', 'Airport pickup', 'Priority WhatsApp line', 'Annual retreat invitation'], popular: false },
 ];
 
 const membershipFaqs = [
-  { q: 'How do I sign up?', a: 'Sign up through our contact form, call us directly, or visit our sanctuary in Ibex Hill. Our team will guide you through the process and find your perfect tier.' },
+  { q: 'How do I sign up?', a: 'Sign up through our contact form, call us directly, or visit our spa in Ibex Hill. Our team will guide you through the process and find your perfect tier.' },
   { q: 'Can I upgrade or downgrade?', a: 'Yes! Change your tier at any time. Upgrades take effect immediately; downgrades apply at your next billing cycle.' },
   { q: 'What if I don\'t use all my monthly massages?', a: 'Unused massages roll over for one month for Gold members and indefinitely for Platinum members.' },
   { q: 'Is there a cancellation fee?', a: 'Cancel with 30 days notice. No fee for memberships held for 3 months or longer.' },
@@ -38,8 +38,8 @@ export default function MembershipPage() {
       <section className="pt-32 pb-16 section-dark">
         <div className="container-tinas text-center">
           <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-[11px] tracking-[0.25em] text-gold/50 mb-4 heading-display">MEMBERSHIP</motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">Invest in Your <span className="text-gradient-sexy">Pleasure</span></motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-lg text-pink-glow/40 max-w-2xl mx-auto body-serif font-light">Choose the tier that fits your desires. Every level unlocks exclusive benefits and priority access.</motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">Invest in Your <span className="text-gradient-sexy">Wellness</span></motion.h1>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-lg text-pink-glow/40 max-w-2xl mx-auto body-serif font-light">Choose the tier that fits your wellness goals. Every level unlocks exclusive benefits and priority access.</motion.p>
         </div>
       </section>
 
@@ -51,7 +51,7 @@ export default function MembershipPage() {
                 <div className="relative">
                   {plan.popular && (
                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
-                      <span className="bg-gradient-to-r from-gold to-pink-brand text-black px-5 py-1.5 rounded-full text-[10px] font-bold tracking-wider shadow-lg shadow-pink-brand/30">MOST DESIRED</span>
+                      <span className="bg-gradient-to-r from-gold to-pink-brand text-black px-5 py-1.5 rounded-full text-[10px] font-bold tracking-wider shadow-lg shadow-pink-brand/30">MOST POPULAR</span>
                     </div>
                   )}
                   <div className={`surface-raised rounded-2xl p-8 h-full transition-all duration-500 hover:border-pink-brand/30 relative overflow-hidden ${selectedPlan === plan.name ? 'border-gold ring-4 ring-gold/10 shadow-xl shadow-gold/5' : plan.popular ? 'border-gold/30 glow-gold' : ''}`}>
@@ -76,7 +76,7 @@ export default function MembershipPage() {
                       </ul>
                       <button onClick={() => { setSelectedPlan(plan.name); navigate('contact'); }}
                         className={`w-full py-3 text-sm font-semibold cursor-pointer transition-all ${plan.popular ? 'bg-gradient-to-r from-pink-brand to-pink-hot hover:from-pink-hot hover:to-pink-brand text-white rounded-full shadow-lg shadow-pink-brand/20' : 'btn-gold'}`}>
-                        {selectedPlan === plan.name ? 'Selected ✓' : 'Indulge Now'}
+                        {selectedPlan === plan.name ? 'Selected ✓' : 'Enjoy Now'}
                       </button>
                     </div>
                   </div>
@@ -260,8 +260,8 @@ export default function MembershipPage() {
       <section className="section-padding gradient-sexy">
         <div className="container-tinas text-center">
           <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-4xl md:text-5xl font-bold mb-6 heading-display">Begin your <span className="text-gradient-sexy">journey</span></motion.h2>
-          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif text-pink-glow/40 leading-relaxed font-light">Choose your tier and unlock a world of exclusive wellness indulgence.</motion.p>
-          <motion.button initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={2} onClick={() => navigate('contact')} className="btn-pink px-8 py-3.5 text-sm font-semibold cursor-pointer">Indulge Now</motion.button>
+          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif text-pink-glow/40 leading-relaxed font-light">Choose your tier and unlock a world of exclusive wellness relaxation.</motion.p>
+          <motion.button initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={2} onClick={() => navigate('contact')} className="btn-pink px-8 py-3.5 text-sm font-semibold cursor-pointer">Enjoy Now</motion.button>
         </div>
       </section>
     </div>

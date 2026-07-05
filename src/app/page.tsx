@@ -5,6 +5,11 @@ import Navigation from '@/components/tinas/Navigation';
 import Footer from '@/components/tinas/Footer';
 import HomePage from '@/components/tinas/HomePage';
 import ServicesPage from '@/components/tinas/ServicesPage';
+import PackagesPage from '@/components/tinas/PackagesPage';
+import CorporatePage from '@/components/tinas/CorporatePage';
+import VouchersPage from '@/components/tinas/VouchersPage';
+import GalleryPage from '@/components/tinas/GalleryPage';
+import TestimonialsPage from '@/components/tinas/TestimonialsPage';
 import TherapistsPage from '@/components/tinas/TherapistsPage';
 import AboutPage from '@/components/tinas/AboutPage';
 import BlogPage from '@/components/tinas/BlogPage';
@@ -19,6 +24,11 @@ import { useAppStore } from '@/lib/store';
 const pageComponents: Record<string, React.ComponentType> = {
   home: HomePage,
   services: ServicesPage,
+  packages: PackagesPage,
+  corporate: CorporatePage,
+  vouchers: VouchersPage,
+  gallery: GalleryPage,
+  testimonials: TestimonialsPage,
   therapists: TherapistsPage,
   about: AboutPage,
   blog: BlogPage,

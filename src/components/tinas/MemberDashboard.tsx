@@ -82,7 +82,7 @@ export default function MemberDashboard() {
 
             <div className="flex items-center gap-3">
               <a
-                href={`https://wa.me/260572782539?text=Hello%20Tina's%20Sanctuary.%20This%20is%20${encodeURIComponent(member.name)}%20(${member.tier}%20member).`}
+                href={`https://wa.me/260761404555?text=Hello%20Serenity%20Touch%20Spa.%20This%20is%20${encodeURIComponent(member.name)}%20(${member.tier}%20member).`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-full text-xs font-semibold transition cursor-pointer"
@@ -212,7 +212,7 @@ function OverviewTab({ member, config }: { member: Member; config: typeof tierCo
                 key={item.label}
                 onClick={() => {
                   if (item.action === 'whatsapp') {
-                    window.open(`https://wa.me/260572782539?text=Hello%20Tina's%20Sanctuary%20concierge.`, '_blank');
+                    window.open(`https://wa.me/260761404555?text=Hello%20Serenity%20Touch%20Spa%20concierge.`, '_blank');
                   } else if (item.action === 'contact' || item.action === 'membership') {
                     const { navigate } = useAppStore.getState();
                     navigate(item.action as 'contact' | 'membership');

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Page = 'home' | 'services' | 'therapists' | 'about' | 'blog' | 'contact' | 'membership' | 'login' | 'dashboard';
+export type Page = 'home' | 'services' | 'packages' | 'therapists' | 'about' | 'blog' | 'contact' | 'membership' | 'corporate' | 'vouchers' | 'gallery' | 'testimonials' | 'login' | 'dashboard';
 
 export interface Member {
   id: string;
@@ -58,7 +58,7 @@ export const useAppStore = create<AppState>()(
       setAgeVerified: (verified) => set({ ageVerified: verified }),
     }),
     {
-      name: 'tinas-sanctuary-storage',
+      name: 'serenity-touch-storage',
       partialize: (state) => ({
         isMemberLoggedIn: state.isMemberLoggedIn,
         member: state.member,

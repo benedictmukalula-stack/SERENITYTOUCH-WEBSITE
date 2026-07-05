@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const demoMembers = {
-  'silver@tinassanctuary.zm': {
+  'silver@serenitytouch.co.zm': {
     password: 'silver2026',
     member: {
       id: 'MEM-001',
       name: 'Chipo Mwale',
-      email: 'silver@tinassanctuary.zm',
+      email: 'silver@serenitytouch.co.zm',
       phone: '+260 779 721 772',
       tier: 'Silver' as const,
       memberSince: '2025-03-15',
@@ -15,12 +15,12 @@ const demoMembers = {
       nextBilling: '2026-08-15',
     },
   },
-  'gold@tinassanctuary.zm': {
+  'gold@serenitytouch.co.zm': {
     password: 'gold2026',
     member: {
       id: 'MEM-002',
       name: 'Bwalya Nkomo',
-      email: 'gold@tinassanctuary.zm',
+      email: 'gold@serenitytouch.co.zm',
       phone: '+260 977 555 123',
       tier: 'Gold' as const,
       memberSince: '2024-11-01',
@@ -29,12 +29,12 @@ const demoMembers = {
       nextBilling: '2026-08-01',
     },
   },
-  'platinum@tinassanctuary.zm': {
+  'platinum@serenitytouch.co.zm': {
     password: 'platinum2026',
     member: {
       id: 'MEM-003',
       name: 'Grace Banda',
-      email: 'platinum@tinassanctuary.zm',
+      email: 'platinum@serenitytouch.co.zm',
       phone: '+260 955 888 456',
       tier: 'Platinum' as const,
       memberSince: '2024-06-01',

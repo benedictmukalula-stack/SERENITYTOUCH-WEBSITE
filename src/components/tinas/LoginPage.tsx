@@ -7,12 +7,12 @@ import { useAppStore, type Member } from '@/lib/store';
 
 // Demo accounts for showcase
 const demoAccounts: Record<string, { password: string; member: Member }> = {
-  'silver@tinassanctuary.zm': {
+  'silver@serenitytouch.co.zm': {
     password: 'silver2026',
     member: {
       id: 'MEM-001',
       name: 'Chipo Mwale',
-      email: 'silver@tinassanctuary.zm',
+      email: 'silver@serenitytouch.co.zm',
       phone: '+260 779 721 772',
       tier: 'Silver',
       memberSince: '2025-03-15',
@@ -21,12 +21,12 @@ const demoAccounts: Record<string, { password: string; member: Member }> = {
       nextBilling: '2026-08-15',
     },
   },
-  'gold@tinassanctuary.zm': {
+  'gold@serenitytouch.co.zm': {
     password: 'gold2026',
     member: {
       id: 'MEM-002',
       name: 'Bwalya Nkomo',
-      email: 'gold@tinassanctuary.zm',
+      email: 'gold@serenitytouch.co.zm',
       phone: '+260 977 555 123',
       tier: 'Gold',
       memberSince: '2024-11-01',
@@ -35,12 +35,12 @@ const demoAccounts: Record<string, { password: string; member: Member }> = {
       nextBilling: '2026-08-01',
     },
   },
-  'platinum@tinassanctuary.zm': {
+  'platinum@serenitytouch.co.zm': {
     password: 'platinum2026',
     member: {
       id: 'MEM-003',
       name: 'Grace Banda',
-      email: 'platinum@tinassanctuary.zm',
+      email: 'platinum@serenitytouch.co.zm',
       phone: '+260 955 888 456',
       tier: 'Platinum',
       memberSince: '2024-06-01',
@@ -92,7 +92,7 @@ export default function LoginPage() {
   };
 
   const handleDemoLogin = (tier: string) => {
-    const demoEmail = `${tier}@tinassanctuary.zm`;
+    const demoEmail = `${tier}@serenitytouch.co.zm`;
     const demo = demoAccounts[demoEmail];
     if (demo) {
       loginMember(demo.member);
@@ -182,7 +182,7 @@ export default function LoginPage() {
               <div className="mt-6 pt-6 border-t border-gold/8">
                 <p className="text-[11px] text-gold/30 text-center mb-4">Forgot your password? Contact us via WhatsApp</p>
                 <a
-                  href="https://wa.me/260572782539?text=Hello%20Tina's%20Sanctuary.%20I%20need%20help%20with%20my%20member%20login."
+                  href="https://wa.me/260761404555?text=Hello%20Serenity%20Touch%20Spa.%20I%20need%20help%20with%20my%20member%20login."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block w-full text-center text-sm text-green-400 hover:text-green-300 transition cursor-pointer"
@@ -197,9 +197,9 @@ export default function LoginPage() {
               <p className="text-[10px] tracking-[0.15em] text-gold/40 font-semibold mb-3 uppercase">Demo Accounts (Showcase)</p>
               <div className="space-y-2">
                 {[
-                  { tier: 'Silver', email: 'silver@tinassanctuary.zm', color: 'border-gold/15' },
-                  { tier: 'Gold', email: 'gold@tinassanctuary.zm', color: 'border-gold/25' },
-                  { tier: 'Platinum', email: 'platinum@tinassanctuary.zm', color: 'border-pink-brand/25' },
+                  { tier: 'Silver', email: 'silver@serenitytouch.co.zm', color: 'border-gold/15' },
+                  { tier: 'Gold', email: 'gold@serenitytouch.co.zm', color: 'border-gold/25' },
+                  { tier: 'Platinum', email: 'platinum@serenitytouch.co.zm', color: 'border-pink-brand/25' },
                 ].map((demo) => (
                   <button
                     key={demo.tier}

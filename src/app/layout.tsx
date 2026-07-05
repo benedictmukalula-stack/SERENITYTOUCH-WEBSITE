@@ -1,45 +1,55 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond } from 'next/font/google';
+import { Playfair_Display, Inter, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
 
-const cormorant = Cormorant_Garamond({
+const playfair = Playfair_Display({
   variable: '--font-display',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+  display: 'swap',
+});
+
+const inter = Inter({
+  variable: '--font-body',
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+});
+
+const cormorant = Cormorant_Garamond({
+  variable: '--font-accent',
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   style: ['normal', 'italic'],
   display: 'swap',
 });
 
-const cormorantBody = Cormorant_Garamond({
-  variable: '--font-body',
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  style: ['normal', 'italic'],
-  display: 'swap',
-});
-
 export const metadata: Metadata = {
-  title: "Tina's Sanctuary — Luxury Wellness in Lusaka",
+  title: "Serenity Touch Spa — Luxury Wellness in Lusaka, Zambia",
   description:
-    "Exclusive wellness sanctuary in Lusaka, Zambia. Certified therapists, silk-draped suites and considered rituals deliver the finest therapeutic experience.",
+    "Premium wellness spa in Lusaka, Zambia. Certified therapists, luxurious treatment suites, and personalised therapies deliver the finest therapeutic experience.",
   keywords: [
-    'wellness',
     'spa',
     'massage',
     'Lusaka',
     'Zambia',
-    'luxury',
+    'luxury spa',
+    'wellness',
     'therapists',
     'membership',
+    'Thai massage',
+    'aromatherapy',
+    'couples massage',
+    'deep tissue',
   ],
   icons: {
-    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌿</text></svg>',
+    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">✨</text></svg>',
   },
   openGraph: {
-    title: "Tina's Sanctuary — Luxury Wellness in Lusaka",
+    title: "Serenity Touch Spa — Luxury Wellness in Lusaka",
     description:
-      'Private wellness sanctuary in Ibex Hill, Lusaka — where certified therapists deliver the finest therapeutic experience in Zambia.',
-    siteName: "Tina's Sanctuary",
+      'Premium wellness spa in Ibex Hill, Lusaka — where certified therapists deliver the finest therapeutic massage experience in Zambia.',
+    siteName: "Serenity Touch Spa",
     type: 'website',
   },
 };
@@ -60,7 +70,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${cormorant.variable} ${cormorantBody.variable} antialiased bg-background text-foreground`}
+        className={`${playfair.variable} ${inter.variable} ${cormorant.variable} antialiased bg-background text-foreground`}
       >
         {children}
       </body>

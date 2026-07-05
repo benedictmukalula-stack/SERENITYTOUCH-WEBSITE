@@ -22,15 +22,15 @@ export default function WhatsAppButton() {
                 <MessageCircle className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="font-bold text-sm heading-display text-white">Tina&apos;s Sanctuary</p>
+                <p className="font-bold text-sm heading-display text-white">Serenity Touch Spa</p>
                 <p className="text-[11px] text-green-400">Online now</p>
               </div>
             </div>
             <p className="text-sm text-pink-glow/35 body-serif mb-4">
-              Hi! Welcome to Tina&apos;s Sanctuary. How can we help you with your wellness journey today?
+              Hi! Welcome to Serenity Touch Spa. How can we help you with your wellness journey today?
             </p>
             <a
-              href="https://wa.me/260572782539?text=Hello%20Tina's%20Sanctuary!%20I'd%20like%20to%20learn%20more%20about%20your%20services."
+              href="https://wa.me/260761404555?text=Hello%20Serenity%20Touch%20Spa!%20I'd%20like%20to%20learn%20more%20about%20your%20services."
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full bg-green-500 hover:bg-green-600 text-white text-center py-2.5 rounded-xl text-sm font-semibold transition"

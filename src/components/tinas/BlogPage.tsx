@@ -14,12 +14,12 @@ const fadeUp = {
 };
 
 const articles = [
-  { id: 1, title: 'The Art of Self-Care: Building Your Wellness Ritual', excerpt: 'Discover how to create a personalized self-care routine that fits your lifestyle and wellness goals.', date: 'June 28, 2026', author: 'Tina Mulenga', category: 'Wellness', readTime: '5 min read', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80', content: 'Self-care is not selfish — it is essential. In our fast-paced world, taking time for yourself is the foundation of good health. A wellness ritual is more than just a routine; it is a sacred practice that honours your body and mind...' },
+  { id: 1, title: 'The Art of Self-Care: Building Your Wellness Treatment', excerpt: 'Discover how to create a personalized self-care routine that fits your lifestyle and wellness goals.', date: 'June 28, 2026', author: 'Tina Mulenga', category: 'Wellness', readTime: '5 min read', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80', content: 'Self-care is not selfish — it is essential. In our fast-paced world, taking time for yourself is the foundation of good health. A wellness treatment is more than just a routine; it is a sacred practice that honours your body and mind...' },
   { id: 2, title: 'Deep Tissue Massage: More Than Just Relaxation', excerpt: 'Explore the therapeutic benefits of deep tissue massage beyond relaxation. From chronic pain relief to improved mobility.', date: 'June 21, 2026', author: 'Chipo Mwale', category: 'Treatments', readTime: '6 min read', image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80', content: 'Deep tissue massage is often misunderstood as simply a more intense version of Swedish massage. In reality, it is a highly specialized therapeutic technique designed to address specific musculoskeletal issues...' },
-  { id: 3, title: 'Aromatherapy Essentials: Oils for Every Season', excerpt: "Learn how to use essential oils throughout the year to support your wellness journey.", date: 'June 14, 2026', author: 'Patricia Nkomo', category: 'Aromatherapy', readTime: '7 min read', image: 'https://images.unsplash.com/photo-1611073615830-4ebed33c0e5b?w=600&q=80', content: 'The art of aromatherapy dates back thousands of years, and at Tina\'s Sanctuary, we honour this ancient practice by sourcing the finest essential oils and creating bespoke blends for each season...' },
+  { id: 3, title: 'Aromatherapy Essentials: Oils for Every Season', excerpt: "Learn how to use essential oils throughout the year to support your wellness journey.", date: 'June 14, 2026', author: 'Patricia Nkomo', category: 'Aromatherapy', readTime: '7 min read', image: 'https://images.unsplash.com/photo-1611073615830-4ebed33c0e5b?w=600&q=80', content: 'The art of aromatherapy dates back thousands of years, and at Serenity Touch Spa, we honour this ancient practice by sourcing the finest essential oils and creating bespoke blends for each season...' },
   { id: 4, title: 'Stress Relief Through Reflexology', excerpt: 'Discover the ancient healing practice of reflexology and how it can help reduce stress and promote whole-body wellness.', date: 'June 7, 2026', author: 'Grace Banda', category: 'Wellness', readTime: '5 min read', image: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=600&q=80', content: 'Reflexology is based on the principle that specific points on the feet and hands correspond to different organs and systems of the body.' },
   { id: 5, title: 'The Benefits of Regular Massage for Busy Professionals', excerpt: 'In our fast-paced world, regular massage is not a luxury — it is a necessity.', date: 'May 31, 2026', author: 'Tina Mulenga', category: 'Wellness', readTime: '6 min read', image: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=600&q=80', content: 'The modern professional faces unprecedented levels of stress. Long hours, screen time, and constant connectivity take a toll on both body and mind.' },
-  { id: 6, title: 'Creating a Spa Experience at Home', excerpt: 'Extend the benefits of your sanctuary visit by creating a wellness space at home.', date: 'May 24, 2026', author: 'Patricia Nkomo', category: 'Wellness', readTime: '5 min read', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80', content: 'Your wellness journey does not end when you leave Tina\'s Sanctuary. With a few thoughtful touches, you can recreate the serenity of our treatment rooms in your own home...' },
+  { id: 6, title: 'Creating a Spa Experience at Home', excerpt: 'Extend the benefits of your spa visit by creating a wellness space at home.', date: 'May 24, 2026', author: 'Patricia Nkomo', category: 'Wellness', readTime: '5 min read', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80', content: 'Your wellness journey does not end when you leave Serenity Touch Spa. With a few thoughtful touches, you can recreate the serenity of our treatment rooms in your own home...' },
 ];
 
 const categories = ['All', 'Wellness', 'Treatments', 'Aromatherapy'];
@@ -44,7 +44,7 @@ export default function BlogPage() {
       <div className="min-h-screen">
         <section className="pt-32 pb-8 section-dark">
           <div className="container-tinas">
-            <button onClick={() => setSelectedArticle(null)} className="text-sm text-pink-glow/35 hover:text-white transition cursor-pointer mb-6 inline-flex items-center gap-1">← Back to Journal</button>
+            <button onClick={() => setSelectedArticle(null)} className="text-sm text-pink-glow/35 hover:text-white transition cursor-pointer mb-6 inline-flex items-center gap-1">← Back to Blog</button>
           </div>
         </section>
         <section className="pb-20 surface-base">
@@ -66,7 +66,7 @@ export default function BlogPage() {
               <div className="space-y-5 text-pink-glow/45 body-serif font-light leading-relaxed text-[16px]">
                 <p>{selected.excerpt}</p>
                 <p>{selected.content}</p>
-                <p>At Tina&apos;s Sanctuary, we believe that knowledge is a crucial part of wellness. Understanding the treatments and practices you receive empowers you to make informed decisions about your health. We encourage all our guests to explore, ask questions, and take an active role in their wellness journey.</p>
+                <p>At Serenity Touch Spa, we believe that knowledge is a crucial part of wellness. Understanding the treatments and practices you receive empowers you to make informed decisions about your health. We encourage all our guests to explore, ask questions, and take an active role in their wellness journey.</p>
                 <p>Whether you are a seasoned wellness enthusiast or just beginning to explore the world of therapeutic care, our journal is here to support and inspire you. Each article is written by our team of certified therapists and wellness experts, drawing on years of experience and a deep passion for their craft.</p>
               </div>
             </motion.div>
@@ -135,7 +135,7 @@ export default function BlogPage() {
       <section className="section-padding section-dark">
         <div className="container-tinas text-center">
           <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-4xl md:text-5xl font-bold mb-6 heading-display">Ready to experience wellness?</motion.h2>
-          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif font-light text-pink-glow/35 leading-relaxed">Book your first session and discover the sanctuary that inspires your wellness journey.</motion.p>
+          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif font-light text-pink-glow/35 leading-relaxed">Book your first session and discover the spa that inspires your wellness journey.</motion.p>
           <motion.button initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={2} onClick={() => navigate('contact')} className="btn-outline-pink px-8 py-3.5 text-sm font-semibold cursor-pointer">Book Your Session</motion.button>
         </div>
       </section>

@@ -6,9 +6,9 @@ import { useAppStore, type Page } from '@/lib/store';
 
 const navItems: { label: string; page: Page }[] = [
   { label: 'Home', page: 'home' },
-  { label: 'Rituals', page: 'services' },
-  { label: 'Therapists', page: 'therapists' },
-  { label: 'Journal', page: 'blog' },
+  { label: 'Treatments', page: 'services' },
+  { label: 'Packages', page: 'packages' },
+  { label: 'Membership', page: 'membership' },
   { label: 'About', page: 'about' },
   { label: 'Contact', page: 'contact' },
 ];
@@ -24,11 +24,9 @@ export default function Navigation() {
           onClick={() => navigate('home')}
           className="flex items-center gap-2.5 cursor-pointer group"
         >
-          <div className="w-9 h-9 rounded-full flex items-center justify-center text-black font-bold text-sm heading-display" style={{ background: 'linear-gradient(135deg, #D4AF37 0%, #E91E63 100%)' }}>
-            TS
-          </div>
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-black font-bold text-sm heading-display" style={{ background: 'linear-gradient(135deg, #D4AF37 0%, #E91E63 100%)' }}>ST</div>
           <span className="text-lg font-semibold text-white heading-display tracking-tight group-hover:text-gold transition-colors">
-            Tina&apos;s Sanctuary
+            Serenity Touch Spa
           </span>
         </button>
 

@@ -15,33 +15,33 @@ const fadeUp = {
 };
 
 const testimonials = [
-  { text: "Tina's Sanctuary is intoxicating. Every visit leaves me breathless — the touch, the atmosphere, the absolute surrender to the experience. Nothing in Lusaka comes close.", author: 'Chipo Mwale', location: 'Lusaka', rating: 5 },
-  { text: 'Pure, unapologetic indulgence. The hot stone therapy melted every ounce of tension from my body. I left feeling like I was floating on air. Absolutely divine.', author: 'Bwalya Nkomo', location: 'Kitwe', rating: 5 },
-  { text: "The intimacy of the experience is unmatched. Patricia's aromatherapy session was a sensual journey I didn't want to end. The oils, the touch — perfection.", author: 'Grace Banda', location: 'Lusaka', rating: 5 },
-  { text: 'Discreet, luxurious, and utterly addictive. I recommend Tina\'s to anyone who craves genuine, world-class pampering in the most private setting.', author: 'Patricia Mulenga', location: 'Lusaka', rating: 5 },
+  { text: "Serenity Touch Spa is my go-to wellness destination. The deep tissue massage was exactly what I needed after weeks of stress. Truly world-class.", author: 'Chipo Mwale', location: 'Lusaka', rating: 5 },
+  { text: 'The hot stone therapy was incredible. I left feeling completely rejuvenated. The ambiance, the service, everything was perfect. Highly recommend.', author: 'Bwalya Nkomo', location: 'Kitwe', rating: 5 },
+  { text: "Patricia's aromatherapy session was a beautiful, calming experience. The essential oils were divine and the technique was flawless. I'll be back.", author: 'Grace Banda', location: 'Lusaka', rating: 5 },
+  { text: 'Professional, luxurious, and deeply relaxing. I recommend Serenity Touch Spa to anyone seeking genuine, world-class pampering in Lusaka.', author: 'Patricia Mulenga', location: 'Lusaka', rating: 5 },
 ];
 
 const faqItems = [
-  { question: "What makes Tina's Sanctuary so special?", answer: 'Certified expertise meets absolute intimacy. Our private suites, hand-blended oils, and personalised rituals create an experience that goes beyond massage — it\'s a complete surrender of the senses.' },
-  { question: 'How do I book?', answer: 'Book through our form, call +260 572 782 539, or message us on WhatsApp. Gold and Platinum members enjoy priority booking through our private concierge.' },
-  { question: 'What is your cancellation policy?', answer: '24-hour notice for full refund. Within 24 hours: 50% fee. No-shows charged in full. We take your time seriously.' },
-  { question: 'Are your therapists certified?', answer: 'Every therapist holds international certifications and is trained in the most advanced techniques. Discretion and excellence are non-negotiable.' },
-  { question: 'What should I bring?', answer: 'Nothing but yourself. We provide everything — silk linens, warm oils, soft lighting. Just arrive 10 minutes early for your consultation and let us take care of the rest.' },
+  { question: "What makes Serenity Touch Spa special?", answer: "Certified expertise meets luxurious comfort. Our private suites, premium products, and personalised treatments create a wellness experience that goes beyond ordinary massage." },
+  { question: 'How do I book?', answer: 'Book through our form, call +260 572 782 539, or message us on WhatsApp at +260 761 404 555. Gold and Platinum members enjoy priority booking through our dedicated concierge.' },
+  { question: 'What is your cancellation policy?', answer: "24-hour notice for full refund. Within 24 hours: 50% fee. No-shows charged in full. We respect your time and our therapists' schedules." },
+  { question: 'Are your therapists certified?', answer: 'Every therapist holds international certifications and is trained in the most advanced therapeutic techniques. Excellence and professionalism are our standards.' },
+  { question: 'What should I bring?', answer: 'Nothing but yourself. We provide everything — fresh linens, premium oils, and a serene environment. Just arrive 10 minutes early for your wellness consultation.' },
 ];
 
 const whyMembers = [
-  { title: 'World-class touch', desc: 'Internationally certified therapists trained in the most exquisite techniques known to the wellness world.' },
-  { title: 'Total discretion', desc: 'Private sanctuary with encrypted booking. Your secret is safe with us.' },
-  { title: 'Sensual rituals', desc: 'Every treatment is composed for your body, your mood, your deepest desires for relaxation.' },
-  { title: 'Personal concierge', desc: 'Gold and Platinum members get a direct WhatsApp line — anytime, anywhere.' },
-  { title: 'Zambian botanicals', desc: 'Locally-sourced essential oils and homegrown expertise for an authentic experience.' },
-  { title: 'Obsessive quality', desc: 'Every detail — from the temperature of the linen to the scent in the air — is considered.' },
+  { title: 'Expert Therapists', desc: 'Internationally certified therapists trained in the most advanced wellness techniques.' },
+  { title: 'Private & Peaceful', desc: 'Private treatment suites designed for your absolute comfort and tranquility.' },
+  { title: 'Personalised Treatments', desc: 'Every treatment is tailored to your body, your needs, and your wellness goals.' },
+  { title: 'Dedicated Concierge', desc: 'Gold and Platinum members get a direct WhatsApp line for priority booking.' },
+  { title: 'Premium Products', desc: 'Locally-sourced essential oils and internationally acclaimed wellness products.' },
+  { title: 'Attention to Detail', desc: 'Every detail — from room temperature to ambient scent — is carefully considered.' },
 ];
 
 const membershipPlans = [
-  { name: 'Silver', tagline: 'A taste of indulgence', price: 'K800', features: ['1 sensual massage per month', '10% off additional pleasures', 'Priority booking', 'Birthday treat', 'Access to member lounge'], popular: false },
-  { name: 'Gold', tagline: 'For the devoted', price: 'K1,600', features: ['2 massages per month', '20% off all services', 'VIP booking', 'Free aromatherapy upgrade', 'Quarterly wellness consult', 'Guest privileges', 'WhatsApp concierge', 'Exclusive events'], popular: true },
-  { name: 'Platinum', tagline: 'The ultimate surrender', price: 'K3,200', features: ['Unlimited massages', '30% off everything', '24/7 concierge', 'Personal wellness plan', 'Private therapy suite', 'Monthly spa day', 'Home visit service', 'Airport pickup', 'Priority line', 'Annual retreat invitation'], popular: false },
+  { name: 'Silver', tagline: 'A taste of wellness', price: 'K800', features: ['1 massage per month', '10% off additional services', 'Priority booking', 'Birthday treat', 'Access to member lounge'], popular: false },
+  { name: 'Gold', tagline: 'For the dedicated', price: 'K1,600', features: ['2 massages per month', '20% off all services', 'VIP booking', 'Free aromatherapy upgrade', 'Quarterly wellness consult', 'Guest privileges', 'WhatsApp concierge', 'Exclusive events access'], popular: true },
+  { name: 'Platinum', tagline: 'The ultimate experience', price: 'K3,200', features: ['Unlimited massages', '30% off everything', '24/7 concierge', 'Personal wellness plan', 'Private therapy suite', 'Monthly spa day', 'Home visit service', 'Airport pickup', 'Priority WhatsApp line', 'Annual retreat invitation'], popular: false },
 ];
 
 export default function HomePage() {
@@ -93,7 +93,7 @@ export default function HomePage() {
           >
             <div className="badge-sexy">
               <span className="w-1.5 h-1.5 rounded-full bg-pink-brand inline-block" />
-              LUSAKA&apos;S MOST PRIVATE SANCTUARY
+              LUSAKA&apos;S PREMIER LUXURY SPA
             </div>
           </motion.div>
 
@@ -104,9 +104,9 @@ export default function HomePage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-semibold mb-6 leading-[1.05] heading-display text-shadow-sexy"
           >
-            <span className="text-gradient-sexy">Surrender</span>{' '}
-            <span className="text-white">to</span>{' '}
-            <span className="text-gradient-gold">Pure Bliss</span>
+            <span className="text-gradient-sexy">Relax</span>{' '}
+            <span className="text-white">• Restore</span>{' '}
+            <span className="text-gradient-gold">• Rejuvenate</span>
           </motion.h1>
 
           {/* Subheading */}
@@ -116,8 +116,7 @@ export default function HomePage() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-lg sm:text-xl text-pink-glow/60 max-w-2xl mx-auto mb-10 body-serif leading-relaxed font-light"
           >
-            Tina&apos;s Sanctuary is a private escape in Ibex Hill, Lusaka — where certified hands, warm oils, and
-            candlelit suites conspire to unravel you completely.
+            Serenity Touch Spa is a premium wellness destination in Ibex Hill, Lusaka — where certified therapists, warm oils, and tranquil suites deliver the finest therapeutic experience.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -131,13 +130,13 @@ export default function HomePage() {
               onClick={() => navigate('contact')}
               className="btn-pink px-8 py-3.5 text-sm font-semibold cursor-pointer"
             >
-              Book Your Escape
+              Book Appointment
             </button>
             <button
               onClick={() => navigate('services')}
               className="btn-outline-gold px-8 py-3.5 text-sm font-semibold cursor-pointer"
             >
-              Explore Our Rituals
+              Explore Our Treatments
             </button>
           </motion.div>
 
@@ -169,20 +168,20 @@ export default function HomePage() {
             className="text-center mb-16"
           >
             <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.25em] text-pink-brand/50 mb-4 heading-display uppercase">
-              Signature Rituals
+              Signature Treatments
             </motion.p>
             <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-semibold mb-4 heading-display">
-              Composed for <span className="text-pink-brand">Pleasure</span>
+              Designed for <span className="text-pink-brand">Wellness</span>
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="text-pink-glow/40 max-w-2xl mx-auto body-serif text-lg font-light">
-              Every treatment is a ritual — from the oils blended in-house to the temperature of the silk against your skin.
+              Every treatment is a crafted experience — from the oils blended in-house to the temperature of the silk against your skin.
             </motion.p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
             {[
               { duration: '60 min', name: 'Swedish Massage', desc: 'Long, flowing strokes that melt away the world. Full-body relaxation that leaves you floating.', price: 'K800', img: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80' },
-              { duration: '90 min', name: 'Deep Tissue Massage', desc: 'Intense, deliberate pressure that targets your deepest tension. For those who crave release.', price: 'K1,200', img: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=600&q=80' },
+              { duration: '90 min', name: 'Deep Tissue Massage', desc: 'Intense, deliberate pressure that targets your deepest tension. For those who seek release.', price: 'K1,200', img: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=600&q=80' },
               { duration: '75 min', name: 'Hot Stone Therapy', desc: 'Heated stones glide across your body, melting resistance and inducing deep, euphoric relaxation.', price: 'K1,000', img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80' },
             ].map((service, idx) => (
               <motion.div
@@ -232,7 +231,7 @@ export default function HomePage() {
             className="text-center mb-16"
           >
             <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-semibold heading-display">
-              Why they <span className="text-pink-brand">come back</span>
+              Why Our <span className="text-pink-brand">Guests Return</span>
             </motion.h2>
           </motion.div>
 
@@ -345,7 +344,7 @@ export default function HomePage() {
               Membership
             </motion.p>
             <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-semibold heading-display">
-              Three ways to <span className="text-gradient-sexy">indulge</span>
+              Three Ways to Invest in <span className="text-gradient-sexy">Your Wellness</span>
             </motion.h2>
           </motion.div>
 
@@ -364,7 +363,7 @@ export default function HomePage() {
                   {plan.popular && (
                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
                       <span className="bg-gradient-to-r from-gold to-pink-brand text-black px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider shadow-lg shadow-gold/20" style={{ color: '#000' }}>
-                        MOST DESIRED
+                        MOST POPULAR
                       </span>
                     </div>
                   )}
@@ -395,7 +394,7 @@ export default function HomePage() {
                           : 'btn-outline-pink'
                       }`}
                     >
-                      {plan.popular ? 'Indulge Now' : 'Enquire'}
+                      {plan.popular ? 'Enjoy Now' : 'Enquire'}
                     </button>
                   </div>
                 </div>
@@ -415,7 +414,7 @@ export default function HomePage() {
             className="text-center mb-14"
           >
             <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-semibold heading-display">
-              Curious <span className="text-pink-brand">minds</span>
+              Frequently Asked <span className="text-pink-brand">Questions</span>
             </motion.h2>
           </motion.div>
 
@@ -470,14 +469,14 @@ export default function HomePage() {
               custom={0}
               className="text-4xl md:text-5xl font-semibold mb-6 heading-display"
             >
-              Ready to <span className="text-gradient-sexy">let go</span>?
+              Ready to Experience <span className="text-gradient-sexy">Serenity</span>?
             </motion.h2>
             <motion.p
               variants={fadeUp}
               custom={1}
               className="text-lg mb-10 max-w-2xl mx-auto body-serif text-pink-glow/40 leading-relaxed font-light"
             >
-              Reserve your first ritual and discover why Tina&apos;s Sanctuary is Lusaka&apos;s most intoxicating escape.
+              Book your first appointment and discover why Serenity Touch Spa is Lusaka's premier wellness destination.
             </motion.p>
             <motion.div
               variants={fadeUp}
@@ -488,13 +487,13 @@ export default function HomePage() {
                 onClick={() => navigate('contact')}
                 className="btn-pink px-8 py-3.5 text-sm font-semibold cursor-pointer"
               >
-                Book Your Escape
+                Book Appointment
               </button>
               <button
                 onClick={() => navigate('about')}
                 className="btn-outline-gold px-8 py-3.5 text-sm font-semibold cursor-pointer flex items-center justify-center gap-2"
               >
-                Meet Tina <ArrowRight className="w-4 h-4" />
+                Learn About Us <ArrowRight className="w-4 h-4" />
               </button>
             </motion.div>
           </motion.div>
