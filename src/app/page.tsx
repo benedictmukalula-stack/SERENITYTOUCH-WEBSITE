@@ -33,7 +33,7 @@ export default function AppPage() {
   const PageComponent = pageComponents[currentPage] || HomePage;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#0a0a0a' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: '#000000' }}>
       {/* R18 Age Gate */}
       <AgeGate />
 
