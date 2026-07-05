@@ -2,6 +2,14 @@
 
 import { motion } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
+import { Car, MapPin } from 'lucide-react';
+
+const calloutZones = [
+  { zone: 'Zone 1 — Ibex Hill & Surrounds', desc: 'Within 5km radius (Ibex Hill, Woodlands, Kabulonga)', fee: 'K200' },
+  { zone: 'Zone 2 — Lusaka Central', desc: '5–15km (CBD, Northmead, Rhodes Park, Longacres)', fee: 'K350' },
+  { zone: 'Zone 3 — Greater Lusaka', desc: '15–30km (Manda Hill, East Park, Chelstone, Roma)', fee: 'K500' },
+  { zone: 'Zone 4 — Outside Lusaka', desc: '30km+ (Kabwe, Chongwe, Kafue, etc.)', fee: 'Custom Quote' },
+];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -96,6 +104,36 @@ export default function ServicesPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Call-Out Fees Section */}
+      <section className="section-padding surface-base">
+        <div className="container-tinas max-w-3xl">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <motion.div variants={fadeUp} custom={0} className="flex items-center gap-3 mb-3">
+              <Car className="w-6 h-6 text-pink-brand" />
+              <h2 className="text-3xl md:text-4xl font-bold heading-display">Call-Out <span className="text-pink-brand">Service</span></h2>
+            </motion.div>
+            <motion.p variants={fadeUp} custom={1} className="text-pink-glow/35 mb-8 font-light body-serif leading-relaxed">Can&apos;t make it to us? We&apos;ll bring the sanctuary experience to your doorstep. Call-out fees are added to your chosen service price.</motion.p>
+            <motion.div variants={fadeUp} custom={2} className="surface-raised rounded-2xl overflow-hidden glow-gold">
+              {calloutZones.map((item, i) => (
+                <div key={i} className={`flex items-center justify-between p-5 ${i > 0 ? 'border-t border-gold/10' : ''}`}>
+                  <div className="flex items-start gap-4">
+                    <MapPin className="w-5 h-5 text-gold mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-bold text-white">{item.zone}</p>
+                      <p className="text-xs text-pink-glow/35 mt-1 body-serif font-light">{item.desc}</p>
+                    </div>
+                  </div>
+                  <span className={`text-xl font-bold shrink-0 ${item.fee === 'Custom Quote' ? 'text-pink-brand' : 'text-gradient-gold'}`}>{item.fee}</span>
+                </div>
+              ))}
+              <div className="p-5 border-t border-gold/10 bg-pink-brand/5">
+                <p className="text-xs text-pink-glow/50 body-serif font-light leading-relaxed">Call-out fees cover therapist travel and equipment transport. Fees are per visit, not per service. For Zone 4, we&apos;ll provide a custom quote based on your exact location. Book a call-out via our <span className="text-pink-brand font-medium">booking form</span> or WhatsApp.</p>
               </div>
             </motion.div>
           </motion.div>
