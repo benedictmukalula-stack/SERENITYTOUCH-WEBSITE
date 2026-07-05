@@ -15,86 +15,33 @@ const fadeUp = {
 };
 
 const testimonials = [
-  {
-    text: "Tina's Sanctuary completely transformed my stress levels. After six months as a member I feel like a new person. The personalized rituals and attention to detail are unlike anything else in Zambia.",
-    author: 'Chipo Mwale',
-    location: 'Lusaka',
-    rating: 5,
-  },
-  {
-    text: 'The best wellness experience in Zambia. Professional, discreet, and absolutely worth every kwacha. The hot stone therapy is my absolute favourite.',
-    author: 'Bwalya Nkomo',
-    location: 'Kitwe',
-    rating: 5,
-  },
-  {
-    text: 'Exceptional service and attention to detail. Every visit feels like a personalized ritual crafted just for me. The aromatherapy blends are divine.',
-    author: 'Grace Banda',
-    location: 'Lusaka',
-    rating: 5,
-  },
-  {
-    text: 'A true sanctuary. The therapists are incredibly skilled and the discretion is unmatched. I recommend Tina\'s to all my colleagues.',
-    author: 'Patricia Mulenga',
-    location: 'Lusaka',
-    rating: 5,
-  },
+  { text: "Tina's Sanctuary is intoxicating. Every visit leaves me breathless — the touch, the atmosphere, the absolute surrender to the experience. Nothing in Lusaka comes close.", author: 'Chipo Mwale', location: 'Lusaka', rating: 5 },
+  { text: 'Pure, unapologetic indulgence. The hot stone therapy melted every ounce of tension from my body. I left feeling like I was floating on air. Absolutely divine.', author: 'Bwalya Nkomo', location: 'Kitwe', rating: 5 },
+  { text: "The intimacy of the experience is unmatched. Patricia's aromatherapy session was a sensual journey I didn't want to end. The oils, the touch — perfection.", author: 'Grace Banda', location: 'Lusaka', rating: 5 },
+  { text: 'Discreet, luxurious, and utterly addictive. I recommend Tina\'s to anyone who craves genuine, world-class pampering in the most private setting.', author: 'Patricia Mulenga', location: 'Lusaka', rating: 5 },
 ];
 
 const faqItems = [
-  {
-    question: "What makes Tina's Sanctuary different?",
-    answer: 'Certified expertise, a private luxury setting in Ibex Hill and treatments personalised to every guest. We don\'t just provide treatments — we craft personalized rituals that leave you feeling transformed.',
-  },
-  {
-    question: 'How do I book?',
-    answer: 'You can book through our website contact form, call us at +260 572 782 539, or email info@tinassanctuary.zm. Members enjoy priority booking through our WhatsApp concierge line.',
-  },
-  {
-    question: 'What is your cancellation policy?',
-    answer: 'Cancellations made 24 hours in advance receive a full refund. Cancellations within 24 hours are subject to a 50% fee. No-shows will be charged in full.',
-  },
-  {
-    question: 'Are your therapists certified?',
-    answer: 'Yes, every practitioner is internationally certified and continually trained in the latest therapeutic techniques. We maintain the highest standards of professional excellence.',
-  },
-  {
-    question: 'What should I bring to my appointment?',
-    answer: 'Just bring yourself! We provide all linens, oils, and amenities. Arrive 10 minutes early to complete a brief wellness consultation.',
-  },
+  { question: "What makes Tina's Sanctuary so special?", answer: 'Certified expertise meets absolute intimacy. Our private suites, hand-blended oils, and personalised rituals create an experience that goes beyond massage — it\'s a complete surrender of the senses.' },
+  { question: 'How do I book?', answer: 'Book through our form, call +260 572 782 539, or message us on WhatsApp. Gold and Platinum members enjoy priority booking through our private concierge.' },
+  { question: 'What is your cancellation policy?', answer: '24-hour notice for full refund. Within 24 hours: 50% fee. No-shows charged in full. We take your time seriously.' },
+  { question: 'Are your therapists certified?', answer: 'Every therapist holds international certifications and is trained in the most advanced techniques. Discretion and excellence are non-negotiable.' },
+  { question: 'What should I bring?', answer: 'Nothing but yourself. We provide everything — silk linens, warm oils, soft lighting. Just arrive 10 minutes early for your consultation and let us take care of the rest.' },
 ];
 
 const whyMembers = [
-  { title: 'Certified therapists', desc: 'Every practitioner internationally certified and continually trained in the latest techniques.' },
-  { title: 'Absolute discretion', desc: 'Private members-only sanctuary with encrypted booking and records.' },
-  { title: 'Personalised rituals', desc: 'Treatments tailored to your body, mood and season.' },
-  { title: 'Concierge care', desc: 'Direct WhatsApp line for Gold and Platinum members.' },
-  { title: 'Zambian craft', desc: 'Locally-sourced botanicals and homegrown expertise.' },
-  { title: 'Consistent excellence', desc: 'Every guest receives the same considered standard of care.' },
+  { title: 'World-class touch', desc: 'Internationally certified therapists trained in the most exquisite techniques known to the wellness world.' },
+  { title: 'Total discretion', desc: 'Private sanctuary with encrypted booking. Your secret is safe with us.' },
+  { title: 'Sensual rituals', desc: 'Every treatment is composed for your body, your mood, your deepest desires for relaxation.' },
+  { title: 'Personal concierge', desc: 'Gold and Platinum members get a direct WhatsApp line — anytime, anywhere.' },
+  { title: 'Zambian botanicals', desc: 'Locally-sourced essential oils and homegrown expertise for an authentic experience.' },
+  { title: 'Obsessive quality', desc: 'Every detail — from the temperature of the linen to the scent in the air — is considered.' },
 ];
 
 const membershipPlans = [
-  {
-    name: 'Silver',
-    tagline: 'For wellness beginners',
-    price: 'K800',
-    features: ['1 massage per month', '10% off additional services', 'Priority booking', 'Birthday special', 'Access to member lounge'],
-    popular: false,
-  },
-  {
-    name: 'Gold',
-    tagline: 'For regular enthusiasts',
-    price: 'K1,600',
-    features: ['2 massages per month', '20% off all services', 'VIP booking', 'Free aromatherapy upgrade', 'Quarterly wellness consult', 'Guest privileges'],
-    popular: true,
-  },
-  {
-    name: 'Platinum',
-    tagline: 'The exclusive experience',
-    price: 'K3,200',
-    features: ['Unlimited massages', '30% off all services', '24/7 concierge', 'Personal wellness plan', 'Private therapy room', 'Monthly spa day', 'Home visit services'],
-    popular: false,
-  },
+  { name: 'Silver', tagline: 'A taste of indulgence', price: 'K800', features: ['1 sensual massage per month', '10% off additional pleasures', 'Priority booking', 'Birthday treat', 'Access to member lounge'], popular: false },
+  { name: 'Gold', tagline: 'For the devoted', price: 'K1,600', features: ['2 massages per month', '20% off all services', 'VIP booking', 'Free aromatherapy upgrade', 'Quarterly wellness consult', 'Guest privileges', 'WhatsApp concierge', 'Exclusive events'], popular: true },
+  { name: 'Platinum', tagline: 'The ultimate surrender', price: 'K3,200', features: ['Unlimited massages', '30% off everything', '24/7 concierge', 'Personal wellness plan', 'Private therapy suite', 'Monthly spa day', 'Home visit service', 'Airport pickup', 'Priority line', 'Annual retreat invitation'], popular: false },
 ];
 
 export default function HomePage() {
@@ -117,52 +64,63 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* Hero Section */}
+      {/* ===== HERO SECTION ===== */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
+        {/* Background image — dark, moody spa */}
         <div
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1920&q=80)',
+            backgroundImage: 'url(https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=1920&q=80)',
             backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundPosition: 'center 30%',
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/60 via-[#0a0a0a]/30 to-[#0a0a0a]/70 z-[1]" />
+        {/* Dark gradient overlay with pink-gold tint */}
+        <div className="absolute inset-0 z-[1]" style={{ background: 'linear-gradient(160deg, rgba(0,0,0,0.82) 0%, rgba(10,5,8,0.6) 35%, rgba(173,20,87,0.15) 70%, rgba(212,175,55,0.08) 100%)' }} />
+        {/* Bottom fade to black */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 z-[2]" style={{ background: 'linear-gradient(to top, #000000, transparent)' }} />
+        {/* Top ambient glow */}
+        <div className="absolute top-0 left-1/3 w-[600px] h-[600px] z-[1] rounded-full" style={{ background: 'radial-gradient(circle, rgba(233,30,99,0.06) 0%, transparent 70%)' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] z-[1] rounded-full" style={{ background: 'radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%)' }} />
 
         <div className="container-tinas relative z-10 text-center py-32">
+          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="mb-6 inline-block"
+            className="mb-8 inline-block"
           >
-            <div className="px-5 py-2.5 rounded-full border border-gold/30 bg-white/5 backdrop-blur-sm">
-              <span className="text-[11px] tracking-[0.2em] text-gold heading-display font-medium">
-                ✦ EXCLUSIVE WELLNESS SANCTUARY
-              </span>
+            <div className="badge-sexy">
+              <span className="w-1.5 h-1.5 rounded-full bg-pink-brand inline-block" />
+              LUSAKA&apos;S MOST PRIVATE SANCTUARY
             </div>
           </motion.div>
 
+          {/* Heading */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[1.1] heading-display"
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-semibold mb-6 leading-[1.05] heading-display text-shadow-sexy"
           >
-            <span className="text-gold">Elevate</span>{' '}
-            <span className="text-white">Your</span>{' '}
-            <span className="text-pink-brand">Wellness</span>
+            <span className="text-gradient-sexy">Surrender</span>{' '}
+            <span className="text-white">to</span>{' '}
+            <span className="text-gradient-gold">Pure Bliss</span>
           </motion.h1>
 
+          {/* Subheading */}
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto mb-10 body-serif leading-relaxed"
+            className="text-lg sm:text-xl text-pink-glow/60 max-w-2xl mx-auto mb-10 body-serif leading-relaxed font-light"
           >
-            Tina&apos;s Sanctuary is a private sanctuary in Ibex Hill, Lusaka — where certified therapists, silk-draped suites and considered rituals deliver the finest therapeutic experience in Zambia.
+            Tina&apos;s Sanctuary is a private escape in Ibex Hill, Lusaka — where certified hands, warm oils, and
+            candlelit suites conspire to unravel you completely.
           </motion.p>
 
+          {/* CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -173,13 +131,13 @@ export default function HomePage() {
               onClick={() => navigate('contact')}
               className="btn-pink px-8 py-3.5 text-sm font-semibold cursor-pointer"
             >
-              Book Your Session
+              Book Your Escape
             </button>
             <button
               onClick={() => navigate('services')}
-              className="btn-lime px-8 py-3.5 text-sm font-semibold cursor-pointer"
+              className="btn-outline-gold px-8 py-3.5 text-sm font-semibold cursor-pointer"
             >
-              Explore Services
+              Explore Our Rituals
             </button>
           </motion.div>
 
@@ -190,19 +148,19 @@ export default function HomePage() {
             transition={{ delay: 1.2 }}
             className="absolute bottom-8 left-1/2 -translate-x-1/2"
           >
-            <div className="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center pt-2">
+            <div className="w-6 h-10 border-2 border-gold/20 rounded-full flex justify-center pt-2">
               <motion.div
                 animate={{ y: [0, 8, 0] }}
                 transition={{ repeat: Infinity, duration: 1.5 }}
-                className="w-1.5 h-1.5 bg-gold rounded-full"
+                className="w-1.5 h-1.5 bg-pink-brand rounded-full"
               />
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Signature Treatments */}
-      <section className="section-padding surface-base">
+      {/* ===== SIGNATURE TREATMENTS ===== */}
+      <section className="section-padding section-dark">
         <div className="container-tinas">
           <motion.div
             initial="hidden"
@@ -210,22 +168,22 @@ export default function HomePage() {
             viewport={{ once: true, margin: '-50px' }}
             className="text-center mb-16"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.2em] text-gray-500 mb-4 heading-display">
-              SIGNATURE TREATMENTS
+            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.25em] text-pink-brand/50 mb-4 heading-display uppercase">
+              Signature Rituals
             </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-bold mb-4 heading-display">
-              Ritual, refined.
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-semibold mb-4 heading-display">
+              Composed for <span className="text-pink-brand">Pleasure</span>
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-gray-400 max-w-2xl mx-auto body-serif">
-              Every treatment is composed for you — from the oils blended in-house to the temperature of the linen. All prices in Zambian Kwacha.
+            <motion.p variants={fadeUp} custom={2} className="text-pink-glow/40 max-w-2xl mx-auto body-serif text-lg font-light">
+              Every treatment is a ritual — from the oils blended in-house to the temperature of the silk against your skin.
             </motion.p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
             {[
-              { duration: '60 min', name: 'Swedish Massage', desc: 'Classic full-body massage using long, flowing strokes to promote relaxation and improve circulation.', price: 'K800' },
-              { duration: '90 min', name: 'Deep Tissue Massage', desc: 'Intensive massage targeting deep muscle layers to relieve tension and chronic pain.', price: 'K1,200' },
-              { duration: '75 min', name: 'Hot Stone Therapy', desc: 'Heated basalt stones combined with massage to melt tension and induce deep relaxation.', price: 'K1,000' },
+              { duration: '60 min', name: 'Swedish Massage', desc: 'Long, flowing strokes that melt away the world. Full-body relaxation that leaves you floating.', price: 'K800', img: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80' },
+              { duration: '90 min', name: 'Deep Tissue Massage', desc: 'Intense, deliberate pressure that targets your deepest tension. For those who crave release.', price: 'K1,200', img: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=600&q=80' },
+              { duration: '75 min', name: 'Hot Stone Therapy', desc: 'Heated stones glide across your body, melting resistance and inducing deep, euphoric relaxation.', price: 'K1,000', img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80' },
             ].map((service, idx) => (
               <motion.div
                 key={service.name}
@@ -235,18 +193,24 @@ export default function HomePage() {
                 variants={fadeUp}
                 custom={idx}
               >
-                <div className="group surface-raised rounded-2xl p-8 hover:border-gold/40 transition-all duration-300 h-full">
-                  <p className="text-[11px] tracking-[0.15em] text-gray-500 mb-3">{service.duration.toUpperCase()}</p>
-                  <h3 className="text-2xl font-bold mb-3 heading-display">{service.name}</h3>
-                  <p className="text-gray-400 mb-6 text-sm body-serif leading-relaxed">{service.desc}</p>
-                  <div className="flex items-center justify-between mt-auto">
-                    <span className="text-2xl font-bold text-white">{service.price}</span>
-                    <button
-                      onClick={() => navigate('services')}
-                      className="text-sm text-gray-400 hover:text-gold transition-colors flex items-center gap-1 cursor-pointer group-hover:text-gold"
-                    >
-                      View details <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                    </button>
+                <div className="group surface-raised rounded-2xl overflow-hidden hover:border-pink-brand/25 transition-all duration-500 h-full">
+                  <div className="h-48 relative overflow-hidden">
+                    <img src={service.img} alt={service.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-50 group-hover:opacity-60" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508] via-[#0a0508]/40 to-transparent" />
+                  </div>
+                  <div className="p-7">
+                    <p className="text-[10px] tracking-[0.2em] text-gold/60 mb-2 uppercase">{service.duration}</p>
+                    <h3 className="text-xl font-semibold mb-3 heading-display">{service.name}</h3>
+                    <p className="text-pink-glow/35 mb-6 text-sm body-serif leading-relaxed font-light">{service.desc}</p>
+                    <div className="flex items-center justify-between mt-auto">
+                      <span className="text-2xl font-semibold text-gradient-gold">{service.price}</span>
+                      <button
+                        onClick={() => navigate('services')}
+                        className="text-sm text-pink-brand/50 hover:text-pink-brand transition-colors flex items-center gap-1 cursor-pointer"
+                      >
+                        Discover <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -255,8 +219,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Why Members Choose Us */}
-      <section className="section-padding" style={{ background: '#111111' }}>
+      {/* Gold-Pink Divider */}
+      <div className="divider-sexy" />
+
+      {/* ===== WHY MEMBERS CHOOSE US ===== */}
+      <section className="section-padding gradient-sexy">
         <div className="container-tinas">
           <motion.div
             initial="hidden"
@@ -264,8 +231,8 @@ export default function HomePage() {
             viewport={{ once: true, margin: '-50px' }}
             className="text-center mb-16"
           >
-            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold heading-display">
-              Why members choose us
+            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-semibold heading-display">
+              Why they <span className="text-pink-brand">come back</span>
             </motion.h2>
           </motion.div>
 
@@ -280,11 +247,11 @@ export default function HomePage() {
                 custom={idx}
               >
                 <div className="group">
-                  <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center mb-4 group-hover:bg-gold/20 transition-colors">
-                    <span className="text-gold text-sm">✦</span>
+                  <div className="w-10 h-10 rounded-full bg-pink-brand/8 border border-pink-brand/15 flex items-center justify-center mb-4 group-hover:bg-pink-brand/15 group-hover:border-pink-brand/25 transition-all">
+                    <span className="text-gold text-sm">&#10022;</span>
                   </div>
-                  <h3 className="text-lg font-bold mb-2.5 heading-display">{item.title}</h3>
-                  <p className="text-gray-400 text-sm body-serif leading-relaxed">{item.desc}</p>
+                  <h3 className="text-lg font-semibold mb-2.5 heading-display">{item.title}</h3>
+                  <p className="text-pink-glow/35 text-sm body-serif leading-relaxed font-light">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -292,8 +259,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="section-padding surface-base">
+      {/* ===== TESTIMONIALS ===== */}
+      <section className="section-padding section-dark">
         <div className="container-tinas">
           <motion.div
             initial="hidden"
@@ -301,8 +268,8 @@ export default function HomePage() {
             viewport={{ once: true, margin: '-50px' }}
             className="text-center mb-16"
           >
-            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold heading-display">
-              In their words
+            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-semibold heading-display">
+              Whispers from our <span className="text-pink-brand">guests</span>
             </motion.h2>
           </motion.div>
 
@@ -313,17 +280,17 @@ export default function HomePage() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.4 }}
-              className="surface-raised p-10 md:p-14 rounded-2xl mb-8"
+              className="surface-raised p-10 md:p-14 rounded-2xl mb-8 glow-pink"
             >
               <div className="flex gap-1 mb-6">
                 {Array.from({ length: testimonials[currentTestimonial].rating }).map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-gold text-gold" />
                 ))}
               </div>
-              <p className="text-lg md:text-xl mb-6 body-serif leading-relaxed text-gray-200">
+              <p className="text-lg md:text-xl mb-6 body-serif leading-relaxed text-pink-glow/70 font-light italic">
                 &ldquo;{testimonials[currentTestimonial].text}&rdquo;
               </p>
-              <p className="font-bold text-sm tracking-wider text-white">
+              <p className="font-semibold text-sm tracking-wider text-gradient-gold">
                 {testimonials[currentTestimonial].author.toUpperCase()} &middot;{' '}
                 {testimonials[currentTestimonial].location.toUpperCase()}
               </p>
@@ -332,10 +299,10 @@ export default function HomePage() {
             <div className="flex items-center justify-between">
               <button
                 onClick={prevTestimonial}
-                className="p-2.5 hover:bg-white/5 rounded-full transition cursor-pointer"
+                className="p-2.5 hover:bg-gold/8 rounded-full transition cursor-pointer"
                 aria-label="Previous testimonial"
               >
-                <ChevronLeft className="w-5 h-5 text-gray-400" />
+                <ChevronLeft className="w-5 h-5 text-gold/40" />
               </button>
 
               <div className="flex gap-2">
@@ -345,8 +312,8 @@ export default function HomePage() {
                     onClick={() => setCurrentTestimonial(idx)}
                     className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                       idx === currentTestimonial
-                        ? 'bg-gold w-8'
-                        : 'bg-white/20 w-2.5 hover:bg-white/40'
+                        ? 'bg-pink-brand w-8'
+                        : 'bg-white/10 w-2.5 hover:bg-white/25'
                     }`}
                     aria-label={`Testimonial ${idx + 1}`}
                   />
@@ -355,18 +322,18 @@ export default function HomePage() {
 
               <button
                 onClick={nextTestimonial}
-                className="p-2.5 hover:bg-white/5 rounded-full transition cursor-pointer"
+                className="p-2.5 hover:bg-gold/8 rounded-full transition cursor-pointer"
                 aria-label="Next testimonial"
               >
-                <ChevronRight className="w-5 h-5 text-gray-400" />
+                <ChevronRight className="w-5 h-5 text-gold/40" />
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Membership */}
-      <section className="section-padding" style={{ background: '#111111' }}>
+      {/* ===== MEMBERSHIP ===== */}
+      <section className="section-padding" style={{ background: 'linear-gradient(180deg, #080406 0%, #000000 100%)' }}>
         <div className="container-tinas">
           <motion.div
             initial="hidden"
@@ -374,11 +341,11 @@ export default function HomePage() {
             viewport={{ once: true, margin: '-50px' }}
             className="text-center mb-16"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.2em] text-gray-500 mb-4 heading-display">
-              MEMBERSHIP
+            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.25em] text-gold/50 mb-4 heading-display uppercase">
+              Membership
             </motion.p>
-            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-bold heading-display">
-              Three ways to belong
+            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-semibold heading-display">
+              Three ways to <span className="text-gradient-sexy">indulge</span>
             </motion.h2>
           </motion.div>
 
@@ -396,35 +363,39 @@ export default function HomePage() {
                 <div className="relative">
                   {plan.popular && (
                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
-                      <span className="bg-gold text-[#0a0a0a] px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider">
-                        MOST POPULAR
+                      <span className="bg-gradient-to-r from-gold to-pink-brand text-black px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider shadow-lg shadow-gold/20" style={{ color: '#000' }}>
+                        MOST DESIRED
                       </span>
                     </div>
                   )}
                   <div
-                    className={`surface-raised rounded-2xl p-8 h-full transition-all duration-300 hover:border-gold/40 ${
-                      plan.popular ? 'border-gold/40 shadow-lg shadow-gold/5' : ''
+                    className={`surface-raised rounded-2xl p-8 h-full transition-all duration-500 hover:border-pink-brand/25 ${
+                      plan.popular ? 'border-gold/30 glow-gold' : ''
                     }`}
                   >
-                    <h3 className="text-3xl font-bold mb-2 heading-display">{plan.name}</h3>
-                    <p className="text-gray-400 mb-6 text-sm">{plan.tagline}</p>
+                    <h3 className="text-3xl font-semibold mb-2 heading-display">{plan.name}</h3>
+                    <p className="text-pink-glow/35 mb-6 text-sm font-light">{plan.tagline}</p>
                     <div className="mb-8">
-                      <span className="text-4xl font-bold text-white">{plan.price}</span>
-                      <span className="text-gray-500 ml-1">/month</span>
+                      <span className="text-4xl font-semibold text-gradient-gold">{plan.price}</span>
+                      <span className="text-pink-brand/35 ml-1">/month</span>
                     </div>
                     <ul className="space-y-3 mb-8">
                       {plan.features.map((feature, fidx) => (
                         <li key={fidx} className="flex items-start gap-3">
-                          <span className="text-gold mt-0.5 text-xs">✦</span>
-                          <span className="text-sm text-gray-300">{feature}</span>
+                          <span className="text-gold mt-0.5 text-xs">&#10022;</span>
+                          <span className="text-sm text-pink-glow/50 font-light">{feature}</span>
                         </li>
                       ))}
                     </ul>
                     <button
                       onClick={() => navigate('membership')}
-                      className="w-full btn-gold py-3 text-sm cursor-pointer"
+                      className={`w-full py-3 text-sm cursor-pointer font-semibold transition-all ${
+                        plan.popular
+                          ? 'btn-gold'
+                          : 'btn-outline-pink'
+                      }`}
                     >
-                      Enquire
+                      {plan.popular ? 'Indulge Now' : 'Enquire'}
                     </button>
                   </div>
                 </div>
@@ -434,8 +405,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="section-padding surface-base">
+      {/* ===== FAQ ===== */}
+      <section className="section-padding section-dark">
         <div className="container-tinas max-w-3xl">
           <motion.div
             initial="hidden"
@@ -443,8 +414,8 @@ export default function HomePage() {
             viewport={{ once: true, margin: '-50px' }}
             className="text-center mb-14"
           >
-            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold heading-display">
-              Questions, answered
+            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-semibold heading-display">
+              Curious <span className="text-pink-brand">minds</span>
             </motion.h2>
           </motion.div>
 
@@ -463,17 +434,17 @@ export default function HomePage() {
               >
                 <button
                   onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
-                  className="w-full p-5 md:p-6 text-left flex items-center justify-between hover:bg-white/[0.02] transition cursor-pointer"
+                  className="w-full p-5 md:p-6 text-left flex items-center justify-between hover:bg-pink-brand/[0.02] transition cursor-pointer"
                 >
-                  <h3 className="font-bold text-[15px] heading-display pr-4 text-white">{item.question}</h3>
+                  <h3 className="font-semibold text-[15px] heading-display pr-4 text-white">{item.question}</h3>
                   <ChevronRight
-                    className={`w-5 h-5 shrink-0 text-gray-500 transition-transform duration-300 ${
+                    className={`w-5 h-5 shrink-0 text-gold/40 transition-transform duration-300 ${
                       expandedFaq === idx ? 'rotate-90' : ''
                     }`}
                   />
                 </button>
                 {expandedFaq === idx && (
-                  <div className="px-5 md:px-6 pb-5 md:pb-6 text-gray-400 text-sm body-serif leading-relaxed border-t border-gold/15 pt-4">
+                  <div className="px-5 md:px-6 pb-5 md:pb-6 text-pink-glow/35 text-sm body-serif leading-relaxed border-t border-gold/8 pt-4 font-light">
                     {item.answer}
                   </div>
                 )}
@@ -483,9 +454,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="section-padding bg-gradient-to-br from-[#111] via-[#1a1a1a] to-[#111] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=40')] bg-cover bg-center opacity-[0.03]" />
+      {/* ===== CTA SECTION ===== */}
+      <section className="section-padding relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #080406 0%, #100a0e 30%, #0d0510 60%, #000000 100%)' }}>
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=800&q=40')] bg-cover bg-center opacity-[0.03]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-pink-brand/[0.03] blur-[100px]" />
+        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-gold/[0.03] blur-[80px]" />
         <div className="container-tinas text-center relative z-10">
           <motion.div
             initial="hidden"
@@ -495,16 +468,16 @@ export default function HomePage() {
             <motion.h2
               variants={fadeUp}
               custom={0}
-              className="text-4xl md:text-5xl font-bold mb-6 heading-display"
+              className="text-4xl md:text-5xl font-semibold mb-6 heading-display"
             >
-              Ready for your transformation?
+              Ready to <span className="text-gradient-sexy">let go</span>?
             </motion.h2>
             <motion.p
               variants={fadeUp}
               custom={1}
-              className="text-lg mb-10 max-w-2xl mx-auto body-serif text-gray-400 leading-relaxed"
+              className="text-lg mb-10 max-w-2xl mx-auto body-serif text-pink-glow/40 leading-relaxed font-light"
             >
-              Reserve your first ritual and discover why Tina&apos;s Sanctuary is Lusaka&apos;s most private wellness address.
+              Reserve your first ritual and discover why Tina&apos;s Sanctuary is Lusaka&apos;s most intoxicating escape.
             </motion.p>
             <motion.div
               variants={fadeUp}
@@ -513,13 +486,13 @@ export default function HomePage() {
             >
               <button
                 onClick={() => navigate('contact')}
-                className="btn-light-on-dark px-8 py-3.5 text-sm font-semibold cursor-pointer"
+                className="btn-pink px-8 py-3.5 text-sm font-semibold cursor-pointer"
               >
-                Book Your Session
+                Book Your Escape
               </button>
               <button
                 onClick={() => navigate('about')}
-                className="btn-outline-white px-8 py-3.5 text-sm font-semibold cursor-pointer flex items-center justify-center gap-2"
+                className="btn-outline-gold px-8 py-3.5 text-sm font-semibold cursor-pointer flex items-center justify-center gap-2"
               >
                 Meet Tina <ArrowRight className="w-4 h-4" />
               </button>

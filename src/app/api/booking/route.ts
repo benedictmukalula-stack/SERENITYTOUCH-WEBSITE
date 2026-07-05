@@ -45,21 +45,21 @@ function buildEmailHtml(body: BookingBody, bookingId: string) {
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><style>
 body { font-family: Georgia, serif; background: #0a0a0a; color: #e5e5e5; margin: 0; padding: 20px; }
-.container { max-width: 600px; margin: 0 auto; background: #1a1a1a; border: 1px solid rgba(212,165,116,0.2); border-radius: 16px; overflow: hidden; }
-.header { background: linear-gradient(135deg, #D4A574, #E91E63); padding: 30px; text-align: center; }
-.header h1 { margin: 0; color: #0a0a0a; font-family: 'Playfair Display', Georgia, serif; font-size: 24px; }
+.container { max-width: 600px; margin: 0 auto; background: #1a1a1a; border: 1px solid rgba(212,175,55,0.15); border-radius: 16px; overflow: hidden; }
+.header { background: linear-gradient(135deg, #D4AF37, #E91E63); padding: 30px; text-align: center; }
+.header h1 { margin: 0; color: #0a0a0a; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; }
 .content { padding: 30px; }
 .field { margin-bottom: 16px; }
 .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 4px; }
 .value { font-size: 15px; color: #e5e5e5; }
-.highlight { color: #D4A574; font-weight: bold; }
-.footer { padding: 20px 30px; border-top: 1px solid rgba(212,165,116,0.15); text-align: center; }
+.highlight { color: #D4AF37; font-weight: bold; }
+.footer { padding: 20px 30px; border-top: 1px solid rgba(212,175,55,0.1); text-align: center; }
 .footer p { font-size: 12px; color: #666; margin: 4px 0; }
 </style></head><body>
 <div class="container">
   <div class="header"><h1>Tina's Sanctuary</h1></div>
   <div class="content">
-    <h2 style="color: #D4A574; font-family: 'Playfair Display', Georgia, serif; margin-top: 0;">New Booking Request</h2>
+    <h2 style="color: #D4AF37; font-family: 'Cormorant Garamond', Georgia, serif; margin-top: 0;">New Booking Request</h2>
     <p style="color: #888; font-size: 13px;">Booking ID: <span class="highlight">${bookingId}</span></p>
     <div class="field"><div class="label">Client Name</div><div class="value">${body.name}</div></div>
     <div class="field"><div class="label">Email</div><div class="value">${body.email}</div></div>

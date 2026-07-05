@@ -19,7 +19,7 @@ const articles = [
   { id: 3, title: 'Aromatherapy Essentials: Oils for Every Season', excerpt: "Learn how to use essential oils throughout the year to support your wellness journey.", date: 'June 14, 2026', author: 'Patricia Nkomo', category: 'Aromatherapy', readTime: '7 min read', image: 'https://images.unsplash.com/photo-1611073615830-4ebed33c0e5b?w=600&q=80', content: 'The art of aromatherapy dates back thousands of years, and at Tina\'s Sanctuary, we honour this ancient practice by sourcing the finest essential oils and creating bespoke blends for each season...' },
   { id: 4, title: 'Stress Relief Through Reflexology', excerpt: 'Discover the ancient healing practice of reflexology and how it can help reduce stress and promote whole-body wellness.', date: 'June 7, 2026', author: 'Grace Banda', category: 'Wellness', readTime: '5 min read', image: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=600&q=80', content: 'Reflexology is based on the principle that specific points on the feet and hands correspond to different organs and systems of the body.' },
   { id: 5, title: 'The Benefits of Regular Massage for Busy Professionals', excerpt: 'In our fast-paced world, regular massage is not a luxury — it is a necessity.', date: 'May 31, 2026', author: 'Tina Mulenga', category: 'Wellness', readTime: '6 min read', image: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=600&q=80', content: 'The modern professional faces unprecedented levels of stress. Long hours, screen time, and constant connectivity take a toll on both body and mind.' },
-  { id: 6, title: 'Creating a Spa Experience at Home', excerpt: 'Extend the benefits of your sanctuary visit by creating a wellness space at home.', date: 'May 24, 2026', author: 'Patricia Nkomo', category: 'Wellness', readTime: '5 min read', image: 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=600&q=80', content: 'Your wellness journey does not end when you leave Tina\'s Sanctuary. With a few thoughtful touches, you can recreate the serenity of our treatment rooms in your own home...' },
+  { id: 6, title: 'Creating a Spa Experience at Home', excerpt: 'Extend the benefits of your sanctuary visit by creating a wellness space at home.', date: 'May 24, 2026', author: 'Patricia Nkomo', category: 'Wellness', readTime: '5 min read', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80', content: 'Your wellness journey does not end when you leave Tina\'s Sanctuary. With a few thoughtful touches, you can recreate the serenity of our treatment rooms in your own home...' },
 ];
 
 const categories = ['All', 'Wellness', 'Treatments', 'Aromatherapy'];
@@ -42,9 +42,9 @@ export default function BlogPage() {
   if (selected) {
     return (
       <div className="min-h-screen">
-        <section className="pt-32 pb-8" style={{ background: '#111111' }}>
+        <section className="pt-32 pb-8 section-dark">
           <div className="container-tinas">
-            <button onClick={() => setSelectedArticle(null)} className="text-sm text-gray-400 hover:text-white transition cursor-pointer mb-6 inline-flex items-center gap-1">← Back to Journal</button>
+            <button onClick={() => setSelectedArticle(null)} className="text-sm text-pink-glow/35 hover:text-white transition cursor-pointer mb-6 inline-flex items-center gap-1">← Back to Journal</button>
           </div>
         </section>
         <section className="pb-20 surface-base">
@@ -52,18 +52,18 @@ export default function BlogPage() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <div className="flex items-center gap-4 mb-4">
                 <span className="text-xs font-semibold text-pink-brand uppercase tracking-wider">{selected.category}</span>
-                <span className="text-gray-600">·</span>
-                <span className="text-xs text-gray-500">{selected.readTime}</span>
+                <span className="text-gold/40">·</span>
+                <span className="text-xs text-gold/50">{selected.readTime}</span>
               </div>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 heading-display leading-tight">{selected.title}</h1>
-              <div className="flex items-center gap-5 text-sm text-gray-400 mb-10">
+              <div className="flex items-center gap-5 text-sm text-pink-glow/35 mb-10">
                 <div className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" /><span>{selected.author}</span></div>
                 <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /><span>{selected.date}</span></div>
               </div>
               <div className="rounded-2xl overflow-hidden mb-10">
                 <img src={selected.image} alt={selected.title} className="w-full h-[300px] md:h-[400px] object-cover" />
               </div>
-              <div className="space-y-5 text-gray-300 body-serif leading-relaxed text-[16px]">
+              <div className="space-y-5 text-pink-glow/45 body-serif font-light leading-relaxed text-[16px]">
                 <p>{selected.excerpt}</p>
                 <p>{selected.content}</p>
                 <p>At Tina&apos;s Sanctuary, we believe that knowledge is a crucial part of wellness. Understanding the treatments and practices you receive empowers you to make informed decisions about your health. We encourage all our guests to explore, ask questions, and take an active role in their wellness journey.</p>
@@ -78,10 +78,10 @@ export default function BlogPage() {
 
   return (
     <div>
-      <section className="pt-32 pb-16" style={{ background: '#111111' }}>
+      <section className="pt-32 pb-16 section-dark">
         <div className="container-tinas text-center">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">Wellness Journal</motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-gray-400 max-w-2xl mx-auto body-serif">Insights, tips, and inspiration for your wellness journey.</motion.p>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">Insights, tips, and inspiration for your wellness journey.</motion.p>
         </div>
       </section>
 
@@ -90,7 +90,7 @@ export default function BlogPage() {
           <div className="flex justify-center gap-3 mb-14 flex-wrap">
             {categories.map((cat) => (
               <button key={cat} onClick={() => setActiveBlogCategory(cat)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${activeBlogCategory === cat ? 'bg-gold text-[#0a0a0a] font-semibold' : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-gold/15'}`}>
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${activeBlogCategory === cat ? 'bg-gold text-black font-semibold' : 'bg-gold/8 text-pink-glow/35 hover:bg-white/10 border border-gold/12'}`}>
                 {cat}
               </button>
             ))}
@@ -98,15 +98,15 @@ export default function BlogPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {filteredArticles.map((article, idx) => (
               <motion.div key={article.id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-30px' }} variants={fadeUp} custom={idx}>
-                <div onClick={() => setSelectedArticle(article.id)} className="group surface-raised rounded-2xl overflow-hidden hover:border-gold/40 transition-all duration-300 cursor-pointer h-full flex flex-col">
+                <div onClick={() => setSelectedArticle(article.id)} className="group surface-raised rounded-2xl overflow-hidden hover:border-pink-brand/30 transition-all duration-300 cursor-pointer h-full flex flex-col">
                   <div className="h-48 overflow-hidden relative">
                     <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute top-3 left-3"><span className="bg-black/60 backdrop-blur-sm text-pink-brand text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">{article.category}</span></div>
+                    <div className="absolute top-3 left-3"><span className="bg-black/60 backdrop-blur-sm text-pink-brand border border-gold/20 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">{article.category}</span></div>
                   </div>
                   <div className="p-6 flex flex-col flex-1">
                     <h3 className="text-lg font-bold mb-3 heading-display group-hover:text-white transition-colors line-clamp-2">{article.title}</h3>
-                    <p className="text-gray-400 mb-4 text-sm body-serif leading-relaxed line-clamp-3 flex-1">{article.excerpt}</p>
-                    <div className="flex items-center justify-between text-xs text-gray-500 pt-4 border-t border-gold/10">
+                    <p className="text-pink-glow/35 mb-4 text-sm body-serif font-light leading-relaxed line-clamp-3 flex-1">{article.excerpt}</p>
+                    <div className="flex items-center justify-between text-xs text-gold/50 pt-4 border-t border-gold/8">
                       <span className="flex items-center gap-1"><User className="w-3 h-3" /> {article.author}</span>
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {article.readTime}</span>
                     </div>
@@ -118,25 +118,25 @@ export default function BlogPage() {
         </div>
       </section>
 
-      <section className="section-padding" style={{ background: '#111111' }}>
+      <section className="section-padding section-dark">
         <div className="container-tinas max-w-2xl text-center">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold mb-4 heading-display">Stay Inspired</motion.h2>
-            <motion.p variants={fadeUp} custom={1} className="text-gray-400 mb-8 body-serif">Subscribe to our wellness journal for monthly insights and exclusive tips.</motion.p>
+            <motion.p variants={fadeUp} custom={1} className="text-pink-glow/35 mb-8 body-serif font-light">Subscribe to our wellness journal for monthly insights and exclusive tips.</motion.p>
             <motion.form variants={fadeUp} custom={2} onSubmit={handleSubscribe} className="flex gap-3 max-w-md mx-auto">
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" required
-                className="flex-1 px-5 py-3 rounded-full border border-gold/20 bg-white/5 focus:outline-none focus:border-gold text-sm body-serif text-white placeholder:text-gray-600 transition" />
-              <button type="submit" className="btn-gold px-7 py-3 text-sm cursor-pointer shrink-0">{subscribed ? 'Subscribed!' : 'Subscribe'}</button>
+                className="flex-1 px-5 py-3 rounded-full border border-gold/15 bg-gold/8 focus:outline-none focus:border-pink-brand text-sm body-serif font-light text-white placeholder:text-gold/30 transition" />
+              <button type="submit" className="btn-pink px-7 py-3 text-sm cursor-pointer shrink-0">{subscribed ? 'Subscribed!' : 'Subscribe'}</button>
             </motion.form>
           </motion.div>
         </div>
       </section>
 
-      <section className="section-padding bg-gradient-to-br from-[#111] via-[#1a1a1a] to-[#111]">
+      <section className="section-padding section-dark">
         <div className="container-tinas text-center">
           <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-4xl md:text-5xl font-bold mb-6 heading-display">Ready to experience wellness?</motion.h2>
-          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif text-gray-400 leading-relaxed">Book your first session and discover the sanctuary that inspires your wellness journey.</motion.p>
-          <motion.button initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={2} onClick={() => navigate('contact')} className="btn-light-on-dark px-8 py-3.5 text-sm font-semibold cursor-pointer">Book Your Session</motion.button>
+          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif font-light text-pink-glow/35 leading-relaxed">Book your first session and discover the sanctuary that inspires your wellness journey.</motion.p>
+          <motion.button initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={2} onClick={() => navigate('contact')} className="btn-outline-pink px-8 py-3.5 text-sm font-semibold cursor-pointer">Book Your Session</motion.button>
         </div>
       </section>
     </div>

@@ -24,10 +24,10 @@ export default function TherapistsPage() {
 
   return (
     <div>
-      <section className="pt-32 pb-16" style={{ background: '#111111' }}>
+      <section className="pt-32 pb-16 section-dark">
         <div className="container-tinas text-center">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">Meet Our Team</motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-gray-400 max-w-2xl mx-auto body-serif">Every therapist at Tina&apos;s Sanctuary is internationally certified and continually trained.</motion.p>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">Every therapist at Tina&apos;s Sanctuary is internationally certified and continually trained.</motion.p>
         </div>
       </section>
 
@@ -36,26 +36,27 @@ export default function TherapistsPage() {
           <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
             {therapists.map((t, idx) => (
               <motion.div key={t.id} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-30px' }} variants={fadeUp} custom={idx}>
-                <div className="group surface-raised rounded-2xl overflow-hidden hover:border-gold/40 transition-all duration-300">
+                <div className="group surface-raised rounded-2xl overflow-hidden glow-gold hover:border-gold/30 transition-all duration-300">
                   <div className="md:flex">
                     <div className="md:w-2/5 h-56 md:h-auto relative overflow-hidden">
-                      <img src={t.image} alt={t.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={t.image} alt={t.name} className="w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508]/80 to-transparent" />
                     </div>
                     <div className="p-6 md:p-8 md:w-3/5">
                       <h3 className="text-xl md:text-2xl font-bold mb-1 heading-display">{t.name}</h3>
                       <p className="text-sm font-semibold text-pink-brand mb-4">{t.title}</p>
-                      <p className="text-gray-400 mb-5 text-sm body-serif leading-relaxed">{t.bio}</p>
+                      <p className="text-pink-glow/35 mb-5 text-sm body-serif font-light leading-relaxed">{t.bio}</p>
                       <div className="space-y-3 mb-5 text-sm">
-                        <div><p className="text-[10px] font-semibold text-gray-500 tracking-wider mb-0.5">EXPERIENCE</p><p className="text-gray-200">{t.experience}</p></div>
-                        <div><p className="text-[10px] font-semibold text-gray-500 tracking-wider mb-1">CERTIFICATION</p><p className="text-gray-300 text-xs leading-relaxed">{t.certification}</p></div>
+                        <div><p className="text-[10px] font-semibold text-gold/50 tracking-wider mb-0.5">EXPERIENCE</p><p className="text-pink-glow/45">{t.experience}</p></div>
+                        <div><p className="text-[10px] font-semibold text-gold/50 tracking-wider mb-1">CERTIFICATION</p><p className="text-pink-glow/45 text-xs body-serif font-light leading-relaxed">{t.certification}</p></div>
                         <div>
-                          <p className="text-[10px] font-semibold text-gray-500 tracking-wider mb-2">SPECIALTIES</p>
+                          <p className="text-[10px] font-semibold text-gold/50 tracking-wider mb-2">SPECIALTIES</p>
                           <div className="flex flex-wrap gap-1.5">
-                            {t.specialties.map((s, i) => (<span key={i} className="px-3 py-1 bg-white/5 text-gray-300 rounded-full text-xs border border-gold/15">{s}</span>))}
+                            {t.specialties.map((s, i) => (<span key={i} className="px-3 py-1 bg-gold/8 text-pink-glow/45 rounded-full text-xs border border-gold/12">{s}</span>))}
                           </div>
                         </div>
                       </div>
-                      <button onClick={() => navigate('contact')} className="w-full btn-gold py-2.5 text-sm cursor-pointer">Book with {t.name.split(' ')[0]}</button>
+                      <button onClick={() => navigate('contact')} className="w-full btn-pink py-2.5 text-sm cursor-pointer">Book with {t.name.split(' ')[0]}</button>
                     </div>
                   </div>
                 </div>
@@ -65,7 +66,7 @@ export default function TherapistsPage() {
         </div>
       </section>
 
-      <section className="section-padding" style={{ background: '#111111' }}>
+      <section className="section-padding section-dark">
         <div className="container-tinas max-w-3xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold text-center mb-12 heading-display">Our Commitment to Excellence</motion.h2>
@@ -79,8 +80,8 @@ export default function TherapistsPage() {
                     { title: 'Wellness Consultation', desc: 'Pre-treatment consultations to understand your wellness goals and customize your experience.' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start gap-3.5">
-                      <div className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center shrink-0 mt-0.5"><span className="text-gold text-xs">✦</span></div>
-                      <div><p className="font-semibold text-sm text-white">{item.title}</p><p className="text-sm text-gray-400 body-serif leading-relaxed">{item.desc}</p></div>
+                      <div className="w-8 h-8 rounded-full bg-gold/8 border border-gold/15 flex items-center justify-center shrink-0 mt-0.5"><span className="text-gold text-xs">✦</span></div>
+                      <div><p className="font-semibold text-sm text-white">{item.title}</p><p className="text-sm text-pink-glow/35 body-serif font-light leading-relaxed">{item.desc}</p></div>
                     </div>
                   ))}
                 </div>
@@ -90,11 +91,11 @@ export default function TherapistsPage() {
         </div>
       </section>
 
-      <section className="section-padding bg-gradient-to-br from-[#111] via-[#1a1a1a] to-[#111]">
+      <section className="section-padding section-dark">
         <div className="container-tinas text-center">
           <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-4xl md:text-5xl font-bold mb-6 heading-display">Experience expert care</motion.h2>
-          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif text-gray-400 leading-relaxed">Book a session with one of our certified therapists.</motion.p>
-          <motion.button initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={2} onClick={() => navigate('contact')} className="btn-light-on-dark px-8 py-3.5 text-sm font-semibold cursor-pointer">Book Your Session</motion.button>
+          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif font-light text-pink-glow/35 leading-relaxed">Book a session with one of our certified therapists.</motion.p>
+          <motion.button initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={2} onClick={() => navigate('contact')} className="btn-outline-pink px-8 py-3.5 text-sm font-semibold cursor-pointer">Book Your Session</motion.button>
         </div>
       </section>
     </div>

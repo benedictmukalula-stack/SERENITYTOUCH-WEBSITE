@@ -20,7 +20,7 @@ const fadeUp = {
 const tierConfig = {
   Silver: { color: 'from-gray-400 to-gray-500', badge: 'bg-gray-500/20 text-gray-300 border-gray-500/30', icon: Sparkles, perks: ['1 massage/month', '10% off services', 'Priority booking', 'Birthday special', 'Member lounge'] },
   Gold: { color: 'from-gold to-amber-600', badge: 'bg-gold/20 text-gold border-gold/30', icon: Crown, perks: ['2 massages/month', '20% off services', 'VIP booking', 'Aromatherapy upgrade', 'Quarterly consult', 'Guest privileges', 'WhatsApp concierge'] },
-  Platinum: { color: 'from-purple-500 to-pink-brand', badge: 'bg-pink-brand/20 text-pink-brand border-pink-brand/30', icon: Crown, perks: ['Unlimited massages', '30% off services', '24/7 concierge', 'Personal wellness plan', 'Private therapy room', 'Monthly spa day', 'Home visits', 'Airport pickup', 'Annual retreat'] },
+  Platinum: { color: 'from-pink-brand to-pink-hot', badge: 'bg-pink-brand/15 text-pink-brand border-pink-brand/25', icon: Crown, perks: ['Unlimited massages', '30% off services', '24/7 concierge', 'Personal wellness plan', 'Private therapy room', 'Monthly spa day', 'Home visits', 'Airport pickup', 'Annual retreat'] },
 };
 
 const mockBookings = [
@@ -59,7 +59,7 @@ export default function MemberDashboard() {
   return (
     <div>
       {/* Header */}
-      <section className="pt-28 pb-8 relative overflow-hidden" style={{ background: '#111111' }}>
+      <section className="pt-28 pb-8 relative overflow-hidden" style={{ background: '#030102' }}>
         <div className={`absolute inset-0 bg-gradient-to-br ${config.color} opacity-[0.03]`} />
         <div className="container-tinas relative z-10">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">

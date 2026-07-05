@@ -102,10 +102,10 @@ export default function LoginPage() {
 
   return (
     <div>
-      <section className="pt-32 pb-16" style={{ background: '#111111' }}>
+      <section className="pt-32 pb-16" style={{ background: '#030102' }}>
         <div className="container-tinas text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">Member Login</motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-gray-400 max-w-2xl mx-auto body-serif">Access your exclusive member dashboard and manage your wellness journey.</motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-semibold mb-5 heading-display">Member Login</motion.h1>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">Access your exclusive member dashboard and manage your wellness journey.</motion.p>
         </div>
       </section>
 
@@ -115,14 +115,14 @@ export default function LoginPage() {
             hidden: { opacity: 0, y: 30 },
             visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
           }}>
-            <div className="surface-raised rounded-2xl p-8">
+            <div className="surface-raised rounded-2xl p-8 glow-gold">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center">
                   <Shield className="w-5 h-5 text-gold" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold heading-display">Secure Login</h2>
-                  <p className="text-[11px] text-gray-500">256-bit encrypted connection</p>
+                  <h2 className="text-lg font-semibold heading-display text-white">Secure Login</h2>
+                  <p className="text-[11px] text-gold/40">256-bit encrypted connection</p>
                 </div>
               </div>
 
@@ -130,13 +130,13 @@ export default function LoginPage() {
                 <div>
                   <label className="block text-sm font-semibold text-white mb-2">Email Address</label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full pl-11 pr-4 py-3 border border-gold/20 rounded-xl bg-white/5 focus:outline-none focus:border-gold text-sm text-white transition placeholder:text-gray-600"
+                      className="w-full pl-11 pr-4 py-3 border border-gold/15 rounded-xl bg-gold/[0.04] focus:outline-none focus:border-gold text-sm text-white transition placeholder:text-gold/30"
                       placeholder="member@email.com"
                     />
                   </div>
@@ -145,19 +145,19 @@ export default function LoginPage() {
                 <div>
                   <label className="block text-sm font-semibold text-white mb-2">Password</label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full pl-11 pr-12 py-3 border border-gold/20 rounded-xl bg-white/5 focus:outline-none focus:border-gold text-sm text-white transition placeholder:text-gray-600"
+                      className="w-full pl-11 pr-12 py-3 border border-gold/15 rounded-xl bg-gold/[0.04] focus:outline-none focus:border-gold text-sm text-white transition placeholder:text-gold/30"
                       placeholder="Enter your password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition cursor-pointer"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gold/40 hover:text-gold/70 transition cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -179,8 +179,8 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              <div className="mt-6 pt-6 border-t border-gold/10">
-                <p className="text-[11px] text-gray-500 text-center mb-4">Forgot your password? Contact us via WhatsApp</p>
+              <div className="mt-6 pt-6 border-t border-gold/8">
+                <p className="text-[11px] text-gold/30 text-center mb-4">Forgot your password? Contact us via WhatsApp</p>
                 <a
                   href="https://wa.me/260572782539?text=Hello%20Tina's%20Sanctuary.%20I%20need%20help%20with%20my%20member%20login."
                   target="_blank"
@@ -194,23 +194,23 @@ export default function LoginPage() {
 
             {/* Demo Accounts */}
             <div className="mt-8 surface-raised rounded-2xl p-6">
-              <p className="text-[10px] tracking-[0.15em] text-gray-500 font-semibold mb-3 uppercase">Demo Accounts (Showcase)</p>
+              <p className="text-[10px] tracking-[0.15em] text-gold/40 font-semibold mb-3 uppercase">Demo Accounts (Showcase)</p>
               <div className="space-y-2">
                 {[
-                  { tier: 'Silver', email: 'silver@tinassanctuary.zm', color: 'border-gray-500/30' },
-                  { tier: 'Gold', email: 'gold@tinassanctuary.zm', color: 'border-gold/30' },
-                  { tier: 'Platinum', email: 'platinum@tinassanctuary.zm', color: 'border-pink-brand/30' },
+                  { tier: 'Silver', email: 'silver@tinassanctuary.zm', color: 'border-gold/15' },
+                  { tier: 'Gold', email: 'gold@tinassanctuary.zm', color: 'border-gold/25' },
+                  { tier: 'Platinum', email: 'platinum@tinassanctuary.zm', color: 'border-pink-brand/25' },
                 ].map((demo) => (
                   <button
                     key={demo.tier}
                     onClick={() => handleDemoLogin(demo.tier.toLowerCase())}
-                    className={`w-full flex items-center justify-between p-3 rounded-xl border ${demo.color} bg-white/[0.02] hover:bg-white/5 transition cursor-pointer`}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl border ${demo.color} bg-gold/[0.02] hover:bg-gold/[0.05] transition cursor-pointer`}
                   >
                     <div className="text-left">
                       <p className="text-sm font-semibold text-white">{demo.tier} Member</p>
-                      <p className="text-[11px] text-gray-500">{demo.email}</p>
+                      <p className="text-[11px] text-gold/35">{demo.email}</p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-500" />
+                    <ArrowRight className="w-4 h-4 text-gold/35" />
                   </button>
                 ))}
               </div>

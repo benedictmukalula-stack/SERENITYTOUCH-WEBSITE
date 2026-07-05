@@ -1,18 +1,19 @@
 import type { Metadata } from 'next';
-import { Playfair_Display, Lora } from 'next/font/google';
+import { Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
 
-const playfair = Playfair_Display({
-  variable: '--font-playfair',
+const cormorant = Cormorant_Garamond({
+  variable: '--font-display',
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
   display: 'swap',
 });
 
-const lora = Lora({
-  variable: '--font-lora',
+const cormorantBody = Cormorant_Garamond({
+  variable: '--font-body',
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600'],
   style: ['normal', 'italic'],
   display: 'swap',
 });
@@ -59,7 +60,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${playfair.variable} ${lora.variable} antialiased bg-background text-foreground`}
+        className={`${cormorant.variable} ${cormorantBody.variable} antialiased bg-background text-foreground`}
       >
         {children}
       </body>

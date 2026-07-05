@@ -6,7 +6,7 @@ import { useAppStore, type Page } from '@/lib/store';
 
 const navItems: { label: string; page: Page }[] = [
   { label: 'Home', page: 'home' },
-  { label: 'Services', page: 'services' },
+  { label: 'Rituals', page: 'services' },
   { label: 'Therapists', page: 'therapists' },
   { label: 'Journal', page: 'blog' },
   { label: 'About', page: 'about' },
@@ -17,17 +17,17 @@ export default function Navigation() {
   const { currentPage, navigate, isMobileMenuOpen, setMobileMenuOpen, isMemberLoggedIn, member } = useAppStore();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-gold/20" style={{ background: 'rgba(10, 10, 10, 0.7)', backdropFilter: 'blur(16px)' }}>
+    <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(24px) saturate(180%)', borderBottom: '1px solid rgba(212, 175, 55, 0.08)' }}>
       <div className="container-tinas flex items-center justify-between h-16 md:h-[72px]">
         {/* Logo */}
         <button
           onClick={() => navigate('home')}
           className="flex items-center gap-2.5 cursor-pointer group"
         >
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold to-pink-brand flex items-center justify-center text-[#0a0a0a] font-bold text-sm heading-display">
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-black font-bold text-sm heading-display" style={{ background: 'linear-gradient(135deg, #D4AF37 0%, #E91E63 100%)' }}>
             TS
           </div>
-          <span className="text-lg font-bold text-white heading-display tracking-tight group-hover:text-gold transition-colors">
+          <span className="text-lg font-semibold text-white heading-display tracking-tight group-hover:text-gold transition-colors">
             Tina&apos;s Sanctuary
           </span>
         </button>
@@ -40,8 +40,8 @@ export default function Navigation() {
               onClick={() => navigate(item.page)}
               className={`text-[13px] tracking-wide transition-colors cursor-pointer ${
                 currentPage === item.page
-                  ? 'text-white font-semibold'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'text-gold font-semibold'
+                  : 'text-pink-glow/35 hover:text-white'
               }`}
             >
               {item.label}
@@ -57,17 +57,18 @@ export default function Navigation() {
                 onClick={() => navigate('dashboard')}
                 className={`flex items-center gap-2 text-[12px] font-medium px-3 py-1.5 rounded-full border cursor-pointer transition ${
                   currentPage === 'dashboard'
-                    ? 'border-gold bg-gold/10 text-gold'
-                    : 'border-gold/15 text-gray-300 hover:text-white hover:border-gold/30'
+                    ? 'border-gold/30 bg-gold/10 text-gold'
+                    : 'border-gold/15 text-pink-glow/45 hover:text-white hover:border-gold/30'
                 }`}
               >
                 <User className="w-3.5 h-3.5" />
                 <span>{member.name.split(' ')[0]}</span>
-                <span className="text-[10px] text-gold">({member.tier})</span>
+                <span className="text-[10px] text-pink-brand">({member.tier})</span>
               </button>
               <button
                 onClick={() => navigate('membership')}
-                className="text-[12px] bg-gradient-to-r from-gold to-amber-600 text-[#0a0a0a] border-0 hover:from-amber-600 hover:to-amber-700 rounded-full px-4 py-2 font-semibold cursor-pointer transition-all"
+                className="text-[12px] text-black border-0 rounded-full px-4 py-2 font-semibold cursor-pointer transition-all hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #D4AF37 0%, #E91E63 100%)' }}
               >
                 {member.tier} Member
               </button>
@@ -76,14 +77,15 @@ export default function Navigation() {
             <>
               <button
                 onClick={() => navigate('login')}
-                className="flex items-center gap-1.5 text-[12px] text-gray-300 hover:text-white transition cursor-pointer px-3 py-1.5 rounded-full border border-gold/15 hover:border-gold/30"
+                className="flex items-center gap-1.5 text-[12px] text-pink-glow/45 hover:text-white transition cursor-pointer px-3 py-1.5 rounded-full border border-gold/15 hover:border-gold/30"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 Member Login
               </button>
               <button
                 onClick={() => navigate('membership')}
-                className="text-[12px] bg-pink-brand text-white border-0 hover:bg-pink-600 rounded-full px-4 py-2 font-semibold cursor-pointer transition-all"
+                className="text-[12px] text-black border-0 rounded-full px-4 py-2 font-semibold cursor-pointer transition-all hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #D4AF37 0%, #B8960B 100%)' }}
               >
                 Become a Member
               </button>
@@ -94,7 +96,7 @@ export default function Navigation() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden p-2 text-gray-300 cursor-pointer"
+          className="lg:hidden p-2 text-gold/50 cursor-pointer"
           aria-label="Toggle menu"
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -108,8 +110,8 @@ export default function Navigation() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden border-t border-gold/15 overflow-hidden"
-            style={{ background: 'rgba(10, 10, 10, 0.95)' }}
+            className="lg:hidden overflow-hidden"
+            style={{ background: 'rgba(0, 0, 0, 0.95)', borderBottom: '1px solid rgba(212, 175, 55, 0.08)' }}
           >
             <div className="container-tinas py-4 space-y-1">
               {navItems.map((item) => (
@@ -121,35 +123,34 @@ export default function Navigation() {
                   }}
                   className={`block w-full text-left px-4 py-3 rounded-lg text-sm transition-colors cursor-pointer ${
                     currentPage === item.page
-                      ? 'bg-white/5 text-white font-semibold'
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                      ? 'bg-gold/10 text-gold font-semibold'
+                      : 'text-pink-glow/35 hover:bg-gold/5 hover:text-white'
                   }`}
                 >
                   {item.label}
                 </button>
               ))}
 
-              <div className="border-t border-gold/10 pt-3 mt-3 space-y-2">
+              <div className="border-t border-gold/8 pt-3 mt-3 space-y-2">
                 {isMemberLoggedIn && member ? (
-                  <>
-                    <button
-                      onClick={() => { navigate('dashboard'); setMobileMenuOpen(false); }}
-                      className="block w-full px-4 py-3 rounded-lg text-sm bg-gold/10 text-gold font-semibold cursor-pointer"
-                    >
-                      Dashboard — {member.name.split(' ')[0]} ({member.tier})
-                    </button>
-                  </>
+                  <button
+                    onClick={() => { navigate('dashboard'); setMobileMenuOpen(false); }}
+                    className="block w-full px-4 py-3 rounded-lg text-sm bg-gold/10 text-gold font-semibold cursor-pointer"
+                  >
+                    Dashboard — {member.name.split(' ')[0]} ({member.tier})
+                  </button>
                 ) : (
                   <button
                     onClick={() => { navigate('login'); setMobileMenuOpen(false); }}
-                    className="block w-full px-4 py-3 rounded-lg text-sm text-gray-300 hover:bg-white/5 cursor-pointer"
+                    className="block w-full px-4 py-3 rounded-lg text-sm text-pink-glow/35 hover:bg-gold/5 cursor-pointer"
                   >
                     Member Login
                   </button>
                 )}
                 <button
                   onClick={() => { navigate('membership'); setMobileMenuOpen(false); }}
-                  className="block w-full mt-2 bg-pink-brand text-white rounded-full py-3 text-sm font-semibold text-center cursor-pointer"
+                  className="block w-full mt-2 text-black rounded-full py-3 text-sm font-semibold text-center cursor-pointer"
+                  style={{ background: 'linear-gradient(135deg, #D4AF37 0%, #B8960B 100%)' }}
                 >
                   Become a Member
                 </button>
