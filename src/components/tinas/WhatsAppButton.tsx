@@ -15,18 +15,18 @@ export default function WhatsAppButton() {
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="mb-3 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 w-72"
+            className="mb-3 surface-raised rounded-2xl shadow-2xl p-5 w-72"
           >
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
                 <MessageCircle className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="font-bold text-sm heading-display">Tina&apos;s Sanctuary</p>
-                <p className="text-[11px] text-green-600">Online now</p>
+                <p className="font-bold text-sm heading-display text-white">Tina&apos;s Sanctuary</p>
+                <p className="text-[11px] text-green-400">Online now</p>
               </div>
             </div>
-            <p className="text-sm text-gray-500 body-serif mb-4">
+            <p className="text-sm text-gray-400 body-serif mb-4">
               Hi! Welcome to Tina&apos;s Sanctuary. How can we help you with your wellness journey today?
             </p>
             <a
@@ -46,17 +46,11 @@ export default function WhatsAppButton() {
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
         className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all cursor-pointer ${
-          isOpen
-            ? 'bg-gray-900 hover:bg-gray-800'
-            : 'bg-green-500 hover:bg-green-600'
+          isOpen ? 'bg-white/10 hover:bg-white/15 border border-gold/20' : 'bg-green-500 hover:bg-green-600'
         }`}
         aria-label={isOpen ? 'Close chat' : 'Open WhatsApp chat'}
       >
-        {isOpen ? (
-          <X className="w-6 h-6 text-white" />
-        ) : (
-          <MessageCircle className="w-6 h-6 text-white" />
-        )}
+        {isOpen ? <X className="w-6 h-6 text-gray-300" /> : <MessageCircle className="w-6 h-6 text-white" />}
       </motion.button>
     </div>
   );

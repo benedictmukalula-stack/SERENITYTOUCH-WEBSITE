@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ChevronRight, ChevronLeft, Star, MessageCircle, ArrowRight } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Star, ArrowRight } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { useAppStore } from '@/lib/store';
 
@@ -44,7 +44,7 @@ const testimonials = [
 const faqItems = [
   {
     question: "What makes Tina's Sanctuary different?",
-    answer: 'Certified expertise, a private luxury setting in Ibex Hill and treatments personalised to every guest. We don\'t just provide treatments\u2014we craft personalized rituals that leave you feeling transformed.',
+    answer: 'Certified expertise, a private luxury setting in Ibex Hill and treatments personalised to every guest. We don\'t just provide treatments — we craft personalized rituals that leave you feeling transformed.',
   },
   {
     question: 'How do I book?',
@@ -110,7 +110,6 @@ export default function HomePage() {
     setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   }, []);
 
-  // Auto-advance testimonials
   useEffect(() => {
     const timer = setInterval(nextTestimonial, 6000);
     return () => clearInterval(timer);
@@ -120,7 +119,6 @@ export default function HomePage() {
     <div>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Background Image */}
         <div
           className="absolute inset-0 z-0"
           style={{
@@ -129,7 +127,7 @@ export default function HomePage() {
             backgroundPosition: 'center',
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60 z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/60 via-[#0a0a0a]/30 to-[#0a0a0a]/70 z-[1]" />
 
         <div className="container-tinas relative z-10 text-center py-32">
           <motion.div
@@ -138,7 +136,7 @@ export default function HomePage() {
             transition={{ duration: 0.8 }}
             className="mb-6 inline-block"
           >
-            <div className="px-5 py-2.5 rounded-full border border-gold/40 bg-white/5 backdrop-blur-sm">
+            <div className="px-5 py-2.5 rounded-full border border-gold/30 bg-white/5 backdrop-blur-sm">
               <span className="text-[11px] tracking-[0.2em] text-gold heading-display font-medium">
                 ✦ EXCLUSIVE WELLNESS SANCTUARY
               </span>
@@ -149,9 +147,10 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[1.1] text-white heading-display"
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[1.1] heading-display"
           >
-            <span className="text-gold">Elevate</span> Your{' '}
+            <span className="text-gold">Elevate</span>{' '}
+            <span className="text-white">Your</span>{' '}
             <span className="text-pink-brand">Wellness</span>
           </motion.h1>
 
@@ -159,7 +158,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-base sm:text-lg text-gray-200 max-w-2xl mx-auto mb-10 body-serif leading-relaxed"
+            className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto mb-10 body-serif leading-relaxed"
           >
             Tina&apos;s Sanctuary is a private sanctuary in Ibex Hill, Lusaka — where certified therapists, silk-draped suites and considered rituals deliver the finest therapeutic experience in Zambia.
           </motion.p>
@@ -177,9 +176,7 @@ export default function HomePage() {
               Book Your Session
             </button>
             <button
-              onClick={() => {
-                navigate('services');
-              }}
+              onClick={() => navigate('services')}
               className="btn-lime px-8 py-3.5 text-sm font-semibold cursor-pointer"
             >
               Explore Services
@@ -193,7 +190,7 @@ export default function HomePage() {
             transition={{ delay: 1.2 }}
             className="absolute bottom-8 left-1/2 -translate-x-1/2"
           >
-            <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
+            <div className="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center pt-2">
               <motion.div
                 animate={{ y: [0, 8, 0] }}
                 transition={{ repeat: Infinity, duration: 1.5 }}
@@ -205,7 +202,7 @@ export default function HomePage() {
       </section>
 
       {/* Signature Treatments */}
-      <section className="section-padding bg-white">
+      <section className="section-padding surface-base">
         <div className="container-tinas">
           <motion.div
             initial="hidden"
@@ -213,13 +210,13 @@ export default function HomePage() {
             viewport={{ once: true, margin: '-50px' }}
             className="text-center mb-16"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.2em] text-gray-400 mb-4 heading-display">
+            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.2em] text-gray-500 mb-4 heading-display">
               SIGNATURE TREATMENTS
             </motion.p>
             <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-bold mb-4 heading-display">
               Ritual, refined.
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-gray-500 max-w-2xl mx-auto body-serif">
+            <motion.p variants={fadeUp} custom={2} className="text-gray-400 max-w-2xl mx-auto body-serif">
               Every treatment is composed for you — from the oils blended in-house to the temperature of the linen. All prices in Zambian Kwacha.
             </motion.p>
           </motion.div>
@@ -238,15 +235,15 @@ export default function HomePage() {
                 variants={fadeUp}
                 custom={idx}
               >
-                <div className="group bg-white border border-gray-100 rounded-2xl p-8 hover:shadow-xl hover:border-gold/30 transition-all duration-300 h-full">
-                  <p className="text-[11px] tracking-[0.15em] text-gray-400 mb-3">{service.duration.toUpperCase()}</p>
-                  <h3 className="text-2xl font-bold mb-3 text-gray-900 heading-display">{service.name}</h3>
-                  <p className="text-gray-500 mb-6 text-sm body-serif leading-relaxed">{service.desc}</p>
+                <div className="group surface-raised rounded-2xl p-8 hover:border-gold/40 transition-all duration-300 h-full">
+                  <p className="text-[11px] tracking-[0.15em] text-gray-500 mb-3">{service.duration.toUpperCase()}</p>
+                  <h3 className="text-2xl font-bold mb-3 heading-display">{service.name}</h3>
+                  <p className="text-gray-400 mb-6 text-sm body-serif leading-relaxed">{service.desc}</p>
                   <div className="flex items-center justify-between mt-auto">
-                    <span className="text-2xl font-bold text-gray-900">{service.price}</span>
+                    <span className="text-2xl font-bold text-white">{service.price}</span>
                     <button
                       onClick={() => navigate('services')}
-                      className="text-sm text-gray-500 hover:text-gold transition-colors flex items-center gap-1 cursor-pointer group-hover:text-gold"
+                      className="text-sm text-gray-400 hover:text-gold transition-colors flex items-center gap-1 cursor-pointer group-hover:text-gold"
                     >
                       View details <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                     </button>
@@ -259,7 +256,7 @@ export default function HomePage() {
       </section>
 
       {/* Why Members Choose Us */}
-      <section className="section-padding bg-gray-50">
+      <section className="section-padding" style={{ background: '#111111' }}>
         <div className="container-tinas">
           <motion.div
             initial="hidden"
@@ -287,7 +284,7 @@ export default function HomePage() {
                     <span className="text-gold text-sm">✦</span>
                   </div>
                   <h3 className="text-lg font-bold mb-2.5 heading-display">{item.title}</h3>
-                  <p className="text-gray-500 text-sm body-serif leading-relaxed">{item.desc}</p>
+                  <p className="text-gray-400 text-sm body-serif leading-relaxed">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -296,7 +293,7 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section className="section-padding bg-white">
+      <section className="section-padding surface-base">
         <div className="container-tinas">
           <motion.div
             initial="hidden"
@@ -316,17 +313,17 @@ export default function HomePage() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.4 }}
-              className="bg-gray-50 p-10 md:p-14 rounded-2xl mb-8"
+              className="surface-raised p-10 md:p-14 rounded-2xl mb-8"
             >
               <div className="flex gap-1 mb-6">
                 {Array.from({ length: testimonials[currentTestimonial].rating }).map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-gold text-gold" />
                 ))}
               </div>
-              <p className="text-lg md:text-xl mb-6 body-serif leading-relaxed text-gray-700">
+              <p className="text-lg md:text-xl mb-6 body-serif leading-relaxed text-gray-200">
                 &ldquo;{testimonials[currentTestimonial].text}&rdquo;
               </p>
-              <p className="font-bold text-sm tracking-wider text-gray-900">
+              <p className="font-bold text-sm tracking-wider text-white">
                 {testimonials[currentTestimonial].author.toUpperCase()} &middot;{' '}
                 {testimonials[currentTestimonial].location.toUpperCase()}
               </p>
@@ -335,10 +332,10 @@ export default function HomePage() {
             <div className="flex items-center justify-between">
               <button
                 onClick={prevTestimonial}
-                className="p-2.5 hover:bg-gray-100 rounded-full transition cursor-pointer"
+                className="p-2.5 hover:bg-white/5 rounded-full transition cursor-pointer"
                 aria-label="Previous testimonial"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-5 h-5 text-gray-400" />
               </button>
 
               <div className="flex gap-2">
@@ -349,7 +346,7 @@ export default function HomePage() {
                     className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                       idx === currentTestimonial
                         ? 'bg-gold w-8'
-                        : 'bg-gray-300 w-2.5 hover:bg-gray-400'
+                        : 'bg-white/20 w-2.5 hover:bg-white/40'
                     }`}
                     aria-label={`Testimonial ${idx + 1}`}
                   />
@@ -358,10 +355,10 @@ export default function HomePage() {
 
               <button
                 onClick={nextTestimonial}
-                className="p-2.5 hover:bg-gray-100 rounded-full transition cursor-pointer"
+                className="p-2.5 hover:bg-white/5 rounded-full transition cursor-pointer"
                 aria-label="Next testimonial"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-5 h-5 text-gray-400" />
               </button>
             </div>
           </div>
@@ -369,7 +366,7 @@ export default function HomePage() {
       </section>
 
       {/* Membership */}
-      <section className="section-padding bg-gray-50">
+      <section className="section-padding" style={{ background: '#111111' }}>
         <div className="container-tinas">
           <motion.div
             initial="hidden"
@@ -377,7 +374,7 @@ export default function HomePage() {
             viewport={{ once: true, margin: '-50px' }}
             className="text-center mb-16"
           >
-            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.2em] text-gray-400 mb-4 heading-display">
+            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.2em] text-gray-500 mb-4 heading-display">
               MEMBERSHIP
             </motion.p>
             <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-bold heading-display">
@@ -399,35 +396,33 @@ export default function HomePage() {
                 <div className="relative">
                   {plan.popular && (
                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
-                      <span className="bg-gray-900 text-white px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider">
+                      <span className="bg-gold text-[#0a0a0a] px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider">
                         MOST POPULAR
                       </span>
                     </div>
                   )}
                   <div
-                    className={`bg-white rounded-2xl p-8 h-full transition-all duration-300 hover:shadow-xl ${
-                      plan.popular
-                        ? 'border-2 border-gray-900 shadow-lg'
-                        : 'border border-gray-100'
+                    className={`surface-raised rounded-2xl p-8 h-full transition-all duration-300 hover:border-gold/40 ${
+                      plan.popular ? 'border-gold/40 shadow-lg shadow-gold/5' : ''
                     }`}
                   >
                     <h3 className="text-3xl font-bold mb-2 heading-display">{plan.name}</h3>
-                    <p className="text-gray-500 mb-6 text-sm">{plan.tagline}</p>
+                    <p className="text-gray-400 mb-6 text-sm">{plan.tagline}</p>
                     <div className="mb-8">
-                      <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                      <span className="text-4xl font-bold text-white">{plan.price}</span>
                       <span className="text-gray-500 ml-1">/month</span>
                     </div>
                     <ul className="space-y-3 mb-8">
                       {plan.features.map((feature, fidx) => (
                         <li key={fidx} className="flex items-start gap-3">
                           <span className="text-gold mt-0.5 text-xs">✦</span>
-                          <span className="text-sm text-gray-600">{feature}</span>
+                          <span className="text-sm text-gray-300">{feature}</span>
                         </li>
                       ))}
                     </ul>
                     <button
                       onClick={() => navigate('membership')}
-                      className="w-full btn-dark py-3 text-sm font-semibold cursor-pointer"
+                      className="w-full btn-gold py-3 text-sm cursor-pointer"
                     >
                       Enquire
                     </button>
@@ -440,7 +435,7 @@ export default function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section className="section-padding bg-white">
+      <section className="section-padding surface-base">
         <div className="container-tinas max-w-3xl">
           <motion.div
             initial="hidden"
@@ -464,21 +459,21 @@ export default function HomePage() {
             {faqItems.map((item, idx) => (
               <div
                 key={idx}
-                className="border border-gray-200 rounded-xl overflow-hidden transition-all"
+                className="surface-raised rounded-xl overflow-hidden transition-all"
               >
                 <button
                   onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
-                  className="w-full p-5 md:p-6 text-left flex items-center justify-between hover:bg-gray-50/50 transition cursor-pointer"
+                  className="w-full p-5 md:p-6 text-left flex items-center justify-between hover:bg-white/[0.02] transition cursor-pointer"
                 >
-                  <h3 className="font-bold text-[15px] heading-display pr-4">{item.question}</h3>
+                  <h3 className="font-bold text-[15px] heading-display pr-4 text-white">{item.question}</h3>
                   <ChevronRight
-                    className={`w-5 h-5 shrink-0 text-gray-400 transition-transform duration-300 ${
+                    className={`w-5 h-5 shrink-0 text-gray-500 transition-transform duration-300 ${
                       expandedFaq === idx ? 'rotate-90' : ''
                     }`}
                   />
                 </button>
                 {expandedFaq === idx && (
-                  <div className="px-5 md:px-6 pb-5 md:pb-6 text-gray-500 text-sm body-serif leading-relaxed border-t border-gray-100 pt-4">
+                  <div className="px-5 md:px-6 pb-5 md:pb-6 text-gray-400 text-sm body-serif leading-relaxed border-t border-gold/15 pt-4">
                     {item.answer}
                   </div>
                 )}
@@ -489,8 +484,8 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=40')] bg-cover bg-center opacity-5" />
+      <section className="section-padding bg-gradient-to-br from-[#111] via-[#1a1a1a] to-[#111] relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=40')] bg-cover bg-center opacity-[0.03]" />
         <div className="container-tinas text-center relative z-10">
           <motion.div
             initial="hidden"
@@ -507,7 +502,7 @@ export default function HomePage() {
             <motion.p
               variants={fadeUp}
               custom={1}
-              className="text-lg mb-10 max-w-2xl mx-auto body-serif text-gray-300 leading-relaxed"
+              className="text-lg mb-10 max-w-2xl mx-auto body-serif text-gray-400 leading-relaxed"
             >
               Reserve your first ritual and discover why Tina&apos;s Sanctuary is Lusaka&apos;s most private wellness address.
             </motion.p>

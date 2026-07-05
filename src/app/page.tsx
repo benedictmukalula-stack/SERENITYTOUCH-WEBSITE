@@ -28,7 +28,7 @@ export default function AppPage() {
   const PageComponent = pageComponents[currentPage] || HomePage;
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col" style={{ background: '#0a0a0a' }}>
       <Navigation />
       <main className="flex-1">
         <AnimatePresence mode="wait">

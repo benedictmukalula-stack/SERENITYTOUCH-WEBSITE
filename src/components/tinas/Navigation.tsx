@@ -17,17 +17,17 @@ export default function Navigation() {
   const { currentPage, navigate, isMobileMenuOpen, setMobileMenuOpen } = useAppStore();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-gold/20" style={{ background: 'rgba(10, 10, 10, 0.7)', backdropFilter: 'blur(16px)' }}>
       <div className="container-tinas flex items-center justify-between h-16 md:h-[72px]">
         {/* Logo */}
         <button
           onClick={() => navigate('home')}
           className="flex items-center gap-2.5 cursor-pointer group"
         >
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold to-pink-brand flex items-center justify-center text-white font-bold text-sm heading-display">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold to-pink-brand flex items-center justify-center text-[#0a0a0a] font-bold text-sm heading-display">
             TS
           </div>
-          <span className="text-lg font-bold text-gray-900 heading-display tracking-tight group-hover:text-gold transition-colors">
+          <span className="text-lg font-bold text-white heading-display tracking-tight group-hover:text-gold transition-colors">
             Tina&apos;s Sanctuary
           </span>
         </button>
@@ -40,8 +40,8 @@ export default function Navigation() {
               onClick={() => navigate(item.page)}
               className={`text-[13px] tracking-wide transition-colors cursor-pointer ${
                 currentPage === item.page
-                  ? 'text-gray-900 font-semibold'
-                  : 'text-gray-500 hover:text-gray-900'
+                  ? 'text-white font-semibold'
+                  : 'text-gray-400 hover:text-white'
               }`}
             >
               {item.label}
@@ -58,7 +58,7 @@ export default function Navigation() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden p-2 text-gray-700 cursor-pointer"
+          className="md:hidden p-2 text-gray-300 cursor-pointer"
           aria-label="Toggle menu"
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -72,7 +72,8 @@ export default function Navigation() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-gray-100 overflow-hidden"
+            className="md:hidden border-t border-gold/15 overflow-hidden"
+            style={{ background: 'rgba(10, 10, 10, 0.95)' }}
           >
             <div className="container-tinas py-4 space-y-1">
               {navItems.map((item) => (
@@ -84,8 +85,8 @@ export default function Navigation() {
                   }}
                   className={`block w-full text-left px-4 py-3 rounded-lg text-sm transition-colors cursor-pointer ${
                     currentPage === item.page
-                      ? 'bg-gray-100 text-gray-900 font-semibold'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'bg-white/5 text-white font-semibold'
+                      : 'text-gray-400 hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   {item.label}
