@@ -96,17 +96,28 @@
 }
 
 /* Erotic gold-black-pink theme */
+html {
+  scroll-behavior: smooth;
+  font-size: 19px;
+}
 body {
   background: #000000 !important;
   color: #f5e6ea !important;
   font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+  line-height: 1.65;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Cormorant Garamond', Georgia, serif;
   color: #D4AF37 !important;
   font-weight: 600;
+  line-height: 1.2;
 }
+h1 { font-size: 2.75rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
 
 .card, [role="card"] {
   background: #0a0508 !important;
@@ -118,9 +129,12 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-weight: 600;
     letter-spacing: 0.01em;
+    font-size: 1.15em;
   }
   .body-serif {
     font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.08em;
+    line-height: 1.7;
   }
 
   /* Gold-to-pink gradient text — the signature erotic look */
@@ -310,10 +324,23 @@ h1, h2, h3, h4, h5, h6 {
     background: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.3) 20%, rgba(233, 30, 99, 0.35) 50%, rgba(212, 175, 55, 0.3) 80%, transparent 100%);
   }
 
-  /* Smooth scrolling */
-  html {
-    scroll-behavior: smooth;
+  /* Larger text in badges, labels, captions */
+  .badge-sexy {
+    font-size: 0.7rem;
   }
+
+  /* Ensure small utility text is readable */
+  p, span, a, li, td, th, label, button {
+    font-size: inherit;
+  }
+  .text-sm { font-size: 0.9rem !important; }
+  .text-xs { font-size: 0.8rem !important; }
+  .text-lg { font-size: 1.15rem !important; }
+  .text-xl { font-size: 1.3rem !important; }
+  .text-2xl { font-size: 1.6rem !important; }
+  .text-3xl { font-size: 1.9rem !important; }
+  .text-4xl { font-size: 2.4rem !important; }
+  .text-5xl { font-size: 3rem !important; }
 
   /* Custom scrollbar — gold-pink */
   ::-webkit-scrollbar {
@@ -437,13 +464,13 @@ h1, h2, h3, h4, h5, h6 {
   .badge-sexy {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 16px;
+    gap: 8px;
+    padding: 8px 20px;
     border-radius: 9999px;
     border: 1px solid rgba(233, 30, 99, 0.25);
     background: rgba(233, 30, 99, 0.06);
     backdrop-filter: blur(8px);
-    font-size: 11px;
+    font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: #E91E63;
