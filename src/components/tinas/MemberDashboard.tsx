@@ -9,8 +9,6 @@ import {
   ArrowUpRight, ArrowDownRight, BarChart3
 } from 'lucide-react';
 import { useAppStore, type Member } from '@/lib/store';
-import LoyaltyPoints from '@/components/tinas/LoyaltyPoints';
-import ReferralProgram from '@/components/tinas/ReferralProgram';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -85,6 +83,14 @@ export default function MemberDashboard() {
             </div>
 
             <div className="flex items-center gap-3">
+              {member.tier === 'Platinum' && (
+                <button
+                  onClick={() => navigate('analytics')}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold transition cursor-pointer border border-gold/20 text-gold hover:bg-gold/10"
+                >
+                  <BarChart3 className="w-3.5 h-3.5" /> Analytics
+                </button>
+              )}
               <a
                 href={`https://wa.me/260761404555?text=Hello%20Serenity%20Touch%20Spa.%20This%20is%20${encodeURIComponent(member.name)}%20(${member.tier}%20member).`}
                 target="_blank"

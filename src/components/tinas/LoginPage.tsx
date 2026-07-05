@@ -183,15 +183,10 @@ export default function LoginPage() {
               </form>
 
               <div className="mt-6 pt-6 border-t border-gold/8">
-                <p className="text-[11px] text-gold/30 text-center mb-4">Forgot your password? Contact us via WhatsApp</p>
-                <a
-                  href="https://wa.me/260761404555?text=Hello%20Serenity%20Touch%20Spa.%20I%20need%20help%20with%20my%20member%20login."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full text-center text-sm text-green-400 hover:text-green-300 transition cursor-pointer"
-                >
-                  Reset via WhatsApp &rarr;
-                </a>
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-[11px] text-gold/30">Forgot password? <a href="https://wa.me/260761404555?text=Hello%20Serenity%20Touch%20Spa.%20I%20need%20help%20with%20my%20member%20login." target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 transition">WhatsApp us</a></p>
+                  <button onClick={() => navigate('register')} className="text-[11px] text-pink-brand/60 hover:text-pink-brand transition cursor-pointer">Full Registration &rarr;</button>
+                </div>
               </div>
             </div>
 

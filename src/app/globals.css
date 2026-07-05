@@ -267,10 +267,6 @@ h6 { font-size: 1rem; }
     box-shadow: 0 0 20px rgba(233, 30, 99, 0.15);
   }
 
-  .section-padding {
-    @apply py-20;
-  }
-
   .container-tinas {
     width: 100%;
     margin-left: auto;
@@ -759,3 +755,4 @@ h6 { font-size: 1rem; }
   .video-play-btn:hover {
     transform: scale(1.1);
   }
+}
