@@ -114,6 +114,12 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 1.25;
 }
+h1 { font-size: 3.2rem; }
+h2 { font-size: 2.5rem; }
+h3 { font-size: 2rem; }
+h4 { font-size: 1.6rem; }
+h5 { font-size: 1.35rem; }
+h6 { font-size: 1.15rem; }
 
 .card, [role="card"] {
   background: #0a0508 !important;
@@ -125,6 +131,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-weight: 600;
     letter-spacing: 0.01em;
+    font-size: 1.25em;
   }
   .body-serif {
     font-family: 'Cormorant Garamond', Georgia, serif;
