@@ -26,7 +26,7 @@ export default function Navigation() {
           onClick={() => navigate('home')}
           className="flex items-center gap-2.5 cursor-pointer group"
         >
-          <div className="w-9 h-9 rounded-full flex items-center justify-center text-black font-bold text-sm heading-display" style={{ background: 'linear-gradient(135deg, #D4AF37 0%, #E91E63 100%)' }}>ST</div>
+          <img src="/logo.jpg" alt="Serenity Touch Spa" className="h-9 w-auto rounded object-contain" />
           <span className="text-lg font-semibold text-white heading-display tracking-tight group-hover:text-gold transition-colors">
             Serenity Touch Spa
           </span>

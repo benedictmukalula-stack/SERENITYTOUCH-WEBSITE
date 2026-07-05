@@ -28,9 +28,7 @@ export default function AgeGate() {
             transition={{ delay: 0.2, duration: 0.5 }}
           >
             {/* Logo */}
-            <div className="w-16 h-16 rounded-full flex items-center justify-center text-black font-bold text-xl heading-display mx-auto mb-6" style={{ background: 'linear-gradient(135deg, #D4AF37 0%, #E91E63 100%)' }}>
-              ST
-            </div>
+            <img src="/logo.jpg" alt="Serenity Touch Spa" className="h-16 w-auto mx-auto mb-6 rounded object-contain" />
 
             <h1 className="text-3xl md:text-4xl font-semibold heading-display mb-3 text-white">
               Serenity Touch Spa

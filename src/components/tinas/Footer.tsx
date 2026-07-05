@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
           <div className="col-span-2 md:col-span-1">
             <button onClick={() => navigate('home')} className="flex items-center gap-2.5 mb-4 cursor-pointer">
-              <div className="w-9 h-9 rounded-full flex items-center justify-center text-black font-bold text-sm heading-display" style={{ background: 'linear-gradient(135deg, #D4AF37 0%, #E91E63 100%)' }}>ST</div>
+              <img src="/logo.jpg" alt="Serenity Touch Spa" className="h-9 w-auto rounded object-contain" />
               <span className="text-lg font-semibold text-white heading-display tracking-tight">Serenity Touch Spa</span>
             </button>
             <p className="text-sm text-gold/40 leading-relaxed mb-4">Premium wellness spa in Lusaka, Zambia. Relax, Restore, Rejuvenate.</p>

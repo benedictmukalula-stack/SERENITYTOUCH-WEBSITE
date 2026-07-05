@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
   robots: { index: true, follow: true },
   icons: {
-    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">✨</text></svg>',
+    icon: '/logo.jpg',
   },
   openGraph: {
     title: "Serenity Touch Spa — Luxury Wellness in Lusaka",
@@ -108,7 +108,7 @@ export default function RootLayout({
                 { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:00", "closes": "17:00" }
               ],
               "priceRange": "K400-K6000",
-              "image": "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=1200&q=80",
+              "image": "https://serenitytouch.co.zm/logo.jpg",
               "aggregateRating": {
                 "@type": "AggregateRating",
                 "ratingValue": "4.9",
