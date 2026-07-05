@@ -98,7 +98,7 @@ function buildWhatsAppMessage(data: typeof defaultFormData): string {
   return encodeURIComponent(lines.join('\n'));
 }
 
-const defaultFormData = { name: '', email: '', phone: '', service: '', therapist: 'any', date: '', message: '', paymentMethod: 'cash', bookingType: 'in_sanctuary', calloutZone: '', calloutAddress: '' };
+const defaultFormData = { name: '', email: '', phone: '', service: '', therapist: 'any', date: '', message: '', paymentMethod: 'cash', bookingType: 'in_spa', calloutZone: '', calloutAddress: '' };
 
 export default function ContactPage() {
   const [formData, setFormData] = useState(defaultFormData);
@@ -254,15 +254,15 @@ export default function ContactPage() {
                         <label className="block text-sm font-semibold text-white mb-3">Booking Location</label>
                         <div className="grid grid-cols-2 gap-3">
                           <button type="button"
-                            onClick={() => setFormData(prev => ({ ...prev, bookingType: 'in_sanctuary', calloutZone: '', calloutAddress: '' }))}
+                            onClick={() => setFormData(prev => ({ ...prev, bookingType: 'in_spa', calloutZone: '', calloutAddress: '' }))}
                             className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
-                              formData.bookingType === 'in_sanctuary'
+                              formData.bookingType === 'in_spa'
                                 ? 'border-pink-brand bg-pink-brand/10'
                                 : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
                             }`}
                           >
-                            <Home className={`w-5 h-5 mb-2 ${formData.bookingType === 'in_sanctuary' ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
-                            <p className={`text-sm font-semibold ${formData.bookingType === 'in_sanctuary' ? 'text-pink-brand' : 'text-pink-glow/45'}`}>In-Spa</p>
+                            <Home className={`w-5 h-5 mb-2 ${formData.bookingType === 'in_spa' ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
+                            <p className={`text-sm font-semibold ${formData.bookingType === 'in_spa' ? 'text-pink-brand' : 'text-pink-glow/45'}`}>In-Spa</p>
                             <p className="text-[11px] text-gold/40 mt-1 leading-tight">Visit us at Ibex Hill</p>
                           </button>
                           <button type="button"

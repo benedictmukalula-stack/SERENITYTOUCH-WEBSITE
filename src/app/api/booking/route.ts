@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const bookingId = `TS-${Date.now().toString(36).toUpperCase()}`;
+    const bookingId = `ST-${Date.now().toString(36).toUpperCase()}`;
 
     // Simulate processing
     await new Promise(resolve => setTimeout(resolve, 1200));
@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
         service,
         therapist: body.therapist,
         date,
-        bookingType: body.bookingType || 'in_sanctuary',
+        bookingType: body.bookingType || 'in_spa',
         calloutZone: body.calloutZone,
         calloutAddress: body.calloutAddress,
         paymentMethod: body.paymentMethod,

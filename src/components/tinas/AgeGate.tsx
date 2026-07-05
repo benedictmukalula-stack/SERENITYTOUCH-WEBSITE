@@ -29,7 +29,7 @@ export default function AgeGate() {
           >
             {/* Logo */}
             <div className="w-16 h-16 rounded-full flex items-center justify-center text-black font-bold text-xl heading-display mx-auto mb-6" style={{ background: 'linear-gradient(135deg, #D4AF37 0%, #E91E63 100%)' }}>
-              TS
+              ST
             </div>
 
             <h1 className="text-3xl md:text-4xl font-semibold heading-display mb-3 text-white">

@@ -142,61 +142,6 @@ export default function MembershipPage() {
         </div>
       </section>
 
-      {/* Member Call-Out Benefits */}
-      <section className="section-padding surface-base">
-        <div className="container-tinas max-w-4xl">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <motion.div variants={fadeUp} custom={0} className="flex items-center gap-3 mb-3">
-              <Car className="w-6 h-6 text-pink-brand" />
-              <h2 className="text-3xl md:text-4xl font-bold heading-display">Member <span className="text-pink-brand">Call-Out</span> Perks</h2>
-            </motion.div>
-            <motion.p variants={fadeUp} custom={1} className="text-pink-glow/35 mb-8 font-light body-serif leading-relaxed">Members enjoy exclusive call-out benefits that make our mobile service even more rewarding.</motion.p>
-            <motion.div variants={fadeUp} custom={2} className="grid md:grid-cols-3 gap-6">
-              <div className="surface-raised rounded-2xl p-6 text-center">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center mx-auto mb-4"><Sparkles className="w-6 h-6 text-white" /></div>
-                <h3 className="text-lg font-bold heading-display mb-2">Silver</h3>
-                <p className="text-2xl font-bold text-gradient-gold mb-2">Standard</p>
-                <p className="text-xs text-pink-glow/35 body-serif font-light">Standard call-out fees apply. K200&ndash;K500 depending on zone.</p>
-              </div>
-              <div className="surface-raised rounded-2xl p-6 text-center border-pink-brand/20 glow-gold">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-brand to-pink-deep flex items-center justify-center mx-auto mb-4"><Crown className="w-6 h-6 text-white" /></div>
-                <h3 className="text-lg font-bold heading-display mb-2 text-pink-brand">Gold</h3>
-                <p className="text-2xl font-bold text-gradient-gold mb-2">25% Off</p>
-                <p className="text-xs text-pink-glow/35 body-serif font-light">25% off all call-out fees across every zone.</p>
-              </div>
-              <div className="surface-raised rounded-2xl p-6 text-center">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gold to-pink-hot flex items-center justify-center mx-auto mb-4"><Crown className="w-6 h-6 text-white" /></div>
-                <h3 className="text-lg font-bold heading-display mb-2">Platinum</h3>
-                <p className="text-2xl font-bold text-gradient-gold mb-2">FREE</p>
-                <p className="text-xs text-pink-glow/35 body-serif font-light">All call-out fees waived within Lusaka. Zone 4 at 50% off.</p>
-              </div>
-            </motion.div>
-            <motion.div variants={fadeUp} custom={3} className="mt-6 surface-raised rounded-xl p-5">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-gold mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-bold text-white mb-1">Call-Out Zones &amp; Standard Fees</p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
-                    {[
-                      { zone: 'Ibex Hill & Surrounds', fee: 'K200' },
-                      { zone: 'Lusaka Central', fee: 'K350' },
-                      { zone: 'Greater Lusaka', fee: 'K500' },
-                      { zone: 'Outside Lusaka', fee: 'Custom' },
-                    ].map((z, i) => (
-                      <div key={i} className="bg-gold/[0.04] rounded-lg p-3">
-                        <p className="text-[10px] text-gold/50 uppercase tracking-wider">Zone {i + 1}</p>
-                        <p className="text-xs text-white font-medium mt-0.5">{z.zone}</p>
-                        <p className="text-sm font-bold text-gold mt-1">{z.fee}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Comparison Table */}
       <section className="section-padding section-dark">
         <div className="container-tinas max-w-4xl">

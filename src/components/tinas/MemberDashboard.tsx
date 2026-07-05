@@ -24,10 +24,10 @@ const tierConfig = {
 };
 
 const mockBookings = [
-  { id: 'TS-K4M9Q', service: 'Swedish Massage', therapist: 'Tina Mulenga', date: '2026-07-10', time: '10:00 AM', status: 'confirmed', price: 'K800' },
-  { id: 'TS-J3L8P', service: 'Hot Stone Therapy', therapist: 'Grace Banda', date: '2026-07-18', time: '2:00 PM', status: 'pending', price: 'K1,000' },
-  { id: 'TS-H2K7N', service: 'Deep Tissue Massage', therapist: 'Chipo Mwale', date: '2026-06-28', time: '11:00 AM', status: 'completed', price: 'K1,200' },
-  { id: 'TS-G1J6M', service: 'Aromatherapy Treatment', therapist: 'Patricia Nkomo', date: '2026-06-15', time: '3:00 PM', status: 'completed', price: 'K900' },
+  { id: 'ST-K4M9Q', service: 'Swedish Massage', therapist: 'Tina Mulenga', date: '2026-07-10', time: '10:00 AM', status: 'confirmed', price: 'K800' },
+  { id: 'ST-J3L8P', service: 'Hot Stone Therapy', therapist: 'Grace Banda', date: '2026-07-18', time: '2:00 PM', status: 'pending', price: 'K1,000' },
+  { id: 'ST-H2K7N', service: 'Deep Tissue Massage', therapist: 'Chipo Mwale', date: '2026-06-28', time: '11:00 AM', status: 'completed', price: 'K1,200' },
+  { id: 'ST-G1J6M', service: 'Aromatherapy Treatment', therapist: 'Patricia Nkomo', date: '2026-06-15', time: '3:00 PM', status: 'completed', price: 'K900' },
 ];
 
 const statusColors: Record<string, string> = {
