@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User, LogIn } from 'lucide-react';
 import { useAppStore, type Page } from '@/lib/store';
 
 const navItems: { label: string; page: Page }[] = [
@@ -14,7 +14,7 @@ const navItems: { label: string; page: Page }[] = [
 ];
 
 export default function Navigation() {
-  const { currentPage, navigate, isMobileMenuOpen, setMobileMenuOpen } = useAppStore();
+  const { currentPage, navigate, isMobileMenuOpen, setMobileMenuOpen, isMemberLoggedIn, member } = useAppStore();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-gold/20" style={{ background: 'rgba(10, 10, 10, 0.7)', backdropFilter: 'blur(16px)' }}>
@@ -33,7 +33,7 @@ export default function Navigation() {
         </button>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-7">
+        <div className="hidden lg:flex items-center gap-6">
           {navItems.map((item) => (
             <button
               key={item.page}
@@ -47,18 +47,54 @@ export default function Navigation() {
               {item.label}
             </button>
           ))}
-          <button
-            onClick={() => navigate('membership')}
-            className="text-[13px] bg-pink-brand text-white border-0 hover:bg-pink-600 rounded-full px-5 py-2 font-semibold cursor-pointer transition-all"
-          >
-            Become a Member
-          </button>
+        </div>
+
+        {/* Right side */}
+        <div className="hidden lg:flex items-center gap-3">
+          {isMemberLoggedIn && member ? (
+            <>
+              <button
+                onClick={() => navigate('dashboard')}
+                className={`flex items-center gap-2 text-[12px] font-medium px-3 py-1.5 rounded-full border cursor-pointer transition ${
+                  currentPage === 'dashboard'
+                    ? 'border-gold bg-gold/10 text-gold'
+                    : 'border-gold/15 text-gray-300 hover:text-white hover:border-gold/30'
+                }`}
+              >
+                <User className="w-3.5 h-3.5" />
+                <span>{member.name.split(' ')[0]}</span>
+                <span className="text-[10px] text-gold">({member.tier})</span>
+              </button>
+              <button
+                onClick={() => navigate('membership')}
+                className="text-[12px] bg-gradient-to-r from-gold to-amber-600 text-[#0a0a0a] border-0 hover:from-amber-600 hover:to-amber-700 rounded-full px-4 py-2 font-semibold cursor-pointer transition-all"
+              >
+                {member.tier} Member
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate('login')}
+                className="flex items-center gap-1.5 text-[12px] text-gray-300 hover:text-white transition cursor-pointer px-3 py-1.5 rounded-full border border-gold/15 hover:border-gold/30"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                Member Login
+              </button>
+              <button
+                onClick={() => navigate('membership')}
+                className="text-[12px] bg-pink-brand text-white border-0 hover:bg-pink-600 rounded-full px-4 py-2 font-semibold cursor-pointer transition-all"
+              >
+                Become a Member
+              </button>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden p-2 text-gray-300 cursor-pointer"
+          className="lg:hidden p-2 text-gray-300 cursor-pointer"
           aria-label="Toggle menu"
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -72,7 +108,7 @@ export default function Navigation() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gold/15 overflow-hidden"
+            className="lg:hidden border-t border-gold/15 overflow-hidden"
             style={{ background: 'rgba(10, 10, 10, 0.95)' }}
           >
             <div className="container-tinas py-4 space-y-1">
@@ -92,15 +128,32 @@ export default function Navigation() {
                   {item.label}
                 </button>
               ))}
-              <button
-                onClick={() => {
-                  navigate('membership');
-                  setMobileMenuOpen(false);
-                }}
-                className="block w-full mt-2 bg-pink-brand text-white rounded-full py-3 text-sm font-semibold text-center cursor-pointer"
-              >
-                Become a Member
-              </button>
+
+              <div className="border-t border-gold/10 pt-3 mt-3 space-y-2">
+                {isMemberLoggedIn && member ? (
+                  <>
+                    <button
+                      onClick={() => { navigate('dashboard'); setMobileMenuOpen(false); }}
+                      className="block w-full px-4 py-3 rounded-lg text-sm bg-gold/10 text-gold font-semibold cursor-pointer"
+                    >
+                      Dashboard — {member.name.split(' ')[0]} ({member.tier})
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => { navigate('login'); setMobileMenuOpen(false); }}
+                    className="block w-full px-4 py-3 rounded-lg text-sm text-gray-300 hover:bg-white/5 cursor-pointer"
+                  >
+                    Member Login
+                  </button>
+                )}
+                <button
+                  onClick={() => { navigate('membership'); setMobileMenuOpen(false); }}
+                  className="block w-full mt-2 bg-pink-brand text-white rounded-full py-3 text-sm font-semibold text-center cursor-pointer"
+                >
+                  Become a Member
+                </button>
+              </div>
             </div>
           </motion.div>
         )}

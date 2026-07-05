@@ -10,6 +10,9 @@ import AboutPage from '@/components/tinas/AboutPage';
 import BlogPage from '@/components/tinas/BlogPage';
 import ContactPage from '@/components/tinas/ContactPage';
 import MembershipPage from '@/components/tinas/MembershipPage';
+import LoginPage from '@/components/tinas/LoginPage';
+import MemberDashboard from '@/components/tinas/MemberDashboard';
+import AgeGate from '@/components/tinas/AgeGate';
 import WhatsAppButton from '@/components/tinas/WhatsAppButton';
 import { useAppStore } from '@/lib/store';
 
@@ -21,14 +24,20 @@ const pageComponents: Record<string, React.ComponentType> = {
   blog: BlogPage,
   contact: ContactPage,
   membership: MembershipPage,
+  login: LoginPage,
+  dashboard: MemberDashboard,
 };
 
 export default function AppPage() {
-  const { currentPage } = useAppStore();
+  const { currentPage, ageVerified } = useAppStore();
   const PageComponent = pageComponents[currentPage] || HomePage;
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#0a0a0a' }}>
+      {/* R18 Age Gate */}
+      <AgeGate />
+
+      {/* Main App */}
       <Navigation />
       <main className="flex-1">
         <AnimatePresence mode="wait">
