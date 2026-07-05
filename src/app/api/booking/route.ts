@@ -10,6 +10,9 @@ interface BookingBody {
   time?: string;
   message?: string;
   paymentMethod?: string;
+  bookingType?: string;
+  calloutZone?: string;
+  calloutAddress?: string;
 }
 
 const serviceLabels: Record<string, string> = {
@@ -66,6 +69,8 @@ body { font-family: Georgia, serif; background: #0a0a0a; color: #e5e5e5; margin:
     <div class="field"><div class="label">Phone</div><div class="value">${body.phone || 'Not provided'}</div></div>
     <div class="field"><div class="label">Preferred Date</div><div class="value">${body.date}</div></div>
     <div class="field"><div class="label">Service</div><div class="value highlight">${service}</div></div>
+    <div class="field"><div class="label">Booking Type</div><div class="value">${body.bookingType === 'callout' ? 'Call-Out Service' : 'In-Sanctuary'}</div></div>
+    ${body.bookingType === 'callout' ? `<div class="field"><div class="label">Call-Out Zone</div><div class="value">${body.calloutZone || 'TBD'}</div></div><div class="field"><div class="label">Call-Out Address</div><div class="value">${body.calloutAddress || 'Not provided'}</div></div>` : ''}
     <div class="field"><div class="label">Preferred Therapist</div><div class="value">${therapist}</div></div>
     <div class="field"><div class="label">Payment Method</div><div class="value">${payment}</div></div>
     ${body.message ? `<div class="field"><div class="label">Additional Notes</div><div class="value">${body.message}</div></div>` : ''}
@@ -91,7 +96,9 @@ function buildWhatsAppNotification(body: BookingBody, bookingId: string): string
     `*Email:* ${body.email}`,
     `*Phone:* ${body.phone || 'N/A'}`,
     `*Date:* ${body.date}`,
+    `*Booking Type:* ${body.bookingType === 'callout' ? 'Call-Out Service' : 'In-Sanctuary'}`,
     `*Service:* ${service}`,
+    ...(body.bookingType === 'callout' ? [`*Call-Out Zone:* ${body.calloutZone || 'TBD'}`, `*Address:* ${body.calloutAddress || 'Not provided'}`] : []),
     `*Therapist:* ${therapist}`,
     `*Payment:* ${payment}`,
     body.message ? `*Notes:* ${body.message}` : '',
@@ -178,6 +185,9 @@ export async function POST(request: NextRequest) {
         service,
         therapist: body.therapist,
         date,
+        bookingType: body.bookingType || 'in_sanctuary',
+        calloutZone: body.calloutZone,
+        calloutAddress: body.calloutAddress,
         paymentMethod: body.paymentMethod,
         message: body.message,
         status: 'pending_confirmation',

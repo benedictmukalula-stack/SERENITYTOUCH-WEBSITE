@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock, Loader2, CheckCircle, AlertCircle, MessageCircle, CreditCard, Building2, Smartphone } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Loader2, CheckCircle, AlertCircle, MessageCircle, CreditCard, Building2, Smartphone, Home, Car, Navigation } from 'lucide-react';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -36,6 +36,15 @@ const therapistOptions = [
   { value: 'chipo', label: 'Chipo Mwale — Therapeutic Massage Specialist' },
 ];
 
+const calloutZones = [
+  { id: 'zone1', label: 'Ibex Hill & Surrounds', desc: 'Within 5km radius', fee: 200, areas: 'Ibex Hill, Woodlands, Kabulonga' },
+  { id: 'zone2', label: 'Lusaka Central', desc: '5–15km from sanctuary', fee: 350, areas: 'CBD, Northmead, Rhodes Park, Longacres' },
+  { id: 'zone3', label: 'Greater Lusaka', desc: '15–30km from sanctuary', fee: 500, areas: 'Manda Hill, East Park, Chelstone, Roma' },
+  { id: 'zone4', label: 'Outside Lusaka', desc: '30km+ — custom quote', fee: 0, areas: 'Kabwe, Chongwe, Kafue, etc.' },
+];
+
+const servicePrices: Record<string, number> = { swedish: 800, deeptissue: 1200, hotstone: 1000, aromatherapy: 900, couples: 2000, reflexology: 850 };
+
 const paymentMethods = [
   { id: 'mobile_money', label: 'Mobile Money', icon: Smartphone, desc: 'MTN Mobile Money, Airtel Money, Zamtel' },
   { id: 'bank_transfer', label: 'Bank EFT', icon: Building2, desc: 'Direct bank transfer' },
@@ -56,19 +65,34 @@ function getServiceLabel(val: string) { return serviceOptions.find(s => s.value 
 function getTherapistLabel(val: string) { return therapistOptions.find(t => t.value === val)?.label || val; }
 function getPaymentLabel(val: string) { return paymentMethods.find(p => p.id === val)?.label || val; }
 
+function getCalloutLabel(val: string) {
+  const z = calloutZones.find(z => z.id === val);
+  return z ? (z.fee > 0 ? `${z.label} (K${z.fee} call-out fee)` : `${z.label} (Custom quote)`) : val;
+}
+
 function buildWhatsAppMessage(data: typeof defaultFormData): string {
   const lines = [
     `*Tina's Sanctuary — Booking Request*`, ``,
     `*Name:* ${data.name}`, `*Email:* ${data.email}`, `*Phone:* ${data.phone || 'Not provided'}`,
     `*Date:* ${data.date}`, `*Service:* ${getServiceLabel(data.service)}`,
-    `*Therapist:* ${getTherapistLabel(data.therapist)}`, `*Payment:* ${getPaymentLabel(data.paymentMethod)}`,
+    `*Booking Type:* ${data.bookingType === 'callout' ? 'Call-Out Service' : 'In-Sanctuary'}`,
   ];
+  if (data.bookingType === 'callout') {
+    lines.push(`*Call-Out Zone:* ${getCalloutLabel(data.calloutZone)}`);
+    if (data.calloutAddress) lines.push(`*Address:* ${data.calloutAddress}`);
+    const svcPrice = servicePrices[data.service] || 0;
+    const zone = calloutZones.find(z => z.id === data.calloutZone);
+    const fee = zone?.fee || 0;
+    if (fee > 0) lines.push(`*Total:* K${svcPrice} + K${fee} call-out = K${svcPrice + fee}`);
+    else lines.push(`*Total:* K${svcPrice} + call-out fee (TBD)`);
+  }
+  lines.push(`*Therapist:* ${getTherapistLabel(data.therapist)}`, `*Payment:* ${getPaymentLabel(data.paymentMethod)}`);
   if (data.message) lines.push(`*Notes:* ${data.message}`);
   lines.push('', 'Please confirm my booking. Thank you!');
   return encodeURIComponent(lines.join('\n'));
 }
 
-const defaultFormData = { name: '', email: '', phone: '', service: '', therapist: 'any', date: '', message: '', paymentMethod: 'cash' };
+const defaultFormData = { name: '', email: '', phone: '', service: '', therapist: 'any', date: '', message: '', paymentMethod: 'cash', bookingType: 'in_sanctuary', calloutZone: '', calloutAddress: '' };
 
 export default function ContactPage() {
   const [formData, setFormData] = useState(defaultFormData);
@@ -196,6 +220,105 @@ export default function ContactPage() {
                           </select>
                         </div>
                       </div>
+
+                      {/* Booking Type — In-Sanctuary vs Call-Out */}
+                      <div>
+                        <label className="block text-sm font-semibold text-white mb-3">Booking Location</label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <button type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, bookingType: 'in_sanctuary', calloutZone: '', calloutAddress: '' }))}
+                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                              formData.bookingType === 'in_sanctuary'
+                                ? 'border-pink-brand bg-pink-brand/10'
+                                : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+                            }`}
+                          >
+                            <Home className={`w-5 h-5 mb-2 ${formData.bookingType === 'in_sanctuary' ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
+                            <p className={`text-sm font-semibold ${formData.bookingType === 'in_sanctuary' ? 'text-pink-brand' : 'text-pink-glow/45'}`}>In-Sanctuary</p>
+                            <p className="text-[11px] text-gold/40 mt-1 leading-tight">Visit us at Ibex Hill</p>
+                          </button>
+                          <button type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, bookingType: 'callout' }))}
+                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                              formData.bookingType === 'callout'
+                                ? 'border-pink-brand bg-pink-brand/10'
+                                : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+                            }`}
+                          >
+                            <Car className={`w-5 h-5 mb-2 ${formData.bookingType === 'callout' ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
+                            <p className={`text-sm font-semibold ${formData.bookingType === 'callout' ? 'text-pink-brand' : 'text-pink-glow/45'}`}>Call-Out</p>
+                            <p className="text-[11px] text-gold/40 mt-1 leading-tight">We come to you</p>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Call-Out Zone Selection */}
+                      <AnimatePresence>
+                        {formData.bookingType === 'callout' && (
+                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+                            <div className="space-y-4">
+                              <div>
+                                <label className="block text-sm font-semibold text-white mb-3">Call-Out Zone</label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                  {calloutZones.map((zone) => (
+                                    <button key={zone.id} type="button"
+                                      onClick={() => setFormData(prev => ({ ...prev, calloutZone: zone.id }))}
+                                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                                        formData.calloutZone === zone.id
+                                          ? 'border-pink-brand bg-pink-brand/10'
+                                          : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+                                      }`}
+                                    >
+                                      <div className="flex items-center justify-between mb-1">
+                                        <p className={`text-sm font-semibold ${formData.calloutZone === zone.id ? 'text-pink-brand' : 'text-pink-glow/45'}`}>{zone.label}</p>
+                                        <span className={`text-sm font-bold ${formData.calloutZone === zone.id ? 'text-gold' : 'text-gold/50'}`}>{zone.fee > 0 ? `K${zone.fee}` : 'Quote'}</span>
+                                      </div>
+                                      <p className="text-[11px] text-gold/40 leading-tight">{zone.desc} &middot; {zone.areas}</p>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              <div>
+                                <label className="block text-sm font-semibold text-white mb-2">Your Address *</label>
+                                <div className="relative">
+                                  <Navigation className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
+                                  <input type="text" name="calloutAddress" value={formData.calloutAddress} onChange={handleChange}
+                                    className="w-full pl-10 pr-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition placeholder:text-gold/30"
+                                    placeholder="Enter your full address for the call-out" />
+                                </div>
+                              </div>
+
+                              {/* Call-Out Fee Summary */}
+                              <div className="surface-raised rounded-xl p-4 border-pink-brand/20">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <Car className="w-4 h-4 text-pink-brand" />
+                                  <p className="text-xs font-semibold text-pink-brand tracking-wider">CALL-OUT FEE SUMMARY</p>
+                                </div>
+                                <div className="space-y-2 text-sm">
+                                  <div className="flex justify-between">
+                                    <span className="text-pink-glow/45">Service</span>
+                                    <span className="text-white font-medium">{serviceOptions.find(s => s.value === formData.service)?.label.split('—')[0]?.trim() || 'Select a service'}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-pink-glow/45">Service Price</span>
+                                    <span className="text-white font-medium">K{servicePrices[formData.service] || 0}</span>
+                                  </div>
+                                  <div className="h-px bg-gold/10 my-1"></div>
+                                  <div className="flex justify-between">
+                                    <span className="text-pink-glow/45">Call-Out Fee</span>
+                                    <span className="text-gold font-bold">{(() => { const z = calloutZones.find(z => z.id === formData.calloutZone); return z?.fee ? `K${z.fee}` : 'TBD'; })()}</span>
+                                  </div>
+                                  <div className="h-px bg-gold/10 my-1"></div>
+                                  <div className="flex justify-between">
+                                    <span className="text-white font-semibold">Estimated Total</span>
+                                    <span className="text-gradient-gold font-bold">{(() => { const p = servicePrices[formData.service] || 0; const z = calloutZones.find(z => z.id === formData.calloutZone); const f = z?.fee || 0; return f > 0 ? `K${p + f}` : `K${p} + call-out fee`; })()}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
 
                       {/* Payment Method */}
                       <div>
