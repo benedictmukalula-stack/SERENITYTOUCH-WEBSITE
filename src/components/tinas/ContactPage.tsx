@@ -158,6 +158,28 @@ export default function ContactPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Call-Out Fees Quick Reference */}
+              <div className="mt-6 surface-raised rounded-2xl p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <Car className="w-4 h-4 text-pink-brand" />
+                  <h3 className="font-bold text-sm text-white">Call-Out Fees</h3>
+                </div>
+                <div className="space-y-2.5">
+                  {[
+                    { zone: 'Ibex Hill & Surrounds', fee: 'K200' },
+                    { zone: 'Lusaka Central', fee: 'K350' },
+                    { zone: 'Greater Lusaka', fee: 'K500' },
+                    { zone: 'Outside Lusaka', fee: 'Quote' },
+                  ].map((z, i) => (
+                    <div key={i} className="flex justify-between items-center">
+                      <span className="text-xs text-pink-glow/45">Zone {i + 1}</span>
+                      <span className="text-xs font-bold text-gold">{z.fee}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-gold/35 mt-3 body-serif font-light leading-relaxed">Members enjoy discounts. Select &quot;Call-Out&quot; in the booking form to get started.</p>
+              </div>
             </motion.div>
 
             <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1} className="lg:col-span-2">
