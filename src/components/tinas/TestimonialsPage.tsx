@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import AnimatedCounter from '@/components/tinas/AnimatedCounter';
+import VideoTestimonials from '@/components/tinas/VideoTestimonials';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -78,6 +79,8 @@ export default function TestimonialsPage() {
           </div>
         </div>
       </section>
+
+      <VideoTestimonials />
 
       <section className="section-padding section-dark">
         <div className="container-tinas max-w-4xl">

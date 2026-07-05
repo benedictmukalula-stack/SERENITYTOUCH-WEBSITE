@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import { ChevronRight, ChevronLeft, Star, ArrowRight } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { useAppStore } from '@/lib/store';
+import AnimatedCounter from '@/components/tinas/AnimatedCounter';
+import VideoTestimonials from '@/components/tinas/VideoTestimonials';
+import ReferralProgram from '@/components/tinas/ReferralProgram';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -261,18 +264,11 @@ export default function HomePage() {
       {/* ===== STATS BAR ===== */}
       <section className="py-16 gradient-sexy">
         <div className="container-tinas">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            {[
-              { value: '2,500+', label: 'Happy Guests' },
-              { value: '4.9', label: 'Average Rating' },
-              { value: '98%', label: 'Would Return' },
-              { value: '15,000+', label: 'Treatments Delivered' },
-            ].map((stat, idx) => (
-              <motion.div key={stat.label} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={idx} className="text-center">
-                <p className="text-3xl md:text-4xl font-bold text-gradient-gold heading-display mb-1">{stat.value}</p>
-                <p className="text-xs text-pink-glow/40 body-serif font-light uppercase tracking-wider">{stat.label}</p>
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <AnimatedCounter value="2,500+" label="Happy Guests" />
+            <AnimatedCounter value="4.9" label="Average Rating" />
+            <AnimatedCounter value="98%" label="Would Return" />
+            <AnimatedCounter value="15,000+" label="Treatments Delivered" />
           </div>
         </div>
       </section>
@@ -389,6 +385,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ===== VIDEO TESTIMONIALS ===== */}
+      <VideoTestimonials />
 
       {/* ===== MEMBERSHIP ===== */}
       <section className="section-padding" style={{ background: 'linear-gradient(180deg, #080406 0%, #000000 100%)' }}>
@@ -558,6 +557,9 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
+
+      {/* ===== REFERRAL PROGRAM ===== */}
+      <ReferralProgram />
     </div>
   );
 }

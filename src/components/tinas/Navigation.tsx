@@ -165,7 +165,7 @@ export default function Navigation() {
         <div className="container-tinas py-3">
           <Breadcrumbs items={[
             { label: 'Home', page: 'home' },
-            { label: currentPage === 'services' ? 'Treatments' : currentPage === 'packages' ? 'Packages' : currentPage === 'membership' ? 'Membership' : currentPage === 'corporate' ? 'Corporate Wellness' : currentPage === 'vouchers' ? 'Gift Vouchers' : currentPage === 'gallery' ? 'Gallery' : currentPage === 'testimonials' ? 'Testimonials' : currentPage === 'blog' ? 'Wellness Journal' : currentPage === 'about' ? 'About' : currentPage === 'contact' ? 'Contact' : currentPage === 'therapists' ? 'Our Team' : currentPage === 'login' ? 'Login' : currentPage === 'dashboard' ? 'Dashboard' : currentPage.charAt(0).toUpperCase() + currentPage.slice(1) }
+            { label: currentPage === 'services' ? 'Treatments' : currentPage === 'packages' ? 'Packages' : currentPage === 'membership' ? 'Membership' : currentPage === 'corporate' ? 'Corporate Wellness' : currentPage === 'vouchers' ? 'Gift Vouchers' : currentPage === 'gallery' ? 'Gallery' : currentPage === 'testimonials' ? 'Testimonials' : currentPage === 'blog' ? 'Wellness Journal' : currentPage === 'about' ? 'About' : currentPage === 'contact' ? 'Contact' : currentPage === 'therapists' ? 'Our Team' : currentPage === 'login' ? 'Login' : currentPage === 'register' ? 'Register' : currentPage === 'dashboard' ? 'Dashboard' : currentPage === 'analytics' ? 'Analytics' : currentPage.charAt(0).toUpperCase() + currentPage.slice(1) }
           ]} />
         </div>
       </div>

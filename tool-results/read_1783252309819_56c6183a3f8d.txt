@@ -1,0 +1,524 @@
+     1→'use client';
+     2→
+     3→import { useState } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import { MapPin, Phone, Mail, Clock, Loader2, CheckCircle, AlertCircle, MessageCircle, CreditCard, Building2, Smartphone, Home, Car, Navigation } from 'lucide-react';
+     6→
+     7→const fadeUp = {
+     8→  hidden: { opacity: 0, y: 30 },
+     9→  visible: (i: number) => ({
+    10→    opacity: 1, y: 0,
+    11→    transition: { delay: i * 0.08, duration: 0.6, ease: 'easeOut' },
+    12→  }),
+    13→};
+    14→
+    15→const contactInfo = [
+    16→  { icon: MapPin, label: 'Address', value: '183 Ibex Hill, Lusaka, Zambia', link: null },
+    17→  { icon: Phone, label: 'Phone', value: '+260 572 782 539', link: 'tel:+260572782539' },
+    18→  { icon: MessageCircle, label: 'WhatsApp', value: '+260 761 404 555', link: 'https://wa.me/260761404555' },
+    19→  { icon: Mail, label: 'Email', value: 'info@serenitytouch.co.zm', link: 'mailto:info@serenitytouch.co.zm' },
+    20→  { icon: Clock, label: 'Hours', value: 'Mon-Fri: 9AM-6PM\nSat: 10AM-5PM\nSun: Closed', link: null },
+    21→];
+    22→
+    23→const serviceOptions = [
+    24→  { value: 'headscalp', label: 'Head & Scalp Massage (30 min) — K400' },
+    25→  { value: 'foot', label: 'Foot Massage (45 min) — K500' },
+    26→  { value: 'backneck', label: 'Back, Neck & Shoulder (45 min) — K600' },
+    27→  { value: 'swedish', label: 'Swedish Massage (60 min) — K800' },
+    28→  { value: 'deeptissue', label: 'Deep Tissue Massage (90 min) — K1,200' },
+    29→  { value: 'thai', label: 'Thai Massage (90 min) — K1,100' },
+    30→  { value: 'aromatherapy', label: 'Aromatherapy Massage (60 min) — K900' },
+    31→  { value: 'reflexology', label: 'Reflexology (60 min) — K850' },
+    32→  { value: 'pregnancy', label: 'Pregnancy Massage (60 min) — K900' },
+    33→  { value: 'fullbody', label: 'Full Body Massage (90 min) — K1,000' },
+    34→  { value: 'couples', label: 'Couples Massage (90 min) — K2,000' },
+    35→];
+    36→
+    37→const therapistOptions = [
+    38→  { value: 'any', label: 'No Preference (First Available)' },
+    39→  { value: 'tina', label: 'Tina Mulenga — Founder & Lead Therapist' },
+    40→  { value: 'grace', label: 'Grace Banda — Senior Massage Therapist' },
+    41→  { value: 'patricia', label: 'Patricia Nkomo — Aromatherapy Specialist' },
+    42→  { value: 'chipo', label: 'Chipo Mwale — Therapeutic Massage Specialist' },
+    43→];
+    44→
+    45→const calloutZones = [
+    46→  { id: 'zone1', label: 'Ibex Hill & Surrounds', desc: 'Within 5km radius', fee: 200, areas: 'Ibex Hill, Woodlands, Kabulonga' },
+    47→  { id: 'zone2', label: 'Lusaka Central', desc: '5–15km from spa', fee: 350, areas: 'CBD, Northmead, Rhodes Park, Longacres' },
+    48→  { id: 'zone3', label: 'Greater Lusaka', desc: '15–30km from spa', fee: 500, areas: 'Manda Hill, East Park, Chelstone, Roma' },
+    49→  { id: 'zone4', label: 'Outside Lusaka', desc: '30km+ — custom quote', fee: 0, areas: 'Kabwe, Chongwe, Kafue, etc.' },
+    50→];
+    51→
+    52→const servicePrices: Record<string, number> = { headscalp: 400, foot: 500, backneck: 600, swedish: 800, deeptissue: 1200, thai: 1100, aromatherapy: 900, reflexology: 850, pregnancy: 900, fullbody: 1000, couples: 2000 };
+    53→
+    54→const paymentMethods = [
+    55→  { id: 'mobile_money', label: 'Mobile Money', icon: Smartphone, desc: 'MTN Mobile Money, Airtel Money, Zamtel' },
+    56→  { id: 'bank_transfer', label: 'Bank EFT', icon: Building2, desc: 'Direct bank transfer' },
+    57→  { id: 'card', label: 'Card Payment', icon: CreditCard, desc: 'Visa, Mastercard (online)' },
+    58→  { id: 'cash', label: 'Pay at Spa', icon: MapPin, desc: 'Cash on arrival' },
+    59→];
+    60→
+    61→const faqs = [
+    62→  { q: 'How do I book an appointment?', a: 'You can book through this form, call us at +260 572 782 539, or message us on WhatsApp. Members can also use our WhatsApp concierge line for priority booking.' },
+    63→  { q: 'What is your cancellation policy?', a: 'Cancellations made 24 hours in advance receive a full refund. Cancellations within 24 hours are subject to a 50% fee. No-shows will be charged in full.' },
+    64→  { q: 'Do you offer membership plans?', a: 'Yes! We offer three membership tiers: Silver (K800/mo), Gold (K1,600/mo), and Platinum (K3,200/mo). Each includes different benefits and service inclusions.' },
+    65→  { q: 'Are your therapists certified?', a: "Yes, every therapist at Serenity Touch Spa is internationally certified and continually trained in the latest therapeutic techniques." },
+    66→  { q: 'What should I bring to my appointment?', a: 'Just bring yourself! We provide all linens, oils, and amenities. Arrive 10 minutes early to complete a brief wellness consultation.' },
+    67→  { q: 'What payment methods do you accept?', a: 'We accept MTN Mobile Money, Airtel Money, Zamtel, bank EFT, Visa/Mastercard, and cash payments at the spa.' },
+    68→];
+    69→
+    70→function getServiceLabel(val: string) { return serviceOptions.find(s => s.value === val)?.label || val; }
+    71→function getTherapistLabel(val: string) { return therapistOptions.find(t => t.value === val)?.label || val; }
+    72→function getPaymentLabel(val: string) { return paymentMethods.find(p => p.id === val)?.label || val; }
+    73→
+    74→function getCalloutLabel(val: string) {
+    75→  const z = calloutZones.find(z => z.id === val);
+    76→  return z ? (z.fee > 0 ? `${z.label} (K${z.fee} call-out fee)` : `${z.label} (Custom quote)`) : val;
+    77→}
+    78→
+    79→function buildWhatsAppMessage(data: typeof defaultFormData): string {
+    80→  const lines = [
+    81→    `*Serenity Touch Spa — Booking Request*`, ``,
+    82→    `*Name:* ${data.name}`, `*Email:* ${data.email}`, `*Phone:* ${data.phone || 'Not provided'}`,
+    83→    `*Date:* ${data.date}`, `*Service:* ${getServiceLabel(data.service)}`,
+    84→    `*Booking Type:* ${data.bookingType === 'callout' ? 'Call-Out Service' : 'In-Spa'}`,
+    85→  ];
+    86→  if (data.bookingType === 'callout') {
+    87→    lines.push(`*Call-Out Zone:* ${getCalloutLabel(data.calloutZone)}`);
+    88→    if (data.calloutAddress) lines.push(`*Address:* ${data.calloutAddress}`);
+    89→    const svcPrice = servicePrices[data.service] || 0;
+    90→    const zone = calloutZones.find(z => z.id === data.calloutZone);
+    91→    const fee = zone?.fee || 0;
+    92→    if (fee > 0) lines.push(`*Total:* K${svcPrice} + K${fee} call-out = K${svcPrice + fee}`);
+    93→    else lines.push(`*Total:* K${svcPrice} + call-out fee (TBD)`);
+    94→  }
+    95→  lines.push(`*Therapist:* ${getTherapistLabel(data.therapist)}`, `*Payment:* ${getPaymentLabel(data.paymentMethod)}`);
+    96→  if (data.message) lines.push(`*Notes:* ${data.message}`);
+    97→  lines.push('', 'Please confirm my booking. Thank you!');
+    98→  return encodeURIComponent(lines.join('\n'));
+    99→}
+   100→
+   101→const defaultFormData = { name: '', email: '', phone: '', service: '', therapist: 'any', date: '', message: '', paymentMethod: 'cash', bookingType: 'in_spa', calloutZone: '', calloutAddress: '' };
+   102→
+   103→export default function ContactPage() {
+   104→  const [formData, setFormData] = useState(defaultFormData);
+   105→  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+   106→  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+   107→  const [showPayment, setShowPayment] = useState(false);
+   108→  const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
+   109→
+   110→  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+   111→    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+   112→  };
+   113→
+   114→  const handleSubmit = async (e: React.FormEvent) => {
+   115→    e.preventDefault();
+   116→    setStatus('loading');
+   117→    try {
+   118→      const res = await fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
+   119→      const data = await res.json();
+   120→      if (data.success) { setStatus('success'); setFormData(defaultFormData); setShowPayment(false); }
+   121→      else setStatus('error');
+   122→    } catch { setStatus('error'); }
+   123→  };
+   124→
+   125→  const handleWhatsAppBooking = () => {
+   126→    const msg = buildWhatsAppMessage(formData);
+   127→    window.open(`https://wa.me/260761404555?text=${msg}`, '_blank');
+   128→  };
+   129→
+   130→  return (
+   131→    <div>
+   132→      <section className="pt-32 pb-16 section-dark">
+   133→        <div className="container-tinas text-center">
+   134→          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">Get in <span className="text-pink-brand">Touch</span></motion.h1>
+   135→          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">Ready to relax to the experience? Book your first session with us.</motion.p>
+   136→        </div>
+   137→      </section>
+   138→
+   139→      <section className="section-padding surface-base">
+   140→        <div className="container-tinas">
+   141→          <div className="grid lg:grid-cols-3 gap-10 lg:gap-14 mb-20">
+   142→            <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0} className="lg:col-span-1">
+   143→              <h2 className="text-2xl font-bold mb-8 heading-display">Contact Information</h2>
+   144→              <div className="space-y-7">
+   145→                {contactInfo.map((item, idx) => (
+   146→                  <div key={idx}>
+   147→                    <div className="flex items-center gap-2.5 mb-1.5">
+   148→                      <item.icon className="w-4 h-4 text-pink-brand" />
+   149→                      <h3 className="font-bold text-sm text-white">{item.label}</h3>
+   150→                    </div>
+   151→                    {item.link ? (
+   152→                      <a href={item.link} className="text-pink-brand hover:text-pink-light transition text-sm ml-[26px] block">{item.value}</a>
+   153→                    ) : (
+   154→                      <p className="text-pink-glow/35 text-sm ml-[26px] whitespace-pre-line">{item.value}</p>
+   155→                    )}
+   156→                  </div>
+   157→                ))}
+   158→              </div>
+   159→              <div className="mt-8 rounded-2xl overflow-hidden h-48 relative border border-gold/12">
+   160→                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&q=60" alt="Map location" className="w-full h-full object-cover opacity-30" />
+   161→                <div className="absolute inset-0 flex items-center justify-center">
+   162→                  <div className="surface-raised rounded-xl px-4 py-3">
+   163→                    <p className="text-xs font-semibold text-white">183 Ibex Hill, Lusaka</p>
+   164→                    <p className="text-[10px] text-pink-brand/40">View in Google Maps</p>
+   165→                  </div>
+   166→                </div>
+   167→              </div>
+   168→
+   169→              {/* Map */}
+   170→              <div className="mt-6 surface-raised rounded-2xl overflow-hidden">
+   171→                <iframe
+   172→                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3878.5!2d28.3!3d-15.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sIbex+Hill+Lusaka+Zambia!5e0!3m2!1sen!2szm!4v1700000000000"
+   173→                  width="100%" height="250" style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) brightness(0.8) contrast(1.2)' }}
+   174→                  allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Serenity Touch Spa Location"
+   175→                />
+   176→              </div>
+   177→
+   178→              {/* Call-Out Fees Quick Reference */}
+   179→              <div className="mt-6 surface-raised rounded-2xl p-5">
+   180→                <div className="flex items-center gap-2 mb-4">
+   181→                  <Car className="w-4 h-4 text-pink-brand" />
+   182→                  <h3 className="font-bold text-sm text-white">Call-Out Fees</h3>
+   183→                </div>
+   184→                <div className="space-y-2.5">
+   185→                  {[
+   186→                    { zone: 'Ibex Hill & Surrounds', fee: 'K200' },
+   187→                    { zone: 'Lusaka Central', fee: 'K350' },
+   188→                    { zone: 'Greater Lusaka', fee: 'K500' },
+   189→                    { zone: 'Outside Lusaka', fee: 'Quote' },
+   190→                  ].map((z, i) => (
+   191→                    <div key={i} className="flex justify-between items-center">
+   192→                      <span className="text-xs text-pink-glow/45">Zone {i + 1}</span>
+   193→                      <span className="text-xs font-bold text-gold">{z.fee}</span>
+   194→                    </div>
+   195→                  ))}
+   196→                </div>
+   197→                <p className="text-[10px] text-gold/35 mt-3 body-serif font-light leading-relaxed">Members enjoy discounts. Select &quot;Call-Out&quot; in the booking form to get started.</p>
+   198→              </div>
+   199→            </motion.div>
+   200→
+   201→            <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1} className="lg:col-span-2">
+   202→              <div className="surface-raised rounded-2xl p-7 md:p-9 glow-gold">
+   203→                <div className="flex items-center justify-between mb-6">
+   204→                  <h2 className="text-2xl font-bold heading-display">Book Your <span className="text-pink-brand">Escape</span></h2>
+   205→                  <button onClick={handleWhatsAppBooking} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full text-xs font-semibold transition cursor-pointer" title="Book via WhatsApp">
+   206→                    <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
+   207→                  </button>
+   208→                </div>
+   209→
+   210→                <AnimatePresence mode="wait">
+   211→                  {status === 'success' ? (
+   212→                    <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-8 text-center">
+   213→                      <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
+   214→                      <p className="text-emerald-300 font-semibold text-lg mb-2 heading-display">Thank you for your inquiry!</p>
+   215→                      <p className="text-emerald-400/70 text-sm body-serif mb-4 font-light">We&apos;ll contact you shortly to confirm your booking.</p>
+   216→                      <p className="text-emerald-400/70 text-xs mb-6">A confirmation has been sent via email and WhatsApp.</p>
+   217→                      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+   218→                        <button onClick={() => setStatus('idle')} className="text-sm text-emerald-400 underline cursor-pointer">Book another session</button>
+   219→                        <button onClick={handleWhatsAppBooking} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-full text-xs font-semibold transition cursor-pointer mx-auto sm:mx-0">
+   220→                          <MessageCircle className="w-3.5 h-3.5" /> Follow up on WhatsApp
+   221→                        </button>
+   222→                      </div>
+   223→                    </motion.div>
+   224→                  ) : (
+   225→                    <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onSubmit={handleSubmit} className="space-y-5">
+   226→                      <div className="grid sm:grid-cols-2 gap-5">
+   227→                        <div>
+   228→                          <label className="block text-sm font-semibold text-white mb-2">Full Name *</label>
+   229→                          <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition placeholder:text-gold/30" placeholder="Your name" />
+   230→                        </div>
+   231→                        <div>
+   232→                          <label className="block text-sm font-semibold text-white mb-2">Email *</label>
+   233→                          <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition placeholder:text-gold/30" placeholder="your@email.com" />
+   234→                        </div>
+   235→                      </div>
+   236→                      <div className="grid sm:grid-cols-2 gap-5">
+   237→                        <div>
+   238→                          <label className="block text-sm font-semibold text-white mb-2">Phone</label>
+   239→                          <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition placeholder:text-gold/30" placeholder="+260 XXX XXX XXX" />
+   240→                        </div>
+   241→                        <div>
+   242→                          <label className="block text-sm font-semibold text-white mb-2">Preferred Date *</label>
+   243→                          <input type="date" name="date" value={formData.date} onChange={handleChange} required className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition [color-scheme:dark]" />
+   244→                        </div>
+   245→                      </div>
+   246→                      <div className="grid sm:grid-cols-2 gap-5">
+   247→                        <div>
+   248→                          <label className="block text-sm font-semibold text-white mb-2">Service *</label>
+   249→                          <select name="service" value={formData.service} onChange={handleChange} required className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-[#0a0508] focus:outline-none focus:border-gold text-sm text-white transition">
+   250→                            <option value="">Select a treatment</option>
+   251→                            {serviceOptions.map((opt) => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}
+   252→                          </select>
+   253→                        </div>
+   254→                        <div>
+   255→                          <label className="block text-sm font-semibold text-white mb-2">Preferred Therapist</label>
+   256→                          <select name="therapist" value={formData.therapist} onChange={handleChange} className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-[#0a0508] focus:outline-none focus:border-gold text-sm text-white transition">
+   257→                            {therapistOptions.map((opt) => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}
+   258→                          </select>
+   259→                        </div>
+   260→                      </div>
+   261→
+   262→                      {/* Booking Type — In-Spa vs Call-Out */}
+   263→                      <div>
+   264→                        <label className="block text-sm font-semibold text-white mb-3">Booking Location</label>
+   265→                        <div className="grid grid-cols-2 gap-3">
+   266→                          <button type="button"
+   267→                            onClick={() => setFormData(prev => ({ ...prev, bookingType: 'in_spa', calloutZone: '', calloutAddress: '' }))}
+   268→                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+   269→                              formData.bookingType === 'in_spa'
+   270→                                ? 'border-pink-brand bg-pink-brand/10'
+   271→                                : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+   272→                            }`}
+   273→                          >
+   274→                            <Home className={`w-5 h-5 mb-2 ${formData.bookingType === 'in_spa' ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
+   275→                            <p className={`text-sm font-semibold ${formData.bookingType === 'in_spa' ? 'text-pink-brand' : 'text-pink-glow/45'}`}>In-Spa</p>
+   276→                            <p className="text-[11px] text-gold/40 mt-1 leading-tight">Visit us at Ibex Hill</p>
+   277→                          </button>
+   278→                          <button type="button"
+   279→                            onClick={() => setFormData(prev => ({ ...prev, bookingType: 'callout' }))}
+   280→                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+   281→                              formData.bookingType === 'callout'
+   282→                                ? 'border-pink-brand bg-pink-brand/10'
+   283→                                : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+   284→                            }`}
+   285→                          >
+   286→                            <Car className={`w-5 h-5 mb-2 ${formData.bookingType === 'callout' ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
+   287→                            <p className={`text-sm font-semibold ${formData.bookingType === 'callout' ? 'text-pink-brand' : 'text-pink-glow/45'}`}>Call-Out</p>
+   288→                            <p className="text-[11px] text-gold/40 mt-1 leading-tight">We come to you</p>
+   289→                          </button>
+   290→                        </div>
+   291→                      </div>
+   292→
+   293→                      {/* Treatment Add-Ons */}
+   294→                      <div className="mb-6">
+   295→                        <label className="text-xs font-semibold text-gold/50 tracking-wider uppercase mb-3 block">Enhance Your Experience (Optional)</label>
+   296→                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+   297→                          {[
+   298→                            { id: 'scalp', name: 'Warm Oil Scalp Treatment', price: 'K200', desc: '15 min scalp massage with warm essential oils' },
+   299→                            { id: 'hotstones', name: 'Hot Stone Upgrade', price: 'K300', desc: 'Add heated volcanic stones to any massage' },
+   300→                            { id: 'aroma', name: 'Aromatherapy Upgrade', price: 'K150', desc: 'Custom-blended essential oils for your session' },
+   301→                            { id: 'facial', name: 'Mini Facial Treatment', price: 'K250', desc: '15 min express facial with natural products' },
+   302→                          ].map((addon) => (
+   303→                            <button type="button" key={addon.id}
+   304→                              onClick={() => {
+   305→                                setSelectedAddons(prev => {
+   306→                                  const next = new Set(prev);
+   307→                                  if (next.has(addon.id)) next.delete(addon.id);
+   308→                                  else next.add(addon.id);
+   309→                                  return next;
+   310→                                });
+   311→                              }}
+   312→                              className={`p-4 rounded-xl border text-left transition-all cursor-pointer group ${
+   313→                                selectedAddons.has(addon.id)
+   314→                                  ? 'border-pink-brand bg-pink-brand/[0.08]'
+   315→                                  : 'border-gold/12 bg-gold/[0.02] hover:border-gold/25'
+   316→                              }`}
+   317→                            >
+   318→                              <div className="flex items-center justify-between mb-1">
+   319→                                <span className={`text-sm font-semibold group-hover:text-gold transition-colors ${selectedAddons.has(addon.id) ? 'text-pink-brand' : 'text-white'}`}>{addon.name}</span>
+   320→                                <span className="text-sm font-bold text-gold">+{addon.price}</span>
+   321→                              </div>
+   322→                              <p className="text-[11px] text-pink-glow/35">{addon.desc}</p>
+   323→                            </button>
+   324→                          ))}
+   325→                        </div>
+   326→                      </div>
+   327→
+   328→                      {/* Call-Out Zone Selection */}
+   329→                      <AnimatePresence>
+   330→                        {formData.bookingType === 'callout' && (
+   331→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+   332→                            <div className="space-y-4">
+   333→                              <div>
+   334→                                <label className="block text-sm font-semibold text-white mb-3">Call-Out Zone</label>
+   335→                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+   336→                                  {calloutZones.map((zone) => (
+   337→                                    <button key={zone.id} type="button"
+   338→                                      onClick={() => setFormData(prev => ({ ...prev, calloutZone: zone.id }))}
+   339→                                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+   340→                                        formData.calloutZone === zone.id
+   341→                                          ? 'border-pink-brand bg-pink-brand/10'
+   342→                                          : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+   343→                                      }`}
+   344→                                    >
+   345→                                      <div className="flex items-center justify-between mb-1">
+   346→                                        <p className={`text-sm font-semibold ${formData.calloutZone === zone.id ? 'text-pink-brand' : 'text-pink-glow/45'}`}>{zone.label}</p>
+   347→                                        <span className={`text-sm font-bold ${formData.calloutZone === zone.id ? 'text-gold' : 'text-gold/50'}`}>{zone.fee > 0 ? `K${zone.fee}` : 'Quote'}</span>
+   348→                                      </div>
+   349→                                      <p className="text-[11px] text-gold/40 leading-tight">{zone.desc} &middot; {zone.areas}</p>
+   350→                                    </button>
+   351→                                  ))}
+   352→                                </div>
+   353→                              </div>
+   354→                              <div>
+   355→                                <label className="block text-sm font-semibold text-white mb-2">Your Address *</label>
+   356→                                <div className="relative">
+   357→                                  <Navigation className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
+   358→                                  <input type="text" name="calloutAddress" value={formData.calloutAddress} onChange={handleChange}
+   359→                                    className="w-full pl-10 pr-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition placeholder:text-gold/30"
+   360→                                    placeholder="Enter your full address for the call-out" />
+   361→                                </div>
+   362→                              </div>
+   363→
+   364→                              {/* Call-Out Fee Summary */}
+   365→                              <div className="surface-raised rounded-xl p-4 border-pink-brand/20">
+   366→                                <div className="flex items-center gap-2 mb-3">
+   367→                                  <Car className="w-4 h-4 text-pink-brand" />
+   368→                                  <p className="text-xs font-semibold text-pink-brand tracking-wider">CALL-OUT FEE SUMMARY</p>
+   369→                                </div>
+   370→                                <div className="space-y-2 text-sm">
+   371→                                  <div className="flex justify-between">
+   372→                                    <span className="text-pink-glow/45">Service</span>
+   373→                                    <span className="text-white font-medium">{serviceOptions.find(s => s.value === formData.service)?.label.split('—')[0]?.trim() || 'Select a service'}</span>
+   374→                                  </div>
+   375→                                  <div className="flex justify-between">
+   376→                                    <span className="text-pink-glow/45">Service Price</span>
+   377→                                    <span className="text-white font-medium">K{servicePrices[formData.service] || 0}</span>
+   378→                                  </div>
+   379→                                  <div className="h-px bg-gold/10 my-1"></div>
+   380→                                  <div className="flex justify-between">
+   381→                                    <span className="text-pink-glow/45">Call-Out Fee</span>
+   382→                                    <span className="text-gold font-bold">{(() => { const z = calloutZones.find(z => z.id === formData.calloutZone); return z?.fee ? `K${z.fee}` : 'TBD'; })()}</span>
+   383→                                  </div>
+   384→                                  <div className="h-px bg-gold/10 my-1"></div>
+   385→                                  <div className="flex justify-between">
+   386→                                    <span className="text-white font-semibold">Estimated Total</span>
+   387→                                    <span className="text-gradient-gold font-bold">{(() => { const p = servicePrices[formData.service] || 0; const z = calloutZones.find(z => z.id === formData.calloutZone); const f = z?.fee || 0; return f > 0 ? `K${p + f}` : `K${p} + call-out fee`; })()}</span>
+   388→                                  </div>
+   389→                                </div>
+   390→                              </div>
+   391→                            </div>
+   392→                          </motion.div>
+   393→                        )}
+   394→                      </AnimatePresence>
+   395→
+   396→                      {/* Payment Method */}
+   397→                      <div>
+   398→                        <label className="block text-sm font-semibold text-white mb-3">Payment Method</label>
+   399→                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+   400→                          {paymentMethods.map((pm) => (
+   401→                            <button key={pm.id} type="button"
+   402→                              onClick={() => { setFormData(prev => ({ ...prev, paymentMethod: pm.id })); setShowPayment(pm.id !== 'cash'); }}
+   403→                              className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+   404→                                formData.paymentMethod === pm.id
+   405→                                  ? 'border-pink-brand bg-pink-brand/10'
+   406→                                  : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+   407→                              }`}
+   408→                            >
+   409→                              <pm.icon className={`w-4 h-4 mb-1.5 ${formData.paymentMethod === pm.id ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
+   410→                              <p className={`text-xs font-semibold ${formData.paymentMethod === pm.id ? 'text-pink-brand' : 'text-pink-glow/45'}`}>{pm.label}</p>
+   411→                              <p className="text-[10px] text-gold/40 mt-0.5 leading-tight">{pm.desc}</p>
+   412→                            </button>
+   413→                          ))}
+   414→                        </div>
+   415→                      </div>
+   416→
+   417→                      {/* Payment Panels */}
+   418→                      <AnimatePresence>
+   419→                        {showPayment && formData.paymentMethod === 'mobile_money' && (
+   420→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+   421→                            <div className="surface-raised rounded-xl p-5 space-y-4">
+   422→                              <p className="text-xs font-semibold text-pink-brand tracking-wider">MOBILE MONEY PAYMENT</p>
+   423→                              <div className="grid grid-cols-3 gap-3">
+   424→                                {[
+   425→                                  { name: 'MTN', number: '0777 123 456', color: 'border-yellow-500/30 bg-yellow-500/5' },
+   426→                                  { name: 'Airtel', number: '0977 123 456', color: 'border-red-500/30 bg-red-500/5' },
+   427→                                  { name: 'Zamtel', number: '0955 123 456', color: 'border-blue-500/30 bg-blue-500/5' },
+   428→                                ].map((network) => (
+   429→                                  <div key={network.name} className={`border rounded-lg p-3 text-center ${network.color}`}>
+   430→                                    <p className="text-xs font-bold text-white">{network.name}</p>
+   431→                                    <p className="text-[11px] text-pink-glow/35 mt-1">{network.number}</p>
+   432→                                  </div>
+   433→                                ))}
+   434→                              </div>
+   435→                              <p className="text-[11px] text-gold/50 body-serif font-light">Send payment using the reference code you receive after booking confirmation. Screenshot your payment receipt and send via WhatsApp.</p>
+   436→                            </div>
+   437→                          </motion.div>
+   438→                        )}
+   439→                        {showPayment && formData.paymentMethod === 'bank_transfer' && (
+   440→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+   441→                            <div className="surface-raised rounded-xl p-5 space-y-3">
+   442→                              <p className="text-xs font-semibold text-pink-brand tracking-wider">BANK TRANSFER DETAILS</p>
+   443→                              <div className="grid sm:grid-cols-2 gap-3 text-sm">
+   444→                                <div><span className="text-gold/50 text-xs">Bank:</span><p className="text-white font-medium">Stanbic Bank Zambia</p></div>
+   445→                                <div><span className="text-gold/50 text-xs">Account Name:</span><p className="text-white font-medium">Serenity Touch Spa Ltd</p></div>
+   446→                                <div><span className="text-gold/50 text-xs">Account Number:</span><p className="text-white font-medium font-mono">9030-XXXX-XXXX</p></div>
+   447→                                <div><span className="text-gold/50 text-xs">Branch:</span><p className="text-white font-medium">Ibex Hill, Lusaka</p></div>
+   448→                              </div>
+   449→                              <p className="text-[11px] text-gold/50 body-serif font-light">Use your booking ID as the payment reference. Send proof of payment via WhatsApp for confirmation.</p>
+   450→                            </div>
+   451→                          </motion.div>
+   452→                        )}
+   453→                        {showPayment && formData.paymentMethod === 'card' && (
+   454→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+   455→                            <div className="surface-raised rounded-xl p-5 space-y-3">
+   456→                              <p className="text-xs font-semibold text-pink-brand tracking-wider">ONLINE CARD PAYMENT</p>
+   457→                              <p className="text-sm text-pink-glow/35 body-serif font-light">After submitting your booking, you will receive a secure payment link via email and WhatsApp. We accept Visa and Mastercard.</p>
+   458→                              <div className="flex gap-2 items-center">
+   459→                                <div className="bg-gold/8 border border-gold/8 rounded-lg px-3 py-2 text-xs text-pink-glow/45">VISA</div>
+   460→                                <div className="bg-gold/8 border border-gold/8 rounded-lg px-3 py-2 text-xs text-pink-glow/45">MASTERCARD</div>
+   461→                                <div className="ml-auto flex items-center gap-1 text-[10px] text-gold/40">
+   462→                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+   463→                                  Secured by SSL
+   464→                                </div>
+   465→                              </div>
+   466→                            </div>
+   467→                          </motion.div>
+   468→                        )}
+   469→                      </AnimatePresence>
+   470→
+   471→                      <div>
+   472→                        <label className="block text-sm font-semibold text-white mb-2">Additional Notes</label>
+   473→                        <textarea name="message" value={formData.message} onChange={handleChange} rows={4} className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition resize-none placeholder:text-gold/30" placeholder="Any special requests or preferences?" />
+   474→                      </div>
+   475→
+   476→                      {status === 'error' && (
+   477→                        <div className="flex items-center gap-2 text-red-400 text-sm"><AlertCircle className="w-4 h-4" /><span>Something went wrong. Please try again.</span></div>
+   478→                      )}
+   479→
+   480→                      <div className="flex flex-col sm:flex-row gap-3">
+   481→                        <button type="submit" disabled={status === 'loading'} className="flex-1 btn-pink py-3.5 text-sm cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2">
+   482→                          {status === 'loading' ? (<><Loader2 className="w-4 h-4 animate-spin" />Processing...</>) : 'Request Booking'}
+   483→                        </button>
+   484→                        <button type="button" onClick={handleWhatsAppBooking} className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3.5 rounded-full text-sm font-semibold transition cursor-pointer">
+   485→                          <MessageCircle className="w-4 h-4" /> Book via WhatsApp
+   486→                        </button>
+   487→                      </div>
+   488→                    </motion.form>
+   489→                  )}
+   490→                </AnimatePresence>
+   491→              </div>
+   492→            </motion.div>
+   493→          </div>
+   494→        </div>
+   495→      </section>
+   496→
+   497→      <section className="section-padding section-dark">
+   498→        <div className="container-tinas max-w-3xl">
+   499→          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold text-center mb-12 heading-display">Frequently Asked <span className="text-pink-brand">Questions</span></motion.h2>
+   500→          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="space-y-3">
+   501→            {faqs.map((item, idx) => (
+   502→              <div key={idx} className="surface-raised rounded-xl overflow-hidden">
+   503→                <button onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)} className="w-full p-5 text-left flex items-center justify-between hover:bg-gold/[0.03] transition cursor-pointer">
+   504→                  <h3 className="font-bold text-[15px] heading-display pr-4 text-white">{item.q}</h3>
+   505→                  <svg className={`w-4 h-4 shrink-0 text-gold/40 transition-transform duration-300 ${expandedFaq === idx ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+   506→                </button>
+   507→                {expandedFaq === idx && (
+   508→                  <div className="px-5 pb-5 text-pink-glow/35 text-sm body-serif leading-relaxed border-t border-gold/8 pt-4 font-light">{item.a}</div>
+   509→                )}
+   510→              </div>
+   511→            ))}
+   512→          </motion.div>
+   513→        </div>
+   514→      </section>
+   515→
+   516→      <section className="section-padding gradient-sexy">
+   517→        <div className="container-tinas text-center">
+   518→          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-4xl md:text-5xl font-bold mb-6 heading-display">We look forward to <span className="text-gradient-sexy">welcoming</span> you</motion.h2>
+   519→          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif text-pink-glow/35 leading-relaxed font-light">Experience the transformation that awaits you at Serenity Touch Spa.</motion.p>
+   520→        </div>
+   521→      </section>
+   522→    </div>
+   523→  );
+   524→}

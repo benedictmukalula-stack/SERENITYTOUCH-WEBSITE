@@ -16,12 +16,15 @@ import BlogPage from '@/components/tinas/BlogPage';
 import ContactPage from '@/components/tinas/ContactPage';
 import MembershipPage from '@/components/tinas/MembershipPage';
 import LoginPage from '@/components/tinas/LoginPage';
+import MemberRegistration from '@/components/tinas/MemberRegistration';
 import MemberDashboard from '@/components/tinas/MemberDashboard';
+import AnalyticsDashboard from '@/components/tinas/AnalyticsDashboard';
 import AgeGate from '@/components/tinas/AgeGate';
 import WhatsAppButton from '@/components/tinas/WhatsAppButton';
 import BackToTop from '@/components/tinas/BackToTop';
 import PromoBanner from '@/components/tinas/PromoBanner';
 import NewsletterPopup from '@/components/tinas/NewsletterPopup';
+import MultilingualToggle from '@/components/tinas/MultilingualToggle';
 import { useAppStore } from '@/lib/store';
 
 const pageComponents: Record<string, React.ComponentType> = {
@@ -38,7 +41,9 @@ const pageComponents: Record<string, React.ComponentType> = {
   contact: ContactPage,
   membership: MembershipPage,
   login: LoginPage,
+  register: MemberRegistration,
   dashboard: MemberDashboard,
+  analytics: AnalyticsDashboard,
 };
 
 export default function AppPage() {
@@ -53,6 +58,7 @@ export default function AppPage() {
       {/* Main App */}
       <Navigation />
       <PromoBanner />
+      <MultilingualToggle />
       <main className="flex-1">
         <AnimatePresence mode="wait">
           <motion.div

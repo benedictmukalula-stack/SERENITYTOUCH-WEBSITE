@@ -1,8 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock, Loader2, CheckCircle, AlertCircle, MessageCircle, CreditCard, Building2, Smartphone, Home, Car, Navigation } from 'lucide-react';
+import {
+  MapPin, Phone, Mail, Clock, Loader2, CheckCircle, AlertCircle, MessageCircle,
+  CreditCard, Building2, Smartphone, Home, Car, Navigation,
+  ChevronLeft, ChevronRight, Calendar, ToggleLeft, ToggleRight,
+  Send, Bot, ExternalLink, Sparkles, Clock4, Zap, Footprints, Timer,
+} from 'lucide-react';
+
+/* ──────────────────────── animation variant ──────────────────────── */
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -11,6 +18,8 @@ const fadeUp = {
     transition: { delay: i * 0.08, duration: 0.6, ease: 'easeOut' },
   }),
 };
+
+/* ──────────────────────── static data ──────────────────────── */
 
 const contactInfo = [
   { icon: MapPin, label: 'Address', value: '183 Ibex Hill, Lusaka, Zambia', link: null },
@@ -67,6 +76,29 @@ const faqs = [
   { q: 'What payment methods do you accept?', a: 'We accept MTN Mobile Money, Airtel Money, Zamtel, bank EFT, Visa/Mastercard, and cash payments at the spa.' },
 ];
 
+/* ──────────────────────── treatment add-ons ──────────────────────── */
+
+const addonOptions = [
+  { id: 'aroma', name: 'Aromatherapy Upgrade', price: 150, icon: Sparkles, desc: 'Custom-blended essential oils to deepen your relaxation experience' },
+  { id: 'hotstone', name: 'Hot Stone Add-On', price: 200, icon: Zap, desc: 'Heated volcanic stones placed on key tension points' },
+  { id: 'scalp', name: 'Scalp Treatment', price: 100, icon: Clock4, desc: '15 min invigorating scalp massage with nourishing oils' },
+  { id: 'foot_reflex', name: 'Foot Reflexology', price: 150, icon: Footprints, desc: 'Targeted pressure point therapy for feet and lower legs' },
+  { id: 'extended', name: 'Extended Time 30min', price: 400, icon: Timer, desc: 'Add 30 extra minutes to any treatment session' },
+];
+
+/* ──────────────────────── time slots ──────────────────────── */
+
+const weekdaySlots = [
+  '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
+  '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM',
+];
+const saturdaySlots = [
+  '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM',
+  '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM',
+];
+
+/* ──────────────────────── helpers ──────────────────────── */
+
 function getServiceLabel(val: string) { return serviceOptions.find(s => s.value === val)?.label || val; }
 function getTherapistLabel(val: string) { return therapistOptions.find(t => t.value === val)?.label || val; }
 function getPaymentLabel(val: string) { return paymentMethods.find(p => p.id === val)?.label || val; }
@@ -76,11 +108,61 @@ function getCalloutLabel(val: string) {
   return z ? (z.fee > 0 ? `${z.label} (K${z.fee} call-out fee)` : `${z.label} (Custom quote)`) : val;
 }
 
+// Deterministic "booked" check for realistic slot availability
+function isSlotBooked(dateStr: string, time: string): boolean {
+  let hash = 0;
+  const str = dateStr + time;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash) % 5 === 0;
+}
+
+function formatDateDisplay(dateStr: string): string {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function formatCalendarMonth(year: number, month: number): string {
+  return new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+}
+
+function pad(n: number): string { return n < 10 ? `0${n}` : `${n}`; }
+
+function toDateString(year: number, month: number, day: number): string {
+  return `${year}-${pad(month + 1)}-${pad(day)}`;
+}
+
+function isSunday(year: number, month: number, day: number): boolean {
+  return new Date(year, month, day).getDay() === 0;
+}
+
+function isSameDay(dateStr: string, year: number, month: number, day: number): boolean {
+  return dateStr === toDateString(year, month, day);
+}
+
+function isToday(year: number, month: number, day: number): boolean {
+  const today = new Date();
+  return year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+}
+
+function isPastDate(year: number, month: number, day: number): boolean {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return new Date(year, month, day) < today;
+}
+
+/* ──────────────────────── WhatsApp message builder ──────────────────────── */
+
 function buildWhatsAppMessage(data: typeof defaultFormData): string {
   const lines = [
     `*Serenity Touch Spa — Booking Request*`, ``,
     `*Name:* ${data.name}`, `*Email:* ${data.email}`, `*Phone:* ${data.phone || 'Not provided'}`,
-    `*Date:* ${data.date}`, `*Service:* ${getServiceLabel(data.service)}`,
+    `*Date:* ${data.date ? formatDateDisplay(data.date) : 'Not selected'}`,
+    `*Time:* ${data.time || 'Not selected'}`,
+    `*Service:* ${getServiceLabel(data.service)}`,
     `*Booking Type:* ${data.bookingType === 'callout' ? 'Call-Out Service' : 'In-Spa'}`,
   ];
   if (data.bookingType === 'callout') {
@@ -98,7 +180,27 @@ function buildWhatsAppMessage(data: typeof defaultFormData): string {
   return encodeURIComponent(lines.join('\n'));
 }
 
-const defaultFormData = { name: '', email: '', phone: '', service: '', therapist: 'any', date: '', message: '', paymentMethod: 'cash', bookingType: 'in_spa', calloutZone: '', calloutAddress: '' };
+/* ──────────────────────── default form data ──────────────────────── */
+
+const defaultFormData = {
+  name: '', email: '', phone: '', service: '', therapist: 'any',
+  date: '', time: '', message: '', paymentMethod: 'cash',
+  bookingType: 'in_spa' as 'in_spa' | 'callout', calloutZone: '', calloutAddress: '',
+};
+
+/* ──────────────────────── WhatsApp quick reply templates ──────────────────────── */
+
+const whatsappTemplates = [
+  { trigger: 'hours', reply: 'Our hours: Mon-Fri 9AM-6PM, Sat 10AM-5PM, Sun Closed.' },
+  { trigger: 'services', reply: 'We offer Swedish, Deep Tissue, Thai, Aromatherapy, Pregnancy, Couples & more.' },
+  { trigger: 'prices', reply: 'Prices start from K400. Visit our website for the full price list.' },
+  { trigger: 'location', reply: 'We are at 183 Ibex Hill, Lusaka, Zambia.' },
+  { trigger: 'book', reply: 'To book, please fill out our online form or call +260 572 782 539.' },
+];
+
+/* ════════════════════════════════════════════════════════════════════
+   COMPONENT
+   ════════════════════════════════════════════════════════════════════ */
 
 export default function ContactPage() {
   const [formData, setFormData] = useState(defaultFormData);
@@ -107,6 +209,68 @@ export default function ContactPage() {
   const [showPayment, setShowPayment] = useState(false);
   const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
 
+  /* ── calendar state ── */
+  const today = useMemo(() => {
+    const t = new Date(); t.setHours(0, 0, 0, 0); return t;
+  }, []);
+  const [calendarYear, setCalendarYear] = useState(today.getFullYear());
+  const [calendarMonth, setCalendarMonth] = useState(today.getMonth());
+
+  /* ── integration UI state ── */
+  const [smsEnabled, setSmsEnabled] = useState(false);
+  const [smsPhone, setSmsPhone] = useState('');
+
+  /* ── add-on total ── */
+  const addonTotal = useMemo(() => {
+    let total = 0;
+    selectedAddons.forEach(id => {
+      const addon = addonOptions.find(a => a.id === id);
+      if (addon) total += addon.price;
+    });
+    return total;
+  }, [selectedAddons]);
+
+  /* ── calendar helpers ── */
+  const calendarDays = useMemo(() => {
+    const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+    // 0=Sun, 1=Mon, ..., 6=Sat — we want Mon first
+    let firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
+    const offset = firstDay === 0 ? 6 : firstDay - 1; // Mon=0 ... Sun=6
+    const days: (number | null)[] = [];
+    for (let i = 0; i < offset; i++) days.push(null);
+    for (let d = 1; d <= daysInMonth; d++) days.push(d);
+    return days;
+  }, [calendarYear, calendarMonth]);
+
+  const prevMonth = useCallback(() => {
+    setCalendarMonth(m => {
+      if (m === 0) { setCalendarYear(y => y - 1); return 11; }
+      return m - 1;
+    });
+  }, []);
+
+  const nextMonth = useCallback(() => {
+    setCalendarMonth(m => {
+      if (m === 11) { setCalendarYear(y => y + 1); return 0; }
+      return m + 1;
+    });
+  }, []);
+
+  const handleDateSelect = useCallback((day: number) => {
+    const ds = toDateString(calendarYear, calendarMonth, day);
+    setFormData(prev => ({ ...prev, date: ds, time: '' }));
+  }, [calendarYear, calendarMonth]);
+
+  /* ── time slots for selected date ── */
+  const timeSlots = useMemo(() => {
+    if (!formData.date) return [];
+    const d = new Date(formData.date + 'T00:00:00');
+    const day = d.getDay(); // 0=Sun
+    if (day === 0) return [];
+    return day === 6 ? saturdaySlots : weekdaySlots;
+  }, [formData.date]);
+
+  /* ── form handlers ── */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -115,10 +279,18 @@ export default function ContactPage() {
     e.preventDefault();
     setStatus('loading');
     try {
-      const res = await fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
+      const res = await fetch('/api/booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, addons: Array.from(selectedAddons) }),
+      });
       const data = await res.json();
-      if (data.success) { setStatus('success'); setFormData(defaultFormData); setShowPayment(false); }
-      else setStatus('error');
+      if (data.success) {
+        setStatus('success');
+        setFormData(defaultFormData);
+        setShowPayment(false);
+        setSelectedAddons(new Set());
+      } else setStatus('error');
     } catch { setStatus('error'); }
   };
 
@@ -127,18 +299,28 @@ export default function ContactPage() {
     window.open(`https://wa.me/260761404555?text=${msg}`, '_blank');
   };
 
+  /* ═══════════════════════ RENDER ═══════════════════════ */
+
   return (
     <div>
+      {/* ───────── Hero ───────── */}
       <section className="pt-32 pb-16 section-dark">
         <div className="container-tinas text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">Get in <span className="text-pink-brand">Touch</span></motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">Ready to relax to the experience? Book your first session with us.</motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">
+            Get in <span className="text-pink-brand">Touch</span>
+          </motion.h1>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">
+            Ready to relax to the experience? Book your first session with us.
+          </motion.p>
         </div>
       </section>
 
+      {/* ───────── Main: Contact Info + Booking Form ───────── */}
       <section className="section-padding surface-base">
         <div className="container-tinas">
           <div className="grid lg:grid-cols-3 gap-10 lg:gap-14 mb-20">
+
+            {/* ═══════ Left Column: Contact Info ═══════ */}
             <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0} className="lg:col-span-1">
               <h2 className="text-2xl font-bold mb-8 heading-display">Contact Information</h2>
               <div className="space-y-7">
@@ -156,26 +338,30 @@ export default function ContactPage() {
                   </div>
                 ))}
               </div>
-              <div className="mt-8 rounded-2xl overflow-hidden h-48 relative border border-gold/12">
-                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&q=60" alt="Map location" className="w-full h-full object-cover opacity-30" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="surface-raised rounded-xl px-4 py-3">
-                    <p className="text-xs font-semibold text-white">183 Ibex Hill, Lusaka</p>
-                    <p className="text-[10px] text-pink-brand/40">View in Google Maps</p>
-                  </div>
+
+              {/* ── Google Maps Embed ── */}
+              <div className="mt-8 surface-raised rounded-2xl overflow-hidden">
+                <div className="relative">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3878.5!2d28.3!3d-15.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sIbex+Hill+Lusaka+Zambia!5e0!3m2!1sen!2szm!4v1700000000000"
+                    width="100%" height="220"
+                    style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) brightness(0.8) contrast(1.2)' }}
+                    allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+                    title="Serenity Touch Spa Location"
+                  />
                 </div>
+                <a
+                  href="https://www.google.com/maps/dir/?api=1&destination=183+Ibex+Hill+Lusaka+Zambia"
+                  target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 px-4 py-3 border-t border-gold/10 text-sm text-gold hover:text-gold-light hover:bg-gold/[0.04] transition"
+                >
+                  <Navigation className="w-3.5 h-3.5" />
+                  Get Directions
+                  <ExternalLink className="w-3 h-3" />
+                </a>
               </div>
 
-              {/* Map */}
-              <div className="mt-6 surface-raised rounded-2xl overflow-hidden">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3878.5!2d28.3!3d-15.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sIbex+Hill+Lusaka+Zambia!5e0!3m2!1sen!2szm!4v1700000000000"
-                  width="100%" height="250" style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) brightness(0.8) contrast(1.2)' }}
-                  allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Serenity Touch Spa Location"
-                />
-              </div>
-
-              {/* Call-Out Fees Quick Reference */}
+              {/* ── Call-Out Fees Quick Reference ── */}
               <div className="mt-6 surface-raised rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <Car className="w-4 h-4 text-pink-brand" />
@@ -198,6 +384,7 @@ export default function ContactPage() {
               </div>
             </motion.div>
 
+            {/* ═══════ Right Column: Booking Form ═══════ */}
             <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1} className="lg:col-span-2">
               <div className="surface-raised rounded-2xl p-7 md:p-9 glow-gold">
                 <div className="flex items-center justify-between mb-6">
@@ -223,43 +410,165 @@ export default function ContactPage() {
                     </motion.div>
                   ) : (
                     <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onSubmit={handleSubmit} className="space-y-5">
+
+                      {/* ── Name & Email ── */}
                       <div className="grid sm:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-sm font-semibold text-white mb-2">Full Name *</label>
-                          <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition placeholder:text-gold/30" placeholder="Your name" />
+                          <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full input-dark" placeholder="Your name" />
                         </div>
                         <div>
                           <label className="block text-sm font-semibold text-white mb-2">Email *</label>
-                          <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition placeholder:text-gold/30" placeholder="your@email.com" />
+                          <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full input-dark" placeholder="your@email.com" />
                         </div>
                       </div>
+
+                      {/* ── Phone & Preferred Date (calendar trigger) ── */}
                       <div className="grid sm:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-sm font-semibold text-white mb-2">Phone</label>
-                          <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition placeholder:text-gold/30" placeholder="+260 XXX XXX XXX" />
+                          <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full input-dark" placeholder="+260 XXX XXX XXX" />
                         </div>
                         <div>
                           <label className="block text-sm font-semibold text-white mb-2">Preferred Date *</label>
-                          <input type="date" name="date" value={formData.date} onChange={handleChange} required className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition [color-scheme:dark]" />
+                          {/* Hidden native date input for form validation — the calendar UI sets the value */}
+                          <input type="hidden" name="date" value={formData.date} />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const el = document.getElementById('calendar-section');
+                              el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }}
+                            className="w-full input-dark text-left flex items-center gap-2 cursor-pointer"
+                          >
+                            <Calendar className="w-4 h-4 text-gold/50 shrink-0" />
+                            <span className={formData.date ? 'text-white' : 'placeholder:text-gold/30'}>
+                              {formData.date ? formatDateDisplay(formData.date) : 'Select a date from the calendar below'}
+                            </span>
+                          </button>
                         </div>
                       </div>
+
+                      {/* ═══════ FEATURE 1: Interactive Booking Calendar ═══════ */}
+                      <div id="calendar-section">
+                        <label className="block text-sm font-semibold text-white mb-3">Select Date</label>
+                        <div className="surface-raised rounded-2xl p-5">
+                          {/* Month Navigation */}
+                          <div className="flex items-center justify-between mb-4">
+                            <button type="button" onClick={prevMonth} className="p-2 rounded-lg hover:bg-gold/10 transition cursor-pointer text-gold/60 hover:text-gold">
+                              <ChevronLeft className="w-5 h-5" />
+                            </button>
+                            <span className="text-sm font-semibold text-white heading-display">
+                              {formatCalendarMonth(calendarYear, calendarMonth)}
+                            </span>
+                            <button type="button" onClick={nextMonth} className="p-2 rounded-lg hover:bg-gold/10 transition cursor-pointer text-gold/60 hover:text-gold">
+                              <ChevronRight className="w-5 h-5" />
+                            </button>
+                          </div>
+                          {/* Day Headers */}
+                          <div className="calendar-grid mb-1">
+                            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                              <div key={day} className="calendar-day-header">{day}</div>
+                            ))}
+                          </div>
+                          {/* Day Grid */}
+                          <div className="calendar-grid">
+                            {calendarDays.map((day, idx) => {
+                              if (day === null) return <div key={`empty-${idx}`} />;
+                              const disabled = isSunday(calendarYear, calendarMonth, day) || isPastDate(calendarYear, calendarMonth, day);
+                              const selected = isSameDay(formData.date, calendarYear, calendarMonth, day);
+                              const todayCls = isToday(calendarYear, calendarMonth, day);
+                              let cls = 'calendar-day';
+                              if (disabled) cls += ' disabled';
+                              if (selected) cls += ' selected';
+                              if (todayCls && !selected) cls += ' today';
+                              return (
+                                <div
+                                  key={day}
+                                  className={cls}
+                                  onClick={disabled ? undefined : () => handleDateSelect(day)}
+                                >
+                                  {day}
+                                </div>
+                              );
+                            })}
+                          </div>
+                          {/* Selected Date Display */}
+                          {formData.date && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="mt-4 flex items-center gap-2 text-sm"
+                            >
+                              <CheckCircle className="w-4 h-4 text-pink-brand" />
+                              <span className="text-pink-glow/70 body-serif font-light">
+                                Selected: <span className="text-white font-medium">{formatDateDisplay(formData.date)}</span>
+                              </span>
+                            </motion.div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* ═══════ FEATURE 2: Time Slot Picker ═══════ */}
+                      <AnimatePresence>
+                        {timeSlots.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <label className="block text-sm font-semibold text-white mb-3">Preferred Time</label>
+                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+                              {timeSlots.map(slot => {
+                                const booked = isSlotBooked(formData.date, slot);
+                                const selected = formData.time === slot;
+                                let cls = 'time-slot';
+                                if (booked) cls += ' disabled';
+                                if (selected) cls += ' selected';
+                                return (
+                                  <div
+                                    key={slot}
+                                    className={cls}
+                                    onClick={booked ? undefined : () => setFormData(prev => ({ ...prev, time: slot }))}
+                                  >
+                                    {slot}
+                                    {booked && <span className="block text-[9px] opacity-60 mt-0.5">Booked</span>}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            {formData.time && (
+                              <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="mt-2.5 text-xs text-pink-glow/50 body-serif font-light"
+                              >
+                                Time selected: <span className="text-white font-medium">{formData.time}</span>
+                              </motion.p>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* ── Service & Therapist ── */}
                       <div className="grid sm:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-sm font-semibold text-white mb-2">Service *</label>
-                          <select name="service" value={formData.service} onChange={handleChange} required className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-[#0a0508] focus:outline-none focus:border-gold text-sm text-white transition">
+                          <select name="service" value={formData.service} onChange={handleChange} required className="w-full input-dark">
                             <option value="">Select a treatment</option>
                             {serviceOptions.map((opt) => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}
                           </select>
                         </div>
                         <div>
                           <label className="block text-sm font-semibold text-white mb-2">Preferred Therapist</label>
-                          <select name="therapist" value={formData.therapist} onChange={handleChange} className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-[#0a0508] focus:outline-none focus:border-gold text-sm text-white transition">
+                          <select name="therapist" value={formData.therapist} onChange={handleChange} className="w-full input-dark">
                             {therapistOptions.map((opt) => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}
                           </select>
                         </div>
                       </div>
 
-                      {/* Booking Type — In-Spa vs Call-Out */}
+                      {/* ── Booking Type: In-Spa vs Call-Out ── */}
                       <div>
                         <label className="block text-sm font-semibold text-white mb-3">Booking Location</label>
                         <div className="grid grid-cols-2 gap-3">
@@ -290,42 +599,70 @@ export default function ContactPage() {
                         </div>
                       </div>
 
-                      {/* Treatment Add-Ons */}
+                      {/* ═══════ FEATURE 3: Treatment Add-Ons ═══════ */}
                       <div className="mb-6">
-                        <label className="text-xs font-semibold text-gold/50 tracking-wider uppercase mb-3 block">Enhance Your Experience (Optional)</label>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {[
-                            { id: 'scalp', name: 'Warm Oil Scalp Treatment', price: 'K200', desc: '15 min scalp massage with warm essential oils' },
-                            { id: 'hotstones', name: 'Hot Stone Upgrade', price: 'K300', desc: 'Add heated volcanic stones to any massage' },
-                            { id: 'aroma', name: 'Aromatherapy Upgrade', price: 'K150', desc: 'Custom-blended essential oils for your session' },
-                            { id: 'facial', name: 'Mini Facial Treatment', price: 'K250', desc: '15 min express facial with natural products' },
-                          ].map((addon) => (
-                            <button type="button" key={addon.id}
-                              onClick={() => {
-                                setSelectedAddons(prev => {
-                                  const next = new Set(prev);
-                                  if (next.has(addon.id)) next.delete(addon.id);
-                                  else next.add(addon.id);
-                                  return next;
-                                });
-                              }}
-                              className={`p-4 rounded-xl border text-left transition-all cursor-pointer group ${
-                                selectedAddons.has(addon.id)
-                                  ? 'border-pink-brand bg-pink-brand/[0.08]'
-                                  : 'border-gold/12 bg-gold/[0.02] hover:border-gold/25'
-                              }`}
-                            >
-                              <div className="flex items-center justify-between mb-1">
-                                <span className={`text-sm font-semibold group-hover:text-gold transition-colors ${selectedAddons.has(addon.id) ? 'text-pink-brand' : 'text-white'}`}>{addon.name}</span>
-                                <span className="text-sm font-bold text-gold">+{addon.price}</span>
-                              </div>
-                              <p className="text-[11px] text-pink-glow/35">{addon.desc}</p>
-                            </button>
-                          ))}
+                        <div className="flex items-center justify-between mb-3">
+                          <label className="text-xs font-semibold text-gold/50 tracking-wider uppercase">Enhance Your Experience</label>
+                          {addonTotal > 0 && (
+                            <span className="badge-new">
+                              <Sparkles className="w-3 h-3" />
+                              +K{addonTotal.toLocaleString()} total
+                            </span>
+                          )}
                         </div>
+                        <div className="space-y-2.5">
+                          {addonOptions.map((addon) => {
+                            const isSelected = selectedAddons.has(addon.id);
+                            return (
+                              <button type="button" key={addon.id}
+                                onClick={() => {
+                                  setSelectedAddons(prev => {
+                                    const next = new Set(prev);
+                                    if (next.has(addon.id)) next.delete(addon.id);
+                                    else next.add(addon.id);
+                                    return next;
+                                  });
+                                }}
+                                className={`w-full p-4 rounded-xl border text-left transition-all cursor-pointer group flex items-start gap-4 ${
+                                  isSelected
+                                    ? 'border-pink-brand bg-pink-brand/[0.08]'
+                                    : 'border-gold/12 bg-gold/[0.02] hover:border-gold/25'
+                                }`}
+                              >
+                                {/* Checkbox indicator */}
+                                <div className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+                                  isSelected
+                                    ? 'border-pink-brand bg-pink-brand'
+                                    : 'border-gold/25 group-hover:border-gold/40'
+                                }`}>
+                                  {isSelected && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className={`text-sm font-semibold group-hover:text-gold transition-colors ${isSelected ? 'text-pink-brand' : 'text-white'}`}>
+                                      {addon.name}
+                                    </span>
+                                    <span className="text-sm font-bold text-gold shrink-0 ml-3">+K{addon.price}</span>
+                                  </div>
+                                  <p className="text-[11px] text-pink-glow/35 leading-relaxed">{addon.desc}</p>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        {addonTotal > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-3 surface-raised rounded-xl p-4 flex items-center justify-between"
+                          >
+                            <span className="text-xs text-pink-glow/45">Add-Ons Total</span>
+                            <span className="text-gradient-gold font-bold text-lg heading-display">K{addonTotal.toLocaleString()}</span>
+                          </motion.div>
+                        )}
                       </div>
 
-                      {/* Call-Out Zone Selection */}
+                      {/* ── Call-Out Zone Selection ── */}
                       <AnimatePresence>
                         {formData.bookingType === 'callout' && (
                           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
@@ -355,9 +692,7 @@ export default function ContactPage() {
                                 <label className="block text-sm font-semibold text-white mb-2">Your Address *</label>
                                 <div className="relative">
                                   <Navigation className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
-                                  <input type="text" name="calloutAddress" value={formData.calloutAddress} onChange={handleChange}
-                                    className="w-full pl-10 pr-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition placeholder:text-gold/30"
-                                    placeholder="Enter your full address for the call-out" />
+                                  <input type="text" name="calloutAddress" value={formData.calloutAddress} onChange={handleChange} className="w-full pl-10 input-dark" placeholder="Enter your full address for the call-out" />
                                 </div>
                               </div>
 
@@ -376,6 +711,12 @@ export default function ContactPage() {
                                     <span className="text-pink-glow/45">Service Price</span>
                                     <span className="text-white font-medium">K{servicePrices[formData.service] || 0}</span>
                                   </div>
+                                  {addonTotal > 0 && (
+                                    <div className="flex justify-between">
+                                      <span className="text-pink-glow/45">Add-Ons</span>
+                                      <span className="text-white font-medium">K{addonTotal.toLocaleString()}</span>
+                                    </div>
+                                  )}
                                   <div className="h-px bg-gold/10 my-1"></div>
                                   <div className="flex justify-between">
                                     <span className="text-pink-glow/45">Call-Out Fee</span>
@@ -384,7 +725,7 @@ export default function ContactPage() {
                                   <div className="h-px bg-gold/10 my-1"></div>
                                   <div className="flex justify-between">
                                     <span className="text-white font-semibold">Estimated Total</span>
-                                    <span className="text-gradient-gold font-bold">{(() => { const p = servicePrices[formData.service] || 0; const z = calloutZones.find(z => z.id === formData.calloutZone); const f = z?.fee || 0; return f > 0 ? `K${p + f}` : `K${p} + call-out fee`; })()}</span>
+                                    <span className="text-gradient-gold font-bold">{(() => { const p = (servicePrices[formData.service] || 0) + addonTotal; const z = calloutZones.find(z => z.id === formData.calloutZone); const f = z?.fee || 0; return f > 0 ? `K${(p + f).toLocaleString()}` : `K${p.toLocaleString()} + call-out fee`; })()}</span>
                                   </div>
                                 </div>
                               </div>
@@ -393,7 +734,7 @@ export default function ContactPage() {
                         )}
                       </AnimatePresence>
 
-                      {/* Payment Method */}
+                      {/* ── Payment Method ── */}
                       <div>
                         <label className="block text-sm font-semibold text-white mb-3">Payment Method</label>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -414,7 +755,7 @@ export default function ContactPage() {
                         </div>
                       </div>
 
-                      {/* Payment Panels */}
+                      {/* ── Payment Panels ── */}
                       <AnimatePresence>
                         {showPayment && formData.paymentMethod === 'mobile_money' && (
                           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
@@ -468,15 +809,21 @@ export default function ContactPage() {
                         )}
                       </AnimatePresence>
 
+                      {/* ── Additional Notes ── */}
                       <div>
                         <label className="block text-sm font-semibold text-white mb-2">Additional Notes</label>
-                        <textarea name="message" value={formData.message} onChange={handleChange} rows={4} className="w-full px-4 py-3 border border-gold/15 rounded-xl bg-gold/8 focus:outline-none focus:border-pink-brand text-sm text-white transition resize-none placeholder:text-gold/30" placeholder="Any special requests or preferences?" />
+                        <textarea name="message" value={formData.message} onChange={handleChange} rows={4} className="w-full input-dark resize-none" placeholder="Any special requests or preferences?" />
                       </div>
 
+                      {/* ── Error ── */}
                       {status === 'error' && (
-                        <div className="flex items-center gap-2 text-red-400 text-sm"><AlertCircle className="w-4 h-4" /><span>Something went wrong. Please try again.</span></div>
+                        <div className="flex items-center gap-2 text-red-400 text-sm">
+                          <AlertCircle className="w-4 h-4" />
+                          <span>Something went wrong. Please try again.</span>
+                        </div>
                       )}
 
+                      {/* ── Submit Buttons ── */}
                       <div className="flex flex-col sm:flex-row gap-3">
                         <button type="submit" disabled={status === 'loading'} className="flex-1 btn-pink py-3.5 text-sm cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2">
                           {status === 'loading' ? (<><Loader2 className="w-4 h-4 animate-spin" />Processing...</>) : 'Request Booking'}
@@ -489,14 +836,143 @@ export default function ContactPage() {
                   )}
                 </AnimatePresence>
               </div>
+
+              {/* ═══════ FEATURE 5: SMS & WhatsApp Business Integration UI ═══════ */}
+              <div className="mt-10 grid sm:grid-cols-2 gap-6">
+                {/* Africa's Talking SMS Card */}
+                <motion.div
+                  initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
+                  className="surface-raised rounded-2xl p-6"
+                >
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 rounded-xl bg-pink-brand/10 flex items-center justify-center">
+                      <Send className="w-5 h-5 text-pink-brand" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-white">Africa&apos;s Talking SMS</h3>
+                      <p className="text-[11px] text-gold/40">Booking confirmations via SMS</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {/* Phone Input for SMS */}
+                    <div>
+                      <label className="block text-xs font-semibold text-pink-glow/45 mb-2">SMS Phone Number</label>
+                      <input
+                        type="tel"
+                        value={smsPhone}
+                        onChange={e => setSmsPhone(e.target.value)}
+                        className="w-full input-dark"
+                        placeholder="+260 XXX XXX XXX"
+                      />
+                    </div>
+
+                    {/* Toggle for SMS confirmation */}
+                    <button
+                      type="button"
+                      onClick={() => setSmsEnabled(!smsEnabled)}
+                      className="w-full flex items-center justify-between p-4 rounded-xl border border-gold/12 bg-gold/[0.02] hover:border-gold/25 transition cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className={`text-xs font-semibold ${smsEnabled ? 'text-pink-brand' : 'text-pink-glow/45'}`}>
+                          Send booking confirmation via SMS
+                        </span>
+                      </div>
+                      {smsEnabled ? (
+                        <ToggleRight className="w-7 h-7 text-pink-brand" />
+                      ) : (
+                        <ToggleLeft className="w-7 h-7 text-gold/25" />
+                      )}
+                    </button>
+
+                    {/* SMS status indicator */}
+                    <div className="flex items-center gap-2 text-[11px]">
+                      <div className={`w-2 h-2 rounded-full ${smsEnabled ? 'bg-emerald-400' : 'bg-gold/20'}`} />
+                      <span className={smsEnabled ? 'text-emerald-400/70' : 'text-gold/30'}>
+                        {smsEnabled ? 'SMS confirmations enabled' : 'SMS confirmations disabled'}
+                      </span>
+                    </div>
+
+                    {smsEnabled && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="surface-raised rounded-lg p-3 text-[11px] text-pink-glow/35 body-serif font-light leading-relaxed"
+                      >
+                        Booking confirmations will be sent to <span className="text-white font-medium">{smsPhone || 'your phone number'}</span> via Africa&apos;s Talking API. Standard SMS rates apply.
+                      </motion.div>
+                    )}
+                  </div>
+                </motion.div>
+
+                {/* WhatsApp Business API Card */}
+                <motion.div
+                  initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1}
+                  className="surface-raised rounded-2xl p-6"
+                >
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 rounded-xl bg-green-600/10 flex items-center justify-center">
+                      <Bot className="w-5 h-5 text-green-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-white">WhatsApp Business API</h3>
+                      <p className="text-[11px] text-gold/40">Automated customer engagement</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {/* Auto-reply Status */}
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-green-500/15 bg-green-500/[0.03]">
+                      <div className="flex items-center gap-3">
+                        <div className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse" />
+                        <div>
+                          <p className="text-xs font-semibold text-green-400">Auto-reply enabled</p>
+                          <p className="text-[10px] text-gold/35 mt-0.5">Instant responses to customer queries</p>
+                        </div>
+                      </div>
+                      <span className="badge-sexy text-[10px] px-2 py-1">Active</span>
+                    </div>
+
+                    {/* Quick Reply Templates */}
+                    <div>
+                      <label className="block text-xs font-semibold text-pink-glow/45 mb-3">Quick Reply Templates</label>
+                      <div className="space-y-2 max-h-48 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
+                        {whatsappTemplates.map((tpl) => (
+                          <div key={tpl.trigger} className="rounded-lg border border-gold/8 bg-gold/[0.02] p-3">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[10px] font-mono text-pink-brand bg-pink-brand/10 px-1.5 py-0.5 rounded">
+                                /{tpl.trigger}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-pink-glow/35 leading-relaxed">{tpl.reply}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Test Bot Button */}
+                    <button
+                      type="button"
+                      onClick={() => window.open('https://wa.me/260761404555?text=Hi%2C%20I%27d%20like%20to%20test%20the%20WhatsApp%20bot.', '_blank')}
+                      className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-xs font-semibold transition cursor-pointer"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      Test WhatsApp Bot
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
+      {/* ───────── FAQ Section ───────── */}
       <section className="section-padding section-dark">
         <div className="container-tinas max-w-3xl">
-          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold text-center mb-12 heading-display">Frequently Asked <span className="text-pink-brand">Questions</span></motion.h2>
+          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold text-center mb-12 heading-display">
+            Frequently Asked <span className="text-pink-brand">Questions</span>
+          </motion.h2>
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="space-y-3">
             {faqs.map((item, idx) => (
               <div key={idx} className="surface-raised rounded-xl overflow-hidden">
@@ -513,10 +989,15 @@ export default function ContactPage() {
         </div>
       </section>
 
+      {/* ───────── Closing CTA ───────── */}
       <section className="section-padding gradient-sexy">
         <div className="container-tinas text-center">
-          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-4xl md:text-5xl font-bold mb-6 heading-display">We look forward to <span className="text-gradient-sexy">welcoming</span> you</motion.h2>
-          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif text-pink-glow/35 leading-relaxed font-light">Experience the transformation that awaits you at Serenity Touch Spa.</motion.p>
+          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-4xl md:text-5xl font-bold mb-6 heading-display">
+            We look forward to <span className="text-gradient-sexy">welcoming</span> you
+          </motion.h2>
+          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif text-pink-glow/35 leading-relaxed font-light">
+            Experience the transformation that awaits you at Serenity Touch Spa.
+          </motion.p>
         </div>
       </section>
     </div>

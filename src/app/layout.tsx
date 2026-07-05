@@ -81,6 +81,42 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "HealthAndBeautyBusiness",
+              "name": "Serenity Touch Spa",
+              "description": "Lusaka's premier luxury wellness spa. 11 therapeutic treatments, signature packages, corporate wellness programs, and membership plans.",
+              "url": "https://serenitytouch.co.zm",
+              "telephone": "+260572782539",
+              "email": "info@serenitytouch.co.zm",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "183 Ibex Hill",
+                "addressLocality": "Lusaka",
+                "addressCountry": "ZM"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": -15.4167,
+                "longitude": 28.2833
+              },
+              "openingHoursSpecification": [
+                { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "18:00" },
+                { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:00", "closes": "17:00" }
+              ],
+              "priceRange": "K400-K6000",
+              "image": "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=1200&q=80",
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.9",
+                "reviewCount": "2500"
+              }
+            })
+          }}
+        />
       </head>
       <body
         className={`${playfair.variable} ${inter.variable} ${cormorant.variable} antialiased bg-background text-foreground`}

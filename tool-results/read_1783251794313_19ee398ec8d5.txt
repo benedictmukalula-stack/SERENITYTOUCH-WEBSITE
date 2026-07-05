@@ -1,0 +1,563 @@
+     1→     1→'use client';
+     2→     2→
+     3→     3→import { motion } from 'framer-motion';
+     4→     4→import { ChevronRight, ChevronLeft, Star, ArrowRight } from 'lucide-react';
+     5→     5→import { useState, useEffect, useCallback } from 'react';
+     6→     6→import { useAppStore } from '@/lib/store';
+     7→     7→
+     8→     8→const fadeUp = {
+     9→     9→  hidden: { opacity: 0, y: 30 },
+    10→    10→  visible: (i: number) => ({
+    11→    11→    opacity: 1,
+    12→    12→    y: 0,
+    13→    13→    transition: { delay: i * 0.1, duration: 0.6, ease: 'easeOut' },
+    14→    14→  }),
+    15→    15→};
+    16→    16→
+    17→    17→const testimonials = [
+    18→    18→  { text: "Serenity Touch Spa is my go-to wellness destination. The deep tissue massage was exactly what I needed after weeks of stress. Truly world-class.", author: 'Chipo Mwale', location: 'Lusaka', rating: 5 },
+    19→    19→  { text: 'The hot stone therapy was incredible. I left feeling completely rejuvenated. The ambiance, the service, everything was perfect. Highly recommend.', author: 'Bwalya Nkomo', location: 'Kitwe', rating: 5 },
+    20→    20→  { text: "Patricia's aromatherapy session was a beautiful, calming experience. The essential oils were divine and the technique was flawless. I'll be back.", author: 'Grace Banda', location: 'Lusaka', rating: 5 },
+    21→    21→  { text: 'Professional, luxurious, and deeply relaxing. I recommend Serenity Touch Spa to anyone seeking genuine, world-class pampering in Lusaka.', author: 'Patricia Mulenga', location: 'Lusaka', rating: 5 },
+    22→    22→];
+    23→    23→
+    24→    24→const faqItems = [
+    25→    25→  { question: "What makes Serenity Touch Spa special?", answer: "Certified expertise meets luxurious comfort. Our private suites, premium products, and personalised treatments create a wellness experience that goes beyond ordinary massage." },
+    26→    26→  { question: 'How do I book?', answer: 'Book through our form, call +260 572 782 539, or message us on WhatsApp at +260 761 404 555. Gold and Platinum members enjoy priority booking through our dedicated concierge.' },
+    27→    27→  { question: 'What is your cancellation policy?', answer: "24-hour notice for full refund. Within 24 hours: 50% fee. No-shows charged in full. We respect your time and our therapists' schedules." },
+    28→    28→  { question: 'Are your therapists certified?', answer: 'Every therapist holds international certifications and is trained in the most advanced therapeutic techniques. Excellence and professionalism are our standards.' },
+    29→    29→  { question: 'What should I bring?', answer: 'Nothing but yourself. We provide everything — fresh linens, premium oils, and a serene environment. Just arrive 10 minutes early for your wellness consultation.' },
+    30→    30→];
+    31→    31→
+    32→    32→const whyMembers = [
+    33→    33→  { title: 'Expert Therapists', desc: 'Internationally certified therapists trained in the most advanced wellness techniques.' },
+    34→    34→  { title: 'Private & Peaceful', desc: 'Private treatment suites designed for your absolute comfort and tranquility.' },
+    35→    35→  { title: 'Personalised Treatments', desc: 'Every treatment is tailored to your body, your needs, and your wellness goals.' },
+    36→    36→  { title: 'Dedicated Concierge', desc: 'Gold and Platinum members get a direct WhatsApp line for priority booking.' },
+    37→    37→  { title: 'Premium Products', desc: 'Locally-sourced essential oils and internationally acclaimed wellness products.' },
+    38→    38→  { title: 'Attention to Detail', desc: 'Every detail — from room temperature to ambient scent — is carefully considered.' },
+    39→    39→];
+    40→    40→
+    41→    41→const membershipPlans = [
+    42→    42→  { name: 'Silver', tagline: 'A taste of wellness', price: 'K800', features: ['1 massage per month', '10% off additional services', 'Priority booking', 'Birthday treat', 'Access to member lounge'], popular: false },
+    43→    43→  { name: 'Gold', tagline: 'For the dedicated', price: 'K1,600', features: ['2 massages per month', '20% off all services', 'VIP booking', 'Free aromatherapy upgrade', 'Quarterly wellness consult', 'Guest privileges', 'WhatsApp concierge', 'Exclusive events access'], popular: true },
+    44→    44→  { name: 'Platinum', tagline: 'The ultimate experience', price: 'K3,200', features: ['Unlimited massages', '30% off everything', '24/7 concierge', 'Personal wellness plan', 'Private therapy suite', 'Monthly spa day', 'Home visit service', 'Airport pickup', 'Priority WhatsApp line', 'Annual retreat invitation'], popular: false },
+    45→    45→];
+    46→    46→
+    47→    47→export default function HomePage() {
+    48→    48→  const { navigate } = useAppStore();
+    49→    49→  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+    50→    50→  const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
+    51→    51→
+    52→    52→  const nextTestimonial = useCallback(() => {
+    53→    53→    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    54→    54→  }, []);
+    55→    55→
+    56→    56→  const prevTestimonial = useCallback(() => {
+    57→    57→    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+    58→    58→  }, []);
+    59→    59→
+    60→    60→  useEffect(() => {
+    61→    61→    const timer = setInterval(nextTestimonial, 6000);
+    62→    62→    return () => clearInterval(timer);
+    63→    63→  }, [nextTestimonial]);
+    64→    64→
+    65→    65→  return (
+    66→    66→    <div>
+    67→    67→      {/* ===== HERO SECTION ===== */}
+    68→    68→      <section className="relative min-h-screen flex items-center overflow-hidden">
+    69→    69→        {/* Background image — dark, moody spa */}
+    70→    70→        <div
+    71→    71→          className="absolute inset-0 z-0"
+    72→    72→          style={{
+    73→    73→            backgroundImage: 'url(https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=1920&q=80)',
+    74→    74→            backgroundSize: 'cover',
+    75→    75→            backgroundPosition: 'center 30%',
+    76→    76→          }}
+    77→    77→        />
+    78→    78→        {/* Dark gradient overlay with pink-gold tint */}
+    79→    79→        <div className="absolute inset-0 z-[1]" style={{ background: 'linear-gradient(160deg, rgba(0,0,0,0.82) 0%, rgba(10,5,8,0.6) 35%, rgba(173,20,87,0.15) 70%, rgba(212,175,55,0.08) 100%)' }} />
+    80→    80→        {/* Bottom fade to black */}
+    81→    81→        <div className="absolute bottom-0 left-0 right-0 h-48 z-[2]" style={{ background: 'linear-gradient(to top, #000000, transparent)' }} />
+    82→    82→        {/* Top ambient glow */}
+    83→    83→        <div className="absolute top-0 left-1/3 w-[600px] h-[600px] z-[1] rounded-full" style={{ background: 'radial-gradient(circle, rgba(233,30,99,0.06) 0%, transparent 70%)' }} />
+    84→    84→        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] z-[1] rounded-full" style={{ background: 'radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%)' }} />
+    85→    85→
+    86→    86→        <div className="container-tinas relative z-10 text-center py-32">
+    87→    87→          {/* Badge */}
+    88→    88→          <motion.div
+    89→    89→            initial={{ opacity: 0, y: 20 }}
+    90→    90→            animate={{ opacity: 1, y: 0 }}
+    91→    91→            transition={{ duration: 0.8 }}
+    92→    92→            className="mb-8 inline-block"
+    93→    93→          >
+    94→    94→            <div className="badge-sexy">
+    95→    95→              <span className="w-1.5 h-1.5 rounded-full bg-pink-brand inline-block" />
+    96→    96→              LUSAKA&apos;S PREMIER LUXURY SPA
+    97→    97→            </div>
+    98→    98→          </motion.div>
+    99→    99→
+   100→   100→          {/* Heading */}
+   101→   101→          <motion.h1
+   102→   102→            initial={{ opacity: 0, y: 30 }}
+   103→   103→            animate={{ opacity: 1, y: 0 }}
+   104→   104→            transition={{ duration: 0.8, delay: 0.2 }}
+   105→   105→            className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-semibold mb-6 leading-[1.05] heading-display text-shadow-sexy"
+   106→   106→          >
+   107→   107→            <span className="text-gradient-sexy">Relax</span>{' '}
+   108→   108→            <span className="text-white">• Restore</span>{' '}
+   109→   109→            <span className="text-gradient-gold">• Rejuvenate</span>
+   110→   110→          </motion.h1>
+   111→   111→
+   112→   112→          {/* Subheading */}
+   113→   113→          <motion.p
+   114→   114→            initial={{ opacity: 0, y: 30 }}
+   115→   115→            animate={{ opacity: 1, y: 0 }}
+   116→   116→            transition={{ duration: 0.8, delay: 0.4 }}
+   117→   117→            className="text-lg sm:text-xl text-pink-glow/60 max-w-2xl mx-auto mb-10 body-serif leading-relaxed font-light"
+   118→   118→          >
+   119→   119→            Serenity Touch Spa is a premium wellness destination in Ibex Hill, Lusaka — where certified therapists, warm oils, and tranquil suites deliver the finest therapeutic experience.
+   120→   120→          </motion.p>
+   121→   121→
+   122→   122→          {/* CTA Buttons */}
+   123→   123→          <motion.div
+   124→   124→            initial={{ opacity: 0, y: 30 }}
+   125→   125→            animate={{ opacity: 1, y: 0 }}
+   126→   126→            transition={{ duration: 0.8, delay: 0.6 }}
+   127→   127→            className="flex flex-col sm:flex-row gap-4 justify-center"
+   128→   128→          >
+   129→   129→            <button
+   130→   130→              onClick={() => navigate('contact')}
+   131→   131→              className="btn-pink px-8 py-3.5 text-sm font-semibold cursor-pointer"
+   132→   132→            >
+   133→   133→              Book Appointment
+   134→   134→            </button>
+   135→   135→            <button
+   136→   136→              onClick={() => navigate('services')}
+   137→   137→              className="btn-outline-gold px-8 py-3.5 text-sm font-semibold cursor-pointer"
+   138→   138→            >
+   139→   139→              Explore Our Treatments
+   140→   140→            </button>
+   141→   141→          </motion.div>
+   142→   142→
+   143→   143→          {/* Scroll indicator */}
+   144→   144→          <motion.div
+   145→   145→            initial={{ opacity: 0 }}
+   146→   146→            animate={{ opacity: 1 }}
+   147→   147→            transition={{ delay: 1.2 }}
+   148→   148→            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+   149→   149→          >
+   150→   150→            <div className="w-6 h-10 border-2 border-gold/20 rounded-full flex justify-center pt-2">
+   151→   151→              <motion.div
+   152→   152→                animate={{ y: [0, 8, 0] }}
+   153→   153→                transition={{ repeat: Infinity, duration: 1.5 }}
+   154→   154→                className="w-1.5 h-1.5 bg-pink-brand rounded-full"
+   155→   155→              />
+   156→   156→            </div>
+   157→   157→          </motion.div>
+   158→   158→        </div>
+   159→   159→      </section>
+   160→   160→
+   161→   161→      {/* ===== SIGNATURE TREATMENTS ===== */}
+   162→   162→      <section className="section-padding section-dark">
+   163→   163→        <div className="container-tinas">
+   164→   164→          <motion.div
+   165→   165→            initial="hidden"
+   166→   166→            whileInView="visible"
+   167→   167→            viewport={{ once: true, margin: '-50px' }}
+   168→   168→            className="text-center mb-16"
+   169→   169→          >
+   170→   170→            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.25em] text-pink-brand/50 mb-4 heading-display uppercase">
+   171→   171→              Signature Treatments
+   172→   172→            </motion.p>
+   173→   173→            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-semibold mb-4 heading-display">
+   174→   174→              Designed for <span className="text-pink-brand">Wellness</span>
+   175→   175→            </motion.h2>
+   176→   176→            <motion.p variants={fadeUp} custom={2} className="text-pink-glow/40 max-w-2xl mx-auto body-serif text-lg font-light">
+   177→   177→              Every treatment is a crafted experience — from the oils blended in-house to the temperature of the silk against your skin.
+   178→   178→            </motion.p>
+   179→   179→          </motion.div>
+   180→   180→
+   181→   181→          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+   182→   182→            {[
+   183→   183→              { duration: '60 min', name: 'Swedish Massage', desc: 'Long, flowing strokes that melt away the world. Full-body relaxation that leaves you floating.', price: 'K800', img: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80' },
+   184→   184→              { duration: '90 min', name: 'Deep Tissue Massage', desc: 'Intense, deliberate pressure that targets your deepest tension. For those who seek release.', price: 'K1,200', img: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=600&q=80' },
+   185→   185→              { duration: '75 min', name: 'Hot Stone Therapy', desc: 'Heated stones glide across your body, melting resistance and inducing deep, euphoric relaxation.', price: 'K1,000', img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80' },
+   186→   186→            ].map((service, idx) => (
+   187→   187→              <motion.div
+   188→   188→                key={service.name}
+   189→   189→                initial="hidden"
+   190→   190→                whileInView="visible"
+   191→   191→                viewport={{ once: true, margin: '-30px' }}
+   192→   192→                variants={fadeUp}
+   193→   193→                custom={idx}
+   194→   194→              >
+   195→   195→                <div className="group surface-raised rounded-2xl overflow-hidden hover:border-pink-brand/25 transition-all duration-500 h-full">
+   196→   196→                  <div className="h-48 relative overflow-hidden">
+   197→   197→                    <img src={service.img} alt={service.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-50 group-hover:opacity-60" />
+   198→   198→                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508] via-[#0a0508]/40 to-transparent" />
+   199→   199→                  </div>
+   200→   200→                  <div className="p-7">
+   201→   201→                    <p className="text-[10px] tracking-[0.2em] text-gold/60 mb-2 uppercase">{service.duration}</p>
+   202→   202→                    <h3 className="text-xl font-semibold mb-3 heading-display">{service.name}</h3>
+   203→   203→                    <p className="text-pink-glow/35 mb-6 text-sm body-serif leading-relaxed font-light">{service.desc}</p>
+   204→   204→                    <div className="flex items-center justify-between mt-auto">
+   205→   205→                      <span className="text-2xl font-semibold text-gradient-gold">{service.price}</span>
+   206→   206→                      <button
+   207→   207→                        onClick={() => navigate('services')}
+   208→   208→                        className="text-sm text-pink-brand/50 hover:text-pink-brand transition-colors flex items-center gap-1 cursor-pointer"
+   209→   209→                      >
+   210→   210→                        Discover <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+   211→   211→                      </button>
+   212→   212→                    </div>
+   213→   213→                  </div>
+   214→   214→                </div>
+   215→   215→              </motion.div>
+   216→   216→            ))}
+   217→   217→          </div>
+   218→   218→        </div>
+   219→   219→      </section>
+   220→   220→
+   221→   221→      {/* Gold-Pink Divider */}
+   222→   222→      <div className="divider-sexy" />
+   223→   223→
+   224→   224→      {/* ===== WHY MEMBERS CHOOSE US ===== */}
+   225→   225→      <section className="section-padding gradient-sexy">
+   226→   226→        <div className="container-tinas">
+   227→   227→          <motion.div
+   228→   228→            initial="hidden"
+   229→   229→            whileInView="visible"
+   230→   230→            viewport={{ once: true, margin: '-50px' }}
+   231→   231→            className="text-center mb-16"
+   232→   232→          >
+   233→   233→            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-semibold heading-display">
+   234→   234→              Why Our <span className="text-pink-brand">Guests Return</span>
+   235→   235→            </motion.h2>
+   236→   236→          </motion.div>
+   237→   237→
+   238→   238→          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
+   239→   239→            {whyMembers.map((item, idx) => (
+   240→   240→              <motion.div
+   241→   241→                key={item.title}
+   242→   242→                initial="hidden"
+   243→   243→                whileInView="visible"
+   244→   244→                viewport={{ once: true, margin: '-30px' }}
+   245→   245→                variants={fadeUp}
+   246→   246→                custom={idx}
+   247→   247→              >
+   248→   248→                <div className="group">
+   249→   249→                  <div className="w-10 h-10 rounded-full bg-pink-brand/8 border border-pink-brand/15 flex items-center justify-center mb-4 group-hover:bg-pink-brand/15 group-hover:border-pink-brand/25 transition-all">
+   250→   250→                    <span className="text-gold text-sm">&#10022;</span>
+   251→   251→                  </div>
+   252→   252→                  <h3 className="text-lg font-semibold mb-2.5 heading-display">{item.title}</h3>
+   253→   253→                  <p className="text-pink-glow/35 text-sm body-serif leading-relaxed font-light">{item.desc}</p>
+   254→   254→                </div>
+   255→   255→              </motion.div>
+   256→   256→            ))}
+   257→   257→          </div>
+   258→   258→        </div>
+   259→   259→      </section>
+   260→   260→
+   261→   261→      {/* ===== STATS BAR ===== */}
+   262→   262→      <section className="py-16 gradient-sexy">
+   263→   263→        <div className="container-tinas">
+   264→   264→          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+   265→   265→            {[
+   266→   266→              { value: '2,500+', label: 'Happy Guests' },
+   267→   267→              { value: '4.9', label: 'Average Rating' },
+   268→   268→              { value: '98%', label: 'Would Return' },
+   269→   269→              { value: '15,000+', label: 'Treatments Delivered' },
+   270→   270→            ].map((stat, idx) => (
+   271→   271→              <motion.div key={stat.label} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={idx} className="text-center">
+   272→   272→                <p className="text-3xl md:text-4xl font-bold text-gradient-gold heading-display mb-1">{stat.value}</p>
+   273→   273→                <p className="text-xs text-pink-glow/40 body-serif font-light uppercase tracking-wider">{stat.label}</p>
+   274→   274→              </motion.div>
+   275→   275→            ))}
+   276→   276→          </div>
+   277→   277→        </div>
+   278→   278→      </section>
+   279→   279→
+   280→   280→      {/* ===== BEFORE & AFTER ===== */}
+   281→   281→      <section className="section-padding section-dark">
+   282→   282→        <div className="container-tinas">
+   283→   283→          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} className="text-center mb-14">
+   284→   284→            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.25em] text-gold/50 mb-4 heading-display uppercase">Real Transformations</motion.p>
+   285→   285→            <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-4xl font-bold heading-display">The <span className="text-pink-brand">Difference</span> We Make</motion.h2>
+   286→   286→          </motion.div>
+   287→   287→          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+   288→   288→            {[
+   289→   289→              { guest: 'Chipo Mwale', treatment: 'Deep Tissue — 4 Sessions', before: 'Chronic lower back pain for 2 years. Could barely sit at my desk for more than 30 minutes without severe discomfort.', after: 'After 4 sessions, the pain is virtually gone. I can work a full day without any discomfort. Life-changing.', image: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=400&q=80' },
+   290→   290→              { guest: 'Grace Banda', treatment: 'Aromatherapy — 6 Sessions', before: 'Severe insomnia and anxiety. Averaging 3-4 hours of sleep per night and feeling constantly on edge.', after: 'Now sleeping 7-8 hours consistently. My anxiety levels have dropped dramatically. The essential oil blends are magical.', image: 'https://images.unsplash.com/photo-1611073615830-4ebed33c0e5b?w=400&q=80' },
+   291→   291→              { guest: 'Bwalya Nkomo', treatment: 'Thai Massage — 3 Sessions', before: 'Office stress causing migraines and neck stiffness. Taking painkillers almost daily.', after: 'Migraines reduced from weekly to almost never. Neck mobility is fully restored. I wish I had found Serenity Touch sooner.', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&q=80' },
+   292→   292→            ].map((story, idx) => (
+   293→   293→              <motion.div key={story.guest} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-30px' }} variants={fadeUp} custom={idx}>
+   294→   294→                <div className="surface-raised rounded-2xl overflow-hidden h-full hover:border-gold/20 transition-all duration-300">
+   295→   295→                  <div className="h-40 relative overflow-hidden">
+   296→   296→                    <img src={story.image} alt={story.guest} className="w-full h-full object-cover opacity-40" />
+   297→   297→                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508] via-[#0a0508]/60 to-transparent" />
+   298→   298→                    <div className="absolute bottom-3 left-4">
+   299→   299→                      <p className="font-bold text-sm text-white heading-display">{story.guest}</p>
+   300→   300→                      <p className="text-[10px] text-gold/50">{story.treatment}</p>
+   301→   301→                    </div>
+   302→   302→                  </div>
+   303→   303→                  <div className="p-6 space-y-4">
+   304→   304→                    <div>
+   305→   305→                      <p className="text-[10px] font-bold text-pink-brand/60 tracking-wider uppercase mb-2">Before</p>
+   306→   306→                      <p className="text-sm text-pink-glow/40 body-serif font-light leading-relaxed">{story.before}</p>
+   307→   307→                    </div>
+   308→   308→                    <div className="border-t border-gold/8 pt-4">
+   309→   309→                      <p className="text-[10px] font-bold text-gold/60 tracking-wider uppercase mb-2">After</p>
+   310→   310→                      <p className="text-sm text-gold/60 body-serif font-light leading-relaxed">{story.after}</p>
+   311→   311→                    </div>
+   312→   312→                  </div>
+   313→   313→                </div>
+   314→   314→              </motion.div>
+   315→   315→            ))}
+   316→   316→          </div>
+   317→   317→        </div>
+   318→   318→      </section>
+   319→   319→
+   320→   320→      {/* ===== TESTIMONIALS ===== */}
+   321→   321→      <section className="section-padding section-dark">
+   322→   322→        <div className="container-tinas">
+   323→   323→          <motion.div
+   324→   324→            initial="hidden"
+   325→   325→            whileInView="visible"
+   326→   326→            viewport={{ once: true, margin: '-50px' }}
+   327→   327→            className="text-center mb-16"
+   328→   328→          >
+   329→   329→            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-semibold heading-display">
+   330→   330→              Whispers from our <span className="text-pink-brand">guests</span>
+   331→   331→            </motion.h2>
+   332→   332→          </motion.div>
+   333→   333→
+   334→   334→          <div className="max-w-3xl mx-auto">
+   335→   335→            <motion.div
+   336→   336→              key={currentTestimonial}
+   337→   337→              initial={{ opacity: 0, x: 20 }}
+   338→   338→              animate={{ opacity: 1, x: 0 }}
+   339→   339→              exit={{ opacity: 0, x: -20 }}
+   340→   340→              transition={{ duration: 0.4 }}
+   341→   341→              className="surface-raised p-10 md:p-14 rounded-2xl mb-8 glow-pink"
+   342→   342→            >
+   343→   343→              <div className="flex gap-1 mb-6">
+   344→   344→                {Array.from({ length: testimonials[currentTestimonial].rating }).map((_, i) => (
+   345→   345→                  <Star key={i} className="w-4 h-4 fill-gold text-gold" />
+   346→   346→                ))}
+   347→   347→              </div>
+   348→   348→              <p className="text-lg md:text-xl mb-6 body-serif leading-relaxed text-pink-glow/70 font-light italic">
+   349→   349→                &ldquo;{testimonials[currentTestimonial].text}&rdquo;
+   350→   350→              </p>
+   351→   351→              <p className="font-semibold text-sm tracking-wider text-gradient-gold">
+   352→   352→                {testimonials[currentTestimonial].author.toUpperCase()} &middot;{' '}
+   353→   353→                {testimonials[currentTestimonial].location.toUpperCase()}
+   354→   354→              </p>
+   355→   355→            </motion.div>
+   356→   356→
+   357→   357→            <div className="flex items-center justify-between">
+   358→   358→              <button
+   359→   359→                onClick={prevTestimonial}
+   360→   360→                className="p-2.5 hover:bg-gold/8 rounded-full transition cursor-pointer"
+   361→   361→                aria-label="Previous testimonial"
+   362→   362→              >
+   363→   363→                <ChevronLeft className="w-5 h-5 text-gold/40" />
+   364→   364→              </button>
+   365→   365→
+   366→   366→              <div className="flex gap-2">
+   367→   367→                {testimonials.map((_, idx) => (
+   368→   368→                  <button
+   369→   369→                    key={idx}
+   370→   370→                    onClick={() => setCurrentTestimonial(idx)}
+   371→   371→                    className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+   372→   372→                      idx === currentTestimonial
+   373→   373→                        ? 'bg-pink-brand w-8'
+   374→   374→                        : 'bg-white/10 w-2.5 hover:bg-white/25'
+   375→   375→                    }`}
+   376→   376→                    aria-label={`Testimonial ${idx + 1}`}
+   377→   377→                  />
+   378→   378→                ))}
+   379→   379→              </div>
+   380→   380→
+   381→   381→              <button
+   382→   382→                onClick={nextTestimonial}
+   383→   383→                className="p-2.5 hover:bg-gold/8 rounded-full transition cursor-pointer"
+   384→   384→                aria-label="Next testimonial"
+   385→   385→              >
+   386→   386→                <ChevronRight className="w-5 h-5 text-gold/40" />
+   387→   387→              </button>
+   388→   388→            </div>
+   389→   389→          </div>
+   390→   390→        </div>
+   391→   391→      </section>
+   392→   392→
+   393→   393→      {/* ===== MEMBERSHIP ===== */}
+   394→   394→      <section className="section-padding" style={{ background: 'linear-gradient(180deg, #080406 0%, #000000 100%)' }}>
+   395→   395→        <div className="container-tinas">
+   396→   396→          <motion.div
+   397→   397→            initial="hidden"
+   398→   398→            whileInView="visible"
+   399→   399→            viewport={{ once: true, margin: '-50px' }}
+   400→   400→            className="text-center mb-16"
+   401→   401→          >
+   402→   402→            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.25em] text-gold/50 mb-4 heading-display uppercase">
+   403→   403→              Membership
+   404→   404→            </motion.p>
+   405→   405→            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-semibold heading-display">
+   406→   406→              Three Ways to Invest in <span className="text-gradient-sexy">Your Wellness</span>
+   407→   407→            </motion.h2>
+   408→   408→          </motion.div>
+   409→   409→
+   410→   410→          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 items-start">
+   411→   411→            {membershipPlans.map((plan, idx) => (
+   412→   412→              <motion.div
+   413→   413→                key={plan.name}
+   414→   414→                initial="hidden"
+   415→   415→                whileInView="visible"
+   416→   416→                viewport={{ once: true, margin: '-30px' }}
+   417→   417→                variants={fadeUp}
+   418→   418→                custom={idx}
+   419→   419→                className={plan.popular ? 'md:-mt-4' : ''}
+   420→   420→              >
+   421→   421→                <div className="relative">
+   422→   422→                  {plan.popular && (
+   423→   423→                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
+   424→   424→                      <span className="bg-gradient-to-r from-gold to-pink-brand text-black px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider shadow-lg shadow-gold/20" style={{ color: '#000' }}>
+   425→   425→                        MOST POPULAR
+   426→   426→                      </span>
+   427→   427→                    </div>
+   428→   428→                  )}
+   429→   429→                  <div
+   430→   430→                    className={`surface-raised rounded-2xl p-8 h-full transition-all duration-500 hover:border-pink-brand/25 ${
+   431→   431→                      plan.popular ? 'border-gold/30 glow-gold' : ''
+   432→   432→                    }`}
+   433→   433→                  >
+   434→   434→                    <h3 className="text-3xl font-semibold mb-2 heading-display">{plan.name}</h3>
+   435→   435→                    <p className="text-pink-glow/35 mb-6 text-sm font-light">{plan.tagline}</p>
+   436→   436→                    <div className="mb-8">
+   437→   437→                      <span className="text-4xl font-semibold text-gradient-gold">{plan.price}</span>
+   438→   438→                      <span className="text-pink-brand/35 ml-1">/month</span>
+   439→   439→                    </div>
+   440→   440→                    <ul className="space-y-3 mb-8">
+   441→   441→                      {plan.features.map((feature, fidx) => (
+   442→   442→                        <li key={fidx} className="flex items-start gap-3">
+   443→   443→                          <span className="text-gold mt-0.5 text-xs">&#10022;</span>
+   444→   444→                          <span className="text-sm text-pink-glow/50 font-light">{feature}</span>
+   445→   445→                        </li>
+   446→   446→                      ))}
+   447→   447→                    </ul>
+   448→   448→                    <button
+   449→   449→                      onClick={() => navigate('membership')}
+   450→   450→                      className={`w-full py-3 text-sm cursor-pointer font-semibold transition-all ${
+   451→   451→                        plan.popular
+   452→   452→                          ? 'btn-gold'
+   453→   453→                          : 'btn-outline-pink'
+   454→   454→                      }`}
+   455→   455→                    >
+   456→   456→                      {plan.popular ? 'Enjoy Now' : 'Enquire'}
+   457→   457→                    </button>
+   458→   458→                  </div>
+   459→   459→                </div>
+   460→   460→              </motion.div>
+   461→   461→            ))}
+   462→   462→          </div>
+   463→   463→        </div>
+   464→   464→      </section>
+   465→   465→
+   466→   466→      {/* ===== FAQ ===== */}
+   467→   467→      <section className="section-padding section-dark">
+   468→   468→        <div className="container-tinas max-w-3xl">
+   469→   469→          <motion.div
+   470→   470→            initial="hidden"
+   471→   471→            whileInView="visible"
+   472→   472→            viewport={{ once: true, margin: '-50px' }}
+   473→   473→            className="text-center mb-14"
+   474→   474→          >
+   475→   475→            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-semibold heading-display">
+   476→   476→              Frequently Asked <span className="text-pink-brand">Questions</span>
+   477→   477→            </motion.h2>
+   478→   478→          </motion.div>
+   479→   479→
+   480→   480→          <motion.div
+   481→   481→            initial="hidden"
+   482→   482→            whileInView="visible"
+   483→   483→            viewport={{ once: true, margin: '-30px' }}
+   484→   484→            variants={fadeUp}
+   485→   485→            custom={1}
+   486→   486→            className="space-y-3"
+   487→   487→          >
+   488→   488→            {faqItems.map((item, idx) => (
+   489→   489→              <div
+   490→   490→                key={idx}
+   491→   491→                className="surface-raised rounded-xl overflow-hidden transition-all"
+   492→   492→              >
+   493→   493→                <button
+   494→   494→                  onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
+   495→   495→                  className="w-full p-5 md:p-6 text-left flex items-center justify-between hover:bg-pink-brand/[0.02] transition cursor-pointer"
+   496→   496→                >
+   497→   497→                  <h3 className="font-semibold text-[15px] heading-display pr-4 text-white">{item.question}</h3>
+   498→   498→                  <ChevronRight
+   499→   499→                    className={`w-5 h-5 shrink-0 text-gold/40 transition-transform duration-300 ${
+   500→   500→                      expandedFaq === idx ? 'rotate-90' : ''
+   501→   501→                    }`}
+   502→   502→                  />
+   503→   503→                </button>
+   504→   504→                {expandedFaq === idx && (
+   505→   505→                  <div className="px-5 md:px-6 pb-5 md:pb-6 text-pink-glow/35 text-sm body-serif leading-relaxed border-t border-gold/8 pt-4 font-light">
+   506→   506→                    {item.answer}
+   507→   507→                  </div>
+   508→   508→                )}
+   509→   509→              </div>
+   510→   510→            ))}
+   511→   511→          </motion.div>
+   512→   512→        </div>
+   513→   513→      </section>
+   514→   514→
+   515→   515→      {/* ===== CTA SECTION ===== */}
+   516→   516→      <section className="section-padding relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #080406 0%, #100a0e 30%, #0d0510 60%, #000000 100%)' }}>
+   517→   517→        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=800&q=40')] bg-cover bg-center opacity-[0.03]" />
+   518→   518→        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-pink-brand/[0.03] blur-[100px]" />
+   519→   519→        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-gold/[0.03] blur-[80px]" />
+   520→   520→        <div className="container-tinas text-center relative z-10">
+   521→   521→          <motion.div
+   522→   522→            initial="hidden"
+   523→   523→            whileInView="visible"
+   524→   524→            viewport={{ once: true, margin: '-50px' }}
+   525→   525→          >
+   526→   526→            <motion.h2
+   527→   527→              variants={fadeUp}
+   528→   528→              custom={0}
+   529→   529→              className="text-4xl md:text-5xl font-semibold mb-6 heading-display"
+   530→   530→            >
+   531→   531→              Ready to Experience <span className="text-gradient-sexy">Serenity</span>?
+   532→   532→            </motion.h2>
+   533→   533→            <motion.p
+   534→   534→              variants={fadeUp}
+   535→   535→              custom={1}
+   536→   536→              className="text-lg mb-10 max-w-2xl mx-auto body-serif text-pink-glow/40 leading-relaxed font-light"
+   537→   537→            >
+   538→   538→              Book your first appointment and discover why Serenity Touch Spa is Lusaka's premier wellness destination.
+   539→   539→            </motion.p>
+   540→   540→            <motion.div
+   541→   541→              variants={fadeUp}
+   542→   542→              custom={2}
+   543→   543→              className="flex flex-col sm:flex-row gap-4 justify-center"
+   544→   544→            >
+   545→   545→              <button
+   546→   546→                onClick={() => navigate('contact')}
+   547→   547→                className="btn-pink px-8 py-3.5 text-sm font-semibold cursor-pointer"
+   548→   548→              >
+   549→   549→                Book Appointment
+   550→   550→              </button>
+   551→   551→              <button
+   552→   552→                onClick={() => navigate('about')}
+   553→   553→                className="btn-outline-gold px-8 py-3.5 text-sm font-semibold cursor-pointer flex items-center justify-center gap-2"
+   554→   554→              >
+   555→   555→                Learn About Us <ArrowRight className="w-4 h-4" />
+   556→   556→              </button>
+   557→   557→            </motion.div>
+   558→   558→          </motion.div>
+   559→   559→        </div>
+   560→   560→      </section>
+   561→   561→    </div>
+   562→   562→  );
+   563→   563→}

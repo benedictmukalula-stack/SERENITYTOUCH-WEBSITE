@@ -6,9 +6,11 @@ import {
   Crown, Sparkles, Calendar, Clock, CreditCard, MessageCircle, LogOut,
   ChevronRight, Star, Gift, Shield, Settings, Bell, BookOpen, User,
   TrendingUp, Heart, Award, MessageSquare, Gem, Plus, Minus, Check,
-  ArrowUpRight, ArrowDownRight
+  ArrowUpRight, ArrowDownRight, BarChart3
 } from 'lucide-react';
 import { useAppStore, type Member } from '@/lib/store';
+import LoyaltyPoints from '@/components/tinas/LoyaltyPoints';
+import ReferralProgram from '@/components/tinas/ReferralProgram';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
