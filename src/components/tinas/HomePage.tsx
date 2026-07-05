@@ -258,6 +258,65 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ===== STATS BAR ===== */}
+      <section className="py-16 gradient-sexy">
+        <div className="container-tinas">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            {[
+              { value: '2,500+', label: 'Happy Guests' },
+              { value: '4.9', label: 'Average Rating' },
+              { value: '98%', label: 'Would Return' },
+              { value: '15,000+', label: 'Treatments Delivered' },
+            ].map((stat, idx) => (
+              <motion.div key={stat.label} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={idx} className="text-center">
+                <p className="text-3xl md:text-4xl font-bold text-gradient-gold heading-display mb-1">{stat.value}</p>
+                <p className="text-xs text-pink-glow/40 body-serif font-light uppercase tracking-wider">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== BEFORE & AFTER ===== */}
+      <section className="section-padding section-dark">
+        <div className="container-tinas">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} className="text-center mb-14">
+            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.25em] text-gold/50 mb-4 heading-display uppercase">Real Transformations</motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-4xl font-bold heading-display">The <span className="text-pink-brand">Difference</span> We Make</motion.h2>
+          </motion.div>
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+            {[
+              { guest: 'Chipo Mwale', treatment: 'Deep Tissue — 4 Sessions', before: 'Chronic lower back pain for 2 years. Could barely sit at my desk for more than 30 minutes without severe discomfort.', after: 'After 4 sessions, the pain is virtually gone. I can work a full day without any discomfort. Life-changing.', image: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=400&q=80' },
+              { guest: 'Grace Banda', treatment: 'Aromatherapy — 6 Sessions', before: 'Severe insomnia and anxiety. Averaging 3-4 hours of sleep per night and feeling constantly on edge.', after: 'Now sleeping 7-8 hours consistently. My anxiety levels have dropped dramatically. The essential oil blends are magical.', image: 'https://images.unsplash.com/photo-1611073615830-4ebed33c0e5b?w=400&q=80' },
+              { guest: 'Bwalya Nkomo', treatment: 'Thai Massage — 3 Sessions', before: 'Office stress causing migraines and neck stiffness. Taking painkillers almost daily.', after: 'Migraines reduced from weekly to almost never. Neck mobility is fully restored. I wish I had found Serenity Touch sooner.', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&q=80' },
+            ].map((story, idx) => (
+              <motion.div key={story.guest} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-30px' }} variants={fadeUp} custom={idx}>
+                <div className="surface-raised rounded-2xl overflow-hidden h-full hover:border-gold/20 transition-all duration-300">
+                  <div className="h-40 relative overflow-hidden">
+                    <img src={story.image} alt={story.guest} className="w-full h-full object-cover opacity-40" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508] via-[#0a0508]/60 to-transparent" />
+                    <div className="absolute bottom-3 left-4">
+                      <p className="font-bold text-sm text-white heading-display">{story.guest}</p>
+                      <p className="text-[10px] text-gold/50">{story.treatment}</p>
+                    </div>
+                  </div>
+                  <div className="p-6 space-y-4">
+                    <div>
+                      <p className="text-[10px] font-bold text-pink-brand/60 tracking-wider uppercase mb-2">Before</p>
+                      <p className="text-sm text-pink-glow/40 body-serif font-light leading-relaxed">{story.before}</p>
+                    </div>
+                    <div className="border-t border-gold/8 pt-4">
+                      <p className="text-[10px] font-bold text-gold/60 tracking-wider uppercase mb-2">After</p>
+                      <p className="text-sm text-gold/60 body-serif font-light leading-relaxed">{story.after}</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ===== TESTIMONIALS ===== */}
       <section className="section-padding section-dark">
         <div className="container-tinas">

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, Shield } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, Shield, ChevronDown, ChevronUp, Check, UserPlus, Phone, Crown, User } from 'lucide-react';
 import { useAppStore, type Member } from '@/lib/store';
 
 // Demo accounts for showcase
@@ -58,6 +58,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showRegister, setShowRegister] = useState(false);
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [regForm, setRegForm] = useState({ name: '', email: '', phone: '', password: '', confirmPassword: '', tier: 'Silver' });
 
   if (isMemberLoggedIn) {
     navigate('dashboard');
@@ -216,6 +219,142 @@ export default function LoginPage() {
               </div>
             </div>
           </motion.div>
+
+          {/* Create Account Section */}
+          <div className="mt-6">
+            <button
+              onClick={() => setShowRegister(!showRegister)}
+              className="w-full text-center text-sm text-gold/50 hover:text-gold/80 transition cursor-pointer flex items-center justify-center gap-2"
+            >
+              {showRegister ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              New to Serenity Touch Spa? Create an account
+            </button>
+
+            <motion.div
+              initial={false}
+              animate={{ height: showRegister ? 'auto' : 0, opacity: showRegister ? 1 : 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-6 surface-raised rounded-2xl p-8">
+                {registerSuccess ? (
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="text-center py-8"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center mx-auto mb-4">
+                      <Check className="w-8 h-8 text-emerald-400" />
+                    </div>
+                    <h3 className="text-lg font-bold heading-display text-white mb-2">Account Created!</h3>
+                    <p className="text-sm text-pink-glow/40 body-serif font-light">Welcome to Serenity Touch Spa. Please sign in with your new credentials.</p>
+                  </motion.div>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center">
+                        <UserPlus className="w-5 h-5 text-gold" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold heading-display text-white">Create Account</h2>
+                        <p className="text-[11px] text-gold/40">Join our exclusive wellness community</p>
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 mb-1.5">Full Name</label>
+                        <div className="relative">
+                          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
+                          <input
+                            type="text"
+                            value={regForm.name}
+                            onChange={(e) => setRegForm(p => ({ ...p, name: e.target.value }))}
+                            className="w-full pl-11 pr-4 py-3 border border-gold/15 rounded-xl bg-gold/[0.04] focus:outline-none focus:border-gold text-sm text-white transition placeholder:text-gold/30"
+                            placeholder="Your full name"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 mb-1.5">Email Address</label>
+                        <div className="relative">
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
+                          <input
+                            type="email"
+                            value={regForm.email}
+                            onChange={(e) => setRegForm(p => ({ ...p, email: e.target.value }))}
+                            className="w-full pl-11 pr-4 py-3 border border-gold/15 rounded-xl bg-gold/[0.04] focus:outline-none focus:border-gold text-sm text-white transition placeholder:text-gold/30"
+                            placeholder="your@email.com"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 mb-1.5">Phone Number</label>
+                        <div className="relative">
+                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
+                          <input
+                            type="tel"
+                            value={regForm.phone}
+                            onChange={(e) => setRegForm(p => ({ ...p, phone: e.target.value }))}
+                            className="w-full pl-11 pr-4 py-3 border border-gold/15 rounded-xl bg-gold/[0.04] focus:outline-none focus:border-gold text-sm text-white transition placeholder:text-gold/30"
+                            placeholder="+260 9XX XXX XXX"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 mb-1.5">Password</label>
+                        <div className="relative">
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
+                          <input
+                            type="password"
+                            value={regForm.password}
+                            onChange={(e) => setRegForm(p => ({ ...p, password: e.target.value }))}
+                            className="w-full pl-11 pr-4 py-3 border border-gold/15 rounded-xl bg-gold/[0.04] focus:outline-none focus:border-gold text-sm text-white transition placeholder:text-gold/30"
+                            placeholder="Create a password"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 mb-1.5">Confirm Password</label>
+                        <div className="relative">
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
+                          <input
+                            type="password"
+                            value={regForm.confirmPassword}
+                            onChange={(e) => setRegForm(p => ({ ...p, confirmPassword: e.target.value }))}
+                            className="w-full pl-11 pr-4 py-3 border border-gold/15 rounded-xl bg-gold/[0.04] focus:outline-none focus:border-gold text-sm text-white transition placeholder:text-gold/30"
+                            placeholder="Confirm your password"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 mb-1.5">Preferred Tier</label>
+                        <div className="relative">
+                          <Crown className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
+                          <select
+                            value={regForm.tier}
+                            onChange={(e) => setRegForm(p => ({ ...p, tier: e.target.value }))}
+                            className="w-full pl-11 pr-4 py-3 border border-gold/15 rounded-xl bg-gold/[0.04] focus:outline-none focus:border-gold text-sm text-white transition appearance-none cursor-pointer"
+                          >
+                            <option value="Silver" className="bg-gray-900">Silver — K500/mo</option>
+                            <option value="Gold" className="bg-gray-900">Gold — K1,500/mo</option>
+                            <option value="Platinum" className="bg-gray-900">Platinum — K3,000/mo</option>
+                          </select>
+                          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40 pointer-events-none" />
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setRegisterSuccess(true)}
+                        className="w-full btn-gold py-3.5 text-sm font-semibold cursor-pointer flex items-center justify-center gap-2"
+                      >
+                        <UserPlus className="w-4 h-4" />
+                        Create Account
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
     </div>

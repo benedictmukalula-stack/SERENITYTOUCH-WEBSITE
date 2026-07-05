@@ -19,6 +19,9 @@ import LoginPage from '@/components/tinas/LoginPage';
 import MemberDashboard from '@/components/tinas/MemberDashboard';
 import AgeGate from '@/components/tinas/AgeGate';
 import WhatsAppButton from '@/components/tinas/WhatsAppButton';
+import BackToTop from '@/components/tinas/BackToTop';
+import PromoBanner from '@/components/tinas/PromoBanner';
+import NewsletterPopup from '@/components/tinas/NewsletterPopup';
 import { useAppStore } from '@/lib/store';
 
 const pageComponents: Record<string, React.ComponentType> = {
@@ -49,6 +52,7 @@ export default function AppPage() {
 
       {/* Main App */}
       <Navigation />
+      <PromoBanner />
       <main className="flex-1">
         <AnimatePresence mode="wait">
           <motion.div
@@ -64,6 +68,8 @@ export default function AppPage() {
       </main>
       <Footer />
       <WhatsAppButton />
+      <BackToTop />
+      <NewsletterPopup />
     </div>
   );
 }

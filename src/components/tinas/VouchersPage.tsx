@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Gift, Heart, Mail, Printer, Sparkles, Star } from 'lucide-react';
+import { Gift, Heart, Mail, Printer, Sparkles, Star, CheckCircle, Smartphone, Building2, CreditCard, Banknote } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 
 const fadeUp = {
@@ -36,6 +36,9 @@ export default function VouchersPage() {
   const [delivery, setDelivery] = useState<'email' | 'print'>('email');
   const [recipientName, setRecipientName] = useState('');
   const [message, setMessage] = useState('');
+  const [showPayment, setShowPayment] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
+  const [purchaseComplete, setPurchaseComplete] = useState(false);
 
   return (
     <div>
@@ -151,6 +154,134 @@ export default function VouchersPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Complete Your Purchase — Checkout Section */}
+      {!purchaseComplete && (
+        <section className="section-padding section-dark">
+          <div className="container-tinas max-w-3xl">
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <motion.div variants={fadeUp} custom={0} className="text-center mb-10">
+                <h2 className="text-3xl md:text-4xl font-bold heading-display mb-3">Complete Your <span className="text-pink-brand">Purchase</span></h2>
+                <p className="text-pink-glow/35 body-serif font-light">Review your order and proceed to payment.</p>
+              </motion.div>
+
+              <motion.div variants={fadeUp} custom={1} className="surface-raised rounded-2xl p-8 md:p-10">
+                <h3 className="text-base font-bold heading-display mb-6 flex items-center gap-2 text-gold">Order Summary</h3>
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-center justify-between py-3 border-b border-gold/8">
+                    <span className="text-sm text-gray-400">Voucher Value</span>
+                    <span className="text-sm font-bold text-white">{selectedValue || 'Not selected'}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-3 border-b border-gold/8">
+                    <span className="text-sm text-gray-400">Delivery</span>
+                    <span className="text-sm font-medium text-white">{delivery === 'email' ? 'Email' : 'Print at Home'}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-3 border-b border-gold/8">
+                    <span className="text-sm text-gray-400">Recipient</span>
+                    <span className="text-sm text-white">{recipientName || 'Not specified'}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-3">
+                    <span className="text-sm text-gray-400">Message</span>
+                    <span className="text-sm text-pink-glow/40 body-serif font-light max-w-[200px] truncate text-right">{message || 'Not specified'}</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowPayment(true)}
+                  disabled={!selectedValue}
+                  className="w-full btn-pink py-4 text-sm font-semibold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <CreditCard className="w-4 h-4" />
+                  Proceed to Payment
+                </button>
+              </motion.div>
+
+              {/* Payment Options */}
+              {showPayment && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="mt-6"
+                >
+                  <div className="surface-raised rounded-2xl p-8">
+                    <h3 className="text-base font-bold heading-display mb-6 flex items-center gap-2 text-white">Payment Method</h3>
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                      {[
+                        { id: 'mtn', label: 'Mobile Money (MTN)', icon: Smartphone },
+                        { id: 'airtel', label: 'Mobile Money (Airtel)', icon: Smartphone },
+                        { id: 'bank', label: 'Bank EFT', icon: Building2 },
+                        { id: 'card', label: 'Card Payment', icon: CreditCard },
+                        { id: 'cash', label: 'Cash at Spa', icon: Banknote },
+                      ].map((method) => (
+                        <button
+                          key={method.id}
+                          onClick={() => setSelectedPayment(method.id)}
+                          className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all text-left ${
+                            selectedPayment === method.id
+                              ? 'border-pink-brand bg-pink-brand/[0.08] glow-pink'
+                              : 'border-gold/15 hover:border-gold/25'
+                          }`}
+                        >
+                          <method.icon className={`w-5 h-5 shrink-0 ${selectedPayment === method.id ? 'text-pink-brand' : 'text-gold/50'}`} />
+                          <span className={`text-xs font-medium ${selectedPayment === method.id ? 'text-white' : 'text-pink-glow/50'}`}>{method.label}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={() => setPurchaseComplete(true)}
+                      disabled={!selectedPayment}
+                      className="w-full btn-pink py-4 text-sm font-semibold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      Complete Purchase
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Purchase Success Animation */}
+      {purchaseComplete && (
+        <section className="section-padding section-dark">
+          <div className="container-tinas max-w-3xl text-center">
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+                className="w-24 h-24 rounded-full bg-emerald-500/15 border-2 border-emerald-500/30 flex items-center justify-center mx-auto mb-6"
+              >
+                <CheckCircle className="w-12 h-12 text-emerald-400" />
+              </motion.div>
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="text-3xl md:text-4xl font-bold heading-display mb-4"
+              >
+                Voucher <span className="text-gradient-sexy">Ordered!</span>
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55 }}
+                className="text-pink-glow/40 body-serif font-light max-w-lg mx-auto"
+              >
+                Your gift voucher for <span className="text-gold font-semibold">{selectedValue}</span> has been placed successfully. You&apos;ll receive a confirmation shortly.
+              </motion.p>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       <section className="section-padding section-dark">
         <div className="container-tinas max-w-3xl">

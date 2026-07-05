@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
+import AnimatedCounter from '@/components/tinas/AnimatedCounter';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -83,17 +84,18 @@ export default function TestimonialsPage() {
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold text-center mb-12 heading-display">The <span className="text-pink-brand">Numbers</span> Speak</motion.h2>
             <motion.div variants={fadeUp} custom={1} className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {[
-                { value: '2,500+', label: 'Happy Guests' },
-                { value: '4.9', label: 'Average Rating' },
-                { value: '98%', label: 'Would Return' },
-                { value: '15,000+', label: 'Treatments Delivered' },
-              ].map((stat, i) => (
-                <div key={i} className="text-center surface-raised rounded-2xl p-6">
-                  <p className="text-3xl md:text-4xl font-bold text-gradient-gold heading-display mb-1">{stat.value}</p>
-                  <p className="text-xs text-pink-glow/40 body-serif font-light uppercase tracking-wider">{stat.label}</p>
-                </div>
-              ))}
+              <div className="surface-raised rounded-2xl p-6 text-center">
+                <AnimatedCounter value="2,500+" label="Happy Guests" />
+              </div>
+              <div className="surface-raised rounded-2xl p-6 text-center">
+                <AnimatedCounter value="4.9" label="Average Rating" />
+              </div>
+              <div className="surface-raised rounded-2xl p-6 text-center">
+                <AnimatedCounter value="98%" label="Would Return" />
+              </div>
+              <div className="surface-raised rounded-2xl p-6 text-center">
+                <AnimatedCounter value="15,000+" label="Treatments Delivered" />
+              </div>
             </motion.div>
           </motion.div>
         </div>

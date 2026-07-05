@@ -105,6 +105,7 @@ export default function ContactPage() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [showPayment, setShowPayment] = useState(false);
+  const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -163,6 +164,15 @@ export default function ContactPage() {
                     <p className="text-[10px] text-pink-brand/40">View in Google Maps</p>
                   </div>
                 </div>
+              </div>
+
+              {/* Map */}
+              <div className="mt-6 surface-raised rounded-2xl overflow-hidden">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3878.5!2d28.3!3d-15.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sIbex+Hill+Lusaka+Zambia!5e0!3m2!1sen!2szm!4v1700000000000"
+                  width="100%" height="250" style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) brightness(0.8) contrast(1.2)' }}
+                  allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Serenity Touch Spa Location"
+                />
               </div>
 
               {/* Call-Out Fees Quick Reference */}
@@ -277,6 +287,41 @@ export default function ContactPage() {
                             <p className={`text-sm font-semibold ${formData.bookingType === 'callout' ? 'text-pink-brand' : 'text-pink-glow/45'}`}>Call-Out</p>
                             <p className="text-[11px] text-gold/40 mt-1 leading-tight">We come to you</p>
                           </button>
+                        </div>
+                      </div>
+
+                      {/* Treatment Add-Ons */}
+                      <div className="mb-6">
+                        <label className="text-xs font-semibold text-gold/50 tracking-wider uppercase mb-3 block">Enhance Your Experience (Optional)</label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {[
+                            { id: 'scalp', name: 'Warm Oil Scalp Treatment', price: 'K200', desc: '15 min scalp massage with warm essential oils' },
+                            { id: 'hotstones', name: 'Hot Stone Upgrade', price: 'K300', desc: 'Add heated volcanic stones to any massage' },
+                            { id: 'aroma', name: 'Aromatherapy Upgrade', price: 'K150', desc: 'Custom-blended essential oils for your session' },
+                            { id: 'facial', name: 'Mini Facial Treatment', price: 'K250', desc: '15 min express facial with natural products' },
+                          ].map((addon) => (
+                            <button type="button" key={addon.id}
+                              onClick={() => {
+                                setSelectedAddons(prev => {
+                                  const next = new Set(prev);
+                                  if (next.has(addon.id)) next.delete(addon.id);
+                                  else next.add(addon.id);
+                                  return next;
+                                });
+                              }}
+                              className={`p-4 rounded-xl border text-left transition-all cursor-pointer group ${
+                                selectedAddons.has(addon.id)
+                                  ? 'border-pink-brand bg-pink-brand/[0.08]'
+                                  : 'border-gold/12 bg-gold/[0.02] hover:border-gold/25'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between mb-1">
+                                <span className={`text-sm font-semibold group-hover:text-gold transition-colors ${selectedAddons.has(addon.id) ? 'text-pink-brand' : 'text-white'}`}>{addon.name}</span>
+                                <span className="text-sm font-bold text-gold">+{addon.price}</span>
+                              </div>
+                              <p className="text-[11px] text-pink-glow/35">{addon.desc}</p>
+                            </button>
+                          ))}
                         </div>
                       </div>
 

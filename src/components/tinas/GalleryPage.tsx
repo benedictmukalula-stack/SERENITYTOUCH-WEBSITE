@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Camera } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
+import ImageLightbox from '@/components/tinas/ImageLightbox';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -33,6 +34,7 @@ const images = [
 export default function GalleryPage() {
   const { navigate } = useAppStore();
   const [activeCategory, setActiveCategory] = useState('All');
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const filteredImages = activeCategory === 'All' ? images : images.filter((img) => img.category === activeCategory);
 
@@ -60,7 +62,8 @@ export default function GalleryPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
             {filteredImages.map((img, idx) => (
               <motion.div key={img.src} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-30px' }} variants={fadeUp} custom={idx}
-                className="group relative overflow-hidden rounded-2xl cursor-pointer">
+                className="group relative overflow-hidden rounded-2xl cursor-pointer"
+                onClick={() => setLightboxIndex(idx)}>
                 <div className="aspect-[4/3] overflow-hidden">
                   <img src={img.src} alt={img.alt} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
                 </div>
@@ -84,6 +87,14 @@ export default function GalleryPage() {
           )}
         </div>
       </section>
+
+      {lightboxIndex !== null && (
+        <ImageLightbox
+          images={filteredImages.map(img => ({ src: img.src.replace('w=600', 'w=1200'), alt: img.alt }))}
+          initialIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
 
       <section className="section-padding section-dark">
         <div className="container-tinas text-center">

@@ -25,9 +25,10 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://serenitytouch.co.zm'),
   title: "Serenity Touch Spa — Luxury Wellness in Lusaka, Zambia",
   description:
-    "Premium wellness spa in Lusaka, Zambia. Certified therapists, luxurious treatment suites, and personalised therapies deliver the finest therapeutic experience.",
+    "Serenity Touch Spa — Lusaka's premier luxury wellness destination. 11 therapeutic treatments, signature packages, corporate wellness programs, and membership plans. Book online or call +260 761 404 555.",
   keywords: [
     'spa',
     'massage',
@@ -41,7 +42,19 @@ export const metadata: Metadata = {
     'aromatherapy',
     'couples massage',
     'deep tissue',
+    'corporate wellness',
+    'gift vouchers',
+    'spa packages',
+    'reflexology',
+    'pregnancy massage',
+    'couples massage',
+    'Thai massage',
+    'Ibex Hill',
+    'Lusaka spa near me',
+    'Zambian spa',
   ],
+  alternates: { canonical: '/' },
+  robots: { index: true, follow: true },
   icons: {
     icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">✨</text></svg>',
   },

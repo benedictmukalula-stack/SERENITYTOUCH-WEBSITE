@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import {
   Crown, Sparkles, Calendar, Clock, CreditCard, MessageCircle, LogOut,
   ChevronRight, Star, Gift, Shield, Settings, Bell, BookOpen, User,
-  TrendingUp, Heart, Award, MessageSquare
+  TrendingUp, Heart, Award, MessageSquare, Gem, Plus, Minus, Check,
+  ArrowUpRight, ArrowDownRight
 } from 'lucide-react';
 import { useAppStore, type Member } from '@/lib/store';
 
@@ -39,7 +40,7 @@ const statusColors: Record<string, string> = {
 
 export default function MemberDashboard() {
   const { member, logoutMember, navigate, isMemberLoggedIn } = useAppStore();
-  const [activeTab, setActiveTab] = useState<'overview' | 'bookings' | 'services' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'bookings' | 'services' | 'rewards' | 'settings'>('overview');
 
   if (!isMemberLoggedIn || !member) {
     navigate('login');
@@ -53,6 +54,7 @@ export default function MemberDashboard() {
     { id: 'overview' as const, label: 'Overview', icon: TrendingUp },
     { id: 'bookings' as const, label: 'My Bookings', icon: Calendar },
     { id: 'services' as const, label: 'Services', icon: BookOpen },
+    { id: 'rewards' as const, label: 'Rewards', icon: Gift },
     { id: 'settings' as const, label: 'Settings', icon: Settings },
   ];
 
@@ -125,6 +127,7 @@ export default function MemberDashboard() {
           {activeTab === 'overview' && <OverviewTab member={member} config={config} />}
           {activeTab === 'bookings' && <BookingsTab member={member} />}
           {activeTab === 'services' && <ServicesTab member={member} />}
+          {activeTab === 'rewards' && <RewardsTab member={member} />}
           {activeTab === 'settings' && <SettingsTab member={member} />}
         </div>
       </section>
@@ -226,6 +229,185 @@ function OverviewTab({ member, config }: { member: Member; config: typeof tierCo
               </button>
             ))}
           </div>
+        </div>
+      </motion.div>
+
+      {/* Referral Section */}
+      <motion.div variants={fadeUp} custom={4} className="mt-6">
+        <div className="surface-raised rounded-2xl p-7" style={{background: 'linear-gradient(135deg, rgba(212,175,55,0.05) 0%, rgba(233,30,99,0.03) 100%)'}}>
+          <div className="flex items-center gap-3 mb-3">
+            <Gift className="w-5 h-5 text-gold" />
+            <h3 className="text-lg font-bold heading-display">Refer & Earn</h3>
+          </div>
+          <p className="text-sm text-pink-glow/45 mb-4 body-serif font-light">Share your referral code and both you and your friend get 20% off your next treatment.</p>
+          <div className="flex items-center gap-3">
+            <div className="flex-1 px-4 py-3 rounded-xl bg-black/40 border border-gold/15 font-mono text-gold text-sm tracking-wider">
+              SERENITY-{member.name.split(' ')[0].toUpperCase()}-2026
+            </div>
+            <button className="btn-pink px-4 py-3 text-xs cursor-pointer">Copy Code</button>
+          </div>
+          <div className="mt-4 flex items-center gap-6 text-sm text-pink-glow/40">
+            <span>Referrals: <span className="text-gold font-bold">3</span></span>
+            <span>Points earned: <span className="text-gold font-bold">450</span></span>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function RewardsTab({ member }: { member: Member }) {
+  const [redeemingId, setRedeemingId] = useState<string | null>(null);
+
+  const pointsBalance = 1250;
+  const tierMultiplier: Record<string, number> = { Silver: 1, Gold: 1.5, Platinum: 2 };
+  const multiplier = tierMultiplier[member.tier] || 1;
+  const nextTierPoints = 2000;
+  const pointsToNext = nextTierPoints - pointsBalance;
+  const progress = Math.min((pointsBalance / nextTierPoints) * 100, 100);
+
+  const rewards = [
+    { id: 'r1', points: 500, name: 'Free Aromatherapy Upgrade', desc: 'Enhance any treatment with premium essential oils' },
+    { id: 'r2', points: 1000, name: 'Free 30-min Add-on Treatment', desc: 'Enjoy an additional 30 minutes of relaxation' },
+    { id: 'r3', points: 2000, name: 'Free 60-min Massage', desc: 'Choose any 60-minute massage on the menu' },
+    { id: 'r4', points: 3500, name: 'Free Signature Package', desc: 'Experience our full Serenity Signature treatment' },
+    { id: 'r5', points: 5000, name: 'Free Couples Retreat', desc: 'A luxurious couples retreat for two' },
+  ];
+
+  const pointsHistory = [
+    { id: 'ph1', desc: 'Booking: Swedish Massage', points: 150, type: 'earned' as const, date: '2026-07-10' },
+    { id: 'ph2', desc: 'Referral bonus: Bwalya N.', points: 150, type: 'earned' as const, date: '2026-07-08' },
+    { id: 'ph3', desc: 'Redeemed: Aromatherapy Upgrade', points: -500, type: 'spent' as const, date: '2026-06-28' },
+    { id: 'ph4', desc: 'Booking: Hot Stone Therapy', points: 200, type: 'earned' as const, date: '2026-06-20' },
+    { id: 'ph5', desc: 'Referral bonus: Grace B.', points: 150, type: 'earned' as const, date: '2026-06-15' },
+    { id: 'ph6', desc: 'Booking: Deep Tissue Massage', points: 250, type: 'earned' as const, date: '2026-06-01' },
+  ];
+
+  const handleRedeem = (rewardId: string) => {
+    setRedeemingId(rewardId);
+    setTimeout(() => setRedeemingId(null), 2000);
+  };
+
+  return (
+    <motion.div initial="hidden" animate="visible">
+      {/* Points Balance Card */}
+      <motion.div variants={fadeUp} custom={0} className="mb-8">
+        <div className="rounded-2xl p-8 relative overflow-hidden" style={{background: 'linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(180,140,30,0.06) 50%, rgba(233,30,99,0.04) 100%)'}}>
+          <div className="absolute top-0 right-0 w-40 h-40 bg-gold/5 rounded-full blur-3xl" />
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-2">
+              <Gem className="w-4 h-4 text-gold/60" />
+              <p className="text-xs text-gold/50 tracking-[0.15em] uppercase font-semibold">Loyalty Points Balance</p>
+            </div>
+            <div className="flex items-end gap-4 mb-6">
+              <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gold via-amber-400 to-gold bg-clip-text text-transparent heading-display">
+                {pointsBalance.toLocaleString()}
+              </h2>
+              <span className="text-gold/50 text-lg mb-2 body-serif">Points</span>
+            </div>
+            <div className="flex items-center gap-3 mb-1">
+              <span className="text-sm text-white/70">Tier Multiplier:</span>
+              <span className="px-3 py-1 rounded-full bg-gold/15 border border-gold/25 text-gold text-xs font-bold">
+                {member.tier}: {multiplier}x
+              </span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Progress to Next Tier */}
+      <motion.div variants={fadeUp} custom={1} className="surface-raised rounded-2xl p-7 mb-8">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-semibold text-white">Progress to Gold Reward</p>
+          <p className="text-xs text-gold font-bold">{pointsToNext.toLocaleString()} points to go</p>
+        </div>
+        <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 1.2, ease: 'easeOut' }}
+            className="h-full rounded-full"
+            style={{background: 'linear-gradient(90deg, #d4af37, #f0d060)'}}
+          />
+        </div>
+        <div className="flex justify-between mt-2">
+          <span className="text-[10px] text-gray-500">0 pts</span>
+          <span className="text-[10px] text-gold/50">2,000 pts</span>
+        </div>
+      </motion.div>
+
+      {/* Redeemable Rewards Grid */}
+      <motion.div variants={fadeUp} custom={2} className="mb-8">
+        <h3 className="text-lg font-bold heading-display mb-5 flex items-center gap-2">
+          <Crown className="w-4 h-4 text-gold" />
+          Redeem Rewards
+        </h3>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {rewards.map((reward) => {
+            const canRedeem = pointsBalance >= reward.points;
+            const isRedeeming = redeemingId === reward.id;
+            return (
+              <div key={reward.id} className="surface-raised rounded-xl p-6 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs text-gold font-bold tracking-wider">{reward.points.toLocaleString()} PTS</span>
+                    <Gem className={`w-4 h-4 ${canRedeem ? 'text-gold' : 'text-gray-600'}`} />
+                  </div>
+                  <h4 className="text-sm font-bold text-white mb-2">{reward.name}</h4>
+                  <p className="text-xs text-pink-glow/40 body-serif font-light">{reward.desc}</p>
+                </div>
+                <button
+                  onClick={() => canRedeem && handleRedeem(reward.id)}
+                  disabled={!canRedeem || isRedeeming}
+                  className={`mt-4 w-full py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                    isRedeeming
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                      : canRedeem
+                        ? 'btn-outline-gold'
+                        : 'bg-white/[0.02] text-gray-600 border border-gold/8 cursor-not-allowed'
+                  }`}
+                >
+                  {isRedeeming ? (
+                    <span className="flex items-center justify-center gap-1.5"><Check className="w-3.5 h-3.5" /> Redeemed!</span>
+                  ) : (
+                    'Redeem'
+                  )}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </motion.div>
+
+      {/* Points History */}
+      <motion.div variants={fadeUp} custom={3}>
+        <h3 className="text-lg font-bold heading-display mb-5 flex items-center gap-2">
+          <Star className="w-4 h-4 text-gold" />
+          Points History
+        </h3>
+        <div className="surface-raised rounded-2xl overflow-hidden">
+          {pointsHistory.map((item, idx) => (
+            <div
+              key={item.id}
+              className={`flex items-center justify-between p-4 ${idx < pointsHistory.length - 1 ? 'border-b border-gold/8' : ''}`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.type === 'earned' ? 'bg-emerald-500/10' : 'bg-red-500/10'}`}>
+                  {item.type === 'earned'
+                    ? <ArrowUpRight className="w-4 h-4 text-emerald-400" />
+                    : <ArrowDownRight className="w-4 h-4 text-red-400" />
+                  }
+                </div>
+                <div>
+                  <p className="text-sm text-white">{item.desc}</p>
+                  <p className="text-[10px] text-gray-500">{item.date}</p>
+                </div>
+              </div>
+              <span className={`text-sm font-bold ${item.type === 'earned' ? 'text-emerald-400' : 'text-red-400'}`}>
+                {item.type === 'earned' ? '+' : ''}{item.points}
+              </span>
+            </div>
+          ))}
         </div>
       </motion.div>
     </motion.div>

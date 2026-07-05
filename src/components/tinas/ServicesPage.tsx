@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
+import ComparisonTable from '@/components/tinas/ComparisonTable';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -75,6 +76,20 @@ export default function ServicesPage() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="section-padding section-dark">
+        <div className="container-tinas">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <motion.div variants={fadeUp} custom={0} className="text-center mb-12">
+              <p className="text-[11px] tracking-[0.25em] text-gold/50 mb-4 heading-display uppercase">Compare</p>
+              <h2 className="text-3xl md:text-4xl font-bold heading-display">Find Your Perfect <span className="text-pink-brand">Treatment</span></h2>
+            </motion.div>
+            <motion.div variants={fadeUp} custom={1}>
+              <ComparisonTable />
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 

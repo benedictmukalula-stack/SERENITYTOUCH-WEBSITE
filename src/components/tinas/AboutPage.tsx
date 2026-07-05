@@ -79,6 +79,39 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Spa Etiquette */}
+      <section className="section-padding section-dark">
+        <div className="container-tinas max-w-4xl">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} className="text-center mb-14">
+            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.25em] text-gold/50 mb-4 heading-display uppercase">FIRST VISIT?</motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-4xl font-bold heading-display">Spa <span className="text-pink-brand">Etiquette</span></motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-pink-glow/35 mt-4 max-w-2xl mx-auto body-serif font-light">Everything you need to know for the perfect first visit.</motion.p>
+          </motion.div>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={3} className="grid sm:grid-cols-2 gap-5">
+            {[
+              { title: 'Arrive 10 Minutes Early', desc: 'This gives us time to prepare your treatment room and discuss your preferences. Rushing in defeats the purpose of relaxation.' },
+              { title: 'Silence Your Phone', desc: 'We kindly ask that you put your phone on silent. This is your time to disconnect and recharge — let the outside world wait.' },
+              { title: 'Communicate Openly', desc: 'Tell your therapist about any pain, preferences, or allergies. Your comfort and safety are our absolute priority.' },
+              { title: 'Hygiene & Comfort', desc: 'Shower before your appointment if possible. We provide fresh linens, robes, and slippers for your comfort.' },
+              { title: 'Cancellations', desc: 'Please give 24 hours notice for cancellations. Late cancellations may incur a 50% fee. No-shows are charged in full.' },
+              { title: 'Gratuities', desc: 'Tipping is appreciated but never expected. If you wish to tip, it can be added to your payment or given directly.' },
+              { title: 'What to Wear', desc: 'Wear whatever makes you comfortable. We provide disposable undergarments and robes. You will always be properly draped.' },
+              { title: 'After Your Treatment', desc: 'Drink plenty of water and avoid heavy meals for an hour. Take it easy — let the treatment benefits settle in.' },
+            ].map((item, i) => (
+              <div key={i} className="surface-raised rounded-xl p-5 hover:border-gold/20 transition-all duration-300">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gold/8 border border-gold/15 flex items-center justify-center shrink-0 mt-0.5"><span className="text-gold text-xs">{i + 1}</span></div>
+                  <div>
+                    <p className="font-semibold text-sm text-white mb-1.5">{item.title}</p>
+                    <p className="text-sm text-pink-glow/35 body-serif font-light leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
       <section className="section-padding section-dark">
         <div className="container-tinas max-w-3xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">

@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, User, LogIn } from 'lucide-react';
+import Breadcrumbs from '@/components/tinas/Breadcrumbs';
 import { useAppStore, type Page } from '@/lib/store';
 
 const navItems: { label: string; page: Page }[] = [
@@ -17,6 +18,7 @@ export default function Navigation() {
   const { currentPage, navigate, isMobileMenuOpen, setMobileMenuOpen, isMemberLoggedIn, member } = useAppStore();
 
   return (
+    <>
     <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(24px) saturate(180%)', borderBottom: '1px solid rgba(212, 175, 55, 0.08)' }}>
       <div className="container-tinas flex items-center justify-between h-16 md:h-[72px]">
         {/* Logo */}
@@ -158,5 +160,16 @@ export default function Navigation() {
         )}
       </AnimatePresence>
     </nav>
+    {currentPage !== 'home' && (
+      <div className="pt-[72px] md:pt-[80px] section-dark border-b border-gold/8">
+        <div className="container-tinas py-3">
+          <Breadcrumbs items={[
+            { label: 'Home', page: 'home' },
+            { label: currentPage === 'services' ? 'Treatments' : currentPage === 'packages' ? 'Packages' : currentPage === 'membership' ? 'Membership' : currentPage === 'corporate' ? 'Corporate Wellness' : currentPage === 'vouchers' ? 'Gift Vouchers' : currentPage === 'gallery' ? 'Gallery' : currentPage === 'testimonials' ? 'Testimonials' : currentPage === 'blog' ? 'Wellness Journal' : currentPage === 'about' ? 'About' : currentPage === 'contact' ? 'Contact' : currentPage === 'therapists' ? 'Our Team' : currentPage === 'login' ? 'Login' : currentPage === 'dashboard' ? 'Dashboard' : currentPage.charAt(0).toUpperCase() + currentPage.slice(1) }
+          ]} />
+        </div>
+      </div>
+    )}
+    </>
   );
 }
