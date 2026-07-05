@@ -21,7 +21,7 @@ interface TreatmentRow {
 
 const treatments: TreatmentRow[] = [
   { feature: 'Duration', swedish: '60–90 min', deepTissue: '60–90 min', thai: '60–120 min' },
-  { feature: 'Price', swedish: '$85–$120', deepTissue: '$95–$140', thai: '$90–$150' },
+  { feature: 'Price', swedish: 'K800', deepTissue: 'K1,200', thai: 'K1,100' },
   { feature: 'Pressure', swedish: 'Light – Medium', deepTissue: 'Firm – Deep', thai: 'Moderate – Strong' },
   { feature: 'Best For', swedish: 'Relaxation & Stress', deepTissue: 'Chronic Pain & Tension', thai: 'Flexibility & Energy' },
   { feature: 'Technique', swedish: 'Long flowing strokes', deepTissue: 'Targeted deep pressure', thai: 'Stretching & compression' },

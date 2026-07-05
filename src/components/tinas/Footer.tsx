@@ -44,6 +44,7 @@ export default function Footer() {
                 { label: 'Testimonials', page: 'testimonials' },
                 { label: 'Blog', page: 'blog' },
                 { label: 'About Us', page: 'about' },
+                { label: 'Our Team', page: 'therapists' },
               ].map((item) => (
                 <li key={item.page}><button onClick={() => navigate(item.page as any)} className="text-gold/35 hover:text-gold transition-colors cursor-pointer">{item.label}</button></li>
               ))}
@@ -56,7 +57,7 @@ export default function Footer() {
               <li><a href="tel:+260572782539" className="hover:text-gold transition-colors">+260 572 782 539</a></li>
               <li><a href="https://wa.me/260761404555" className="hover:text-gold transition-colors">WhatsApp: +260 761 404 555</a></li>
               <li><a href="mailto:info@serenitytouch.co.zm" className="hover:text-gold transition-colors">info@serenitytouch.co.zm</a></li>
-              <li><a href="mailto:info@serenitytouch.co.za" className="hover:text-gold transition-colors">info@serenitytouch.co.za</a></li>
+              <li><a href="https://serenitytouch.co.zm" className="hover:text-gold transition-colors">www.serenitytouch.co.zm</a></li>
             </ul>
           </div>
         </div>

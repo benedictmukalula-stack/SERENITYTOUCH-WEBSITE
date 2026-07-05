@@ -33,18 +33,26 @@ export default function Navigation() {
         </button>
 
         {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-7">
           {navItems.map((item) => (
             <button
               key={item.page}
               onClick={() => navigate(item.page)}
-              className={`text-[13px] tracking-wide transition-colors cursor-pointer ${
+              className={`relative text-[13.5px] tracking-wide transition-colors cursor-pointer py-1 ${
                 currentPage === item.page
                   ? 'text-gold font-semibold'
                   : 'text-pink-glow/35 hover:text-white'
               }`}
             >
               {item.label}
+              {currentPage === item.page && (
+                <motion.span
+                  layoutId="nav-active"
+                  className="absolute -bottom-1.5 left-0 right-0 h-0.5 rounded-full"
+                  style={{ background: 'linear-gradient(90deg, #D4AF37, #E91E63)' }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                />
+              )}
             </button>
           ))}
         </div>
@@ -113,7 +121,7 @@ export default function Navigation() {
             className="lg:hidden overflow-hidden"
             style={{ background: 'rgba(0, 0, 0, 0.95)', borderBottom: '1px solid rgba(212, 175, 55, 0.08)' }}
           >
-            <div className="container-tinas py-4 space-y-1">
+            <div className="container-tinas py-3 space-y-0.5">
               {navItems.map((item) => (
                 <button
                   key={item.page}
@@ -121,7 +129,7 @@ export default function Navigation() {
                     navigate(item.page);
                     setMobileMenuOpen(false);
                   }}
-                  className={`block w-full text-left px-4 py-3 rounded-lg text-sm transition-colors cursor-pointer ${
+                  className={`block w-full text-left px-4 py-3.5 rounded-xl text-[15px] transition-colors cursor-pointer ${
                     currentPage === item.page
                       ? 'bg-gold/10 text-gold font-semibold'
                       : 'text-pink-glow/35 hover:bg-gold/5 hover:text-white'
