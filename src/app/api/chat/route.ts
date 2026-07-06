@@ -3,6 +3,7 @@ import { spawn } from 'child_process';
 import { existsSync, readFileSync, unlinkSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { db } from '@/lib/db';
+import { sendEmail, bookingConfirmationEmail, newBookingNotificationEmail } from '@/lib/email';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -96,8 +97,14 @@ export async function POST(request: NextRequest) {
             let t24 = '';
             if (tm) { let h = parseInt(tm[1]); const m = parseInt(tm[2]); const p = tm[3].toUpperCase(); if (p === 'PM' && h !== 12) h += 12; if (p === 'AM' && h === 12) h = 0; t24 = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`; }
             const rid = `ST-${Array.from({ length: 6 }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)]).join('')}`;
-            await db.booking.create({ data: { bookingId: rid, name: ba.name, email: ba.email, phone: ba.phone || '', serviceId: service.id, serviceName: service.name, date: ba.date, time: t24, bookingType: ba.bookingType || 'in_spa', totalAmount: total, paymentMethod: 'cash' } });
+            const bookingType = ba.bookingType || 'in_spa';
+            await db.booking.create({ data: { bookingId: rid, name: ba.name, email: ba.email, phone: ba.phone || '', serviceId: service.id, serviceName: service.name, date: ba.date, time: t24, bookingType, totalAmount: total, paymentMethod: 'cash', paymentStatus: 'pending', status: 'confirmed' } });
             bookingResult = { success: true, bookingId: rid, totalAmount: total };
+
+            // Send confirmation emails (fire-and-forget)
+            const bData = { name: ba.name, email: ba.email, phone: ba.phone || '', bookingId: rid, serviceName: service.name, date: ba.date, time: t24, therapistName: 'First Available', totalAmount: total, bookingType, paymentMethod: 'cash', notes: '' };
+            sendEmail({ to: ba.email, subject: `Booking Confirmed — ${rid} | Serenity Touch Spa`, html: bookingConfirmationEmail(bData), from: 'bookings' }).catch(() => {});
+            sendEmail({ to: 'bookings@serenitytouch.co.za', subject: `New Booking: ${rid} — ${service.name}`, html: newBookingNotificationEmail(bData), from: 'bookings' }).catch(() => {});
           } else { bookingResult = { success: false, error: `Service "${ba.service}" not found` }; }
         }
       } catch (err) { console.error('[Booking]', err); bookingResult = { success: false, error: 'Booking failed' }; }
