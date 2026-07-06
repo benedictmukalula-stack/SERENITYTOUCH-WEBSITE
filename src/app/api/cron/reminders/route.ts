@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { sendWhatsApp, buildReminderWA } from '@/lib/whatsapp';
-import { sendEmail, bookingConfirmationEmail } from '@/lib/email';
+import { sendEmail } from '@/lib/email';
+import { validateCronKey, unauthorizedResponse } from '@/lib/api-auth';
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' };
 export async function OPTIONS() { return new NextResponse(null, { status: 204, headers: CORS }); }
@@ -11,9 +12,10 @@ export async function OPTIONS() { return new NextResponse(null, { status: 204, h
  * Call this daily (e.g. via cron-job.org or Ultramsg scheduler).
  * Finds all confirmed bookings for TOMORROW and sends WhatsApp + email reminders.
  * 
- * Security: pass ?key=REMINDERS_CRON_KEY (set in .env, optional for now).
+ * Security: pass ?key=CRON_KEY from .env.
  */
 export async function POST(request: NextRequest) {
+  if (!validateCronKey(request)) return unauthorizedResponse();
   try {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);

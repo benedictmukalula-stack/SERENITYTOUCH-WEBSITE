@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { sendWhatsApp, buildStatusUpdateWA, buildPaymentConfirmedWA } from '@/lib/whatsapp';
 import { sendEmail, paymentReceiptEmail, paymentNotificationEmail } from '@/lib/email';
+import { validateAdminKey, unauthorizedResponse } from '@/lib/api-auth';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -20,6 +21,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!validateAdminKey(request)) return unauthorizedResponse();
   try {
     const { id } = await params;
     const body = await request.json();

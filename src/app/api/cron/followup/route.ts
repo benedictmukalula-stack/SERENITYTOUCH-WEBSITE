@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { sendWhatsApp, buildFollowUpWA } from '@/lib/whatsapp';
+import { validateCronKey, unauthorizedResponse } from '@/lib/api-auth';
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' };
 export async function OPTIONS() { return new NextResponse(null, { status: 204, headers: CORS }); }
@@ -11,6 +12,7 @@ export async function OPTIONS() { return new NextResponse(null, { status: 204, h
  * Run weekly.
  */
 export async function POST(request: NextRequest) {
+  if (!validateCronKey(request)) return unauthorizedResponse();
   try {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);

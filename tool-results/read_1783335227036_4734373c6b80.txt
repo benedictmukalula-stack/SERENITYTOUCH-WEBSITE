@@ -1,0 +1,669 @@
+     1→'use client';
+     2→
+     3→import { useState, useEffect } from 'react';
+     4→import { motion } from 'framer-motion';
+     5→import {
+     6→  Crown, Sparkles, Calendar, Clock, CreditCard, MessageCircle, LogOut,
+     7→  ChevronRight, Star, Gift, Shield, Settings, Bell, BookOpen, User,
+     8→  TrendingUp, Heart, Award, MessageSquare, Gem, Plus, Minus, Check,
+     9→  ArrowUpRight, ArrowDownRight, BarChart3
+    10→} from 'lucide-react';
+    11→import { useAppStore, type Member } from '@/lib/store';
+    12→
+    13→const fadeUp = {
+    14→  hidden: { opacity: 0, y: 20 },
+    15→  visible: (i: number) => ({
+    16→    opacity: 1, y: 0,
+    17→    transition: { delay: i * 0.06, duration: 0.5, ease: 'easeOut' },
+    18→  }),
+    19→};
+    20→
+    21→const tierConfig = {
+    22→  Silver: { color: 'from-gray-400 to-gray-500', badge: 'bg-gray-500/20 text-gray-300 border-gray-500/30', icon: Sparkles, perks: ['1 massage/month', '10% off services', 'Priority booking', 'Birthday special', 'Member lounge'] },
+    23→  Gold: { color: 'from-gold to-amber-600', badge: 'bg-gold/20 text-gold border-gold/30', icon: Crown, perks: ['2 massages/month', '20% off services', 'VIP booking', 'Aromatherapy upgrade', 'Quarterly consult', 'Guest privileges', 'WhatsApp concierge'] },
+    24→  Platinum: { color: 'from-pink-brand to-pink-hot', badge: 'bg-pink-brand/15 text-pink-brand border-pink-brand/25', icon: Crown, perks: ['Unlimited massages', '30% off services', '24/7 concierge', 'Personal wellness plan', 'Private therapy room', 'Monthly spa day', 'Home visits', 'Airport pickup', 'Annual retreat'] },
+    25→};
+    26→
+    27→const statusColors: Record<string, string> = {
+    28→  confirmed: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    29→  pending: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    30→  completed: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+    31→  cancelled: 'bg-red-500/10 text-red-400 border-red-500/20',
+    32→};
+    33→
+    34→export default function MemberDashboard() {
+    35→  const { member, logoutMember, navigate, isMemberLoggedIn } = useAppStore();
+    36→  const [activeTab, setActiveTab] = useState<'overview' | 'bookings' | 'services' | 'rewards' | 'settings'>('overview');
+    37→
+    38→  const [realBookings, setRealBookings] = useState<Array<{
+    39→    bookingId: string;
+    40→    serviceName: string;
+    41→    date: string;
+    42→    time: string;
+    43→    status: string;
+    44→    totalAmount: number;
+    45→    therapistName: string;
+    46→    bookingType: string;
+    47→    paymentMethod: string;
+    48→    paymentStatus: string;
+    49→  }>>([]);
+    50→
+    51→  const [bookingsLoading, setBookingsLoading] = useState(true);
+    52→
+    53→  useEffect(() => {
+    54→    if (!member?.email) return;
+    55→    setBookingsLoading(true);
+    56→    fetch(`/api/booking?email=${encodeURIComponent(member.email)}`)
+    57→      .then(r => r.json())
+    58→      .then(data => {
+    59→        if (data.success && Array.isArray(data.bookings)) {
+    60→          setRealBookings(data.bookings);
+    61→        }
+    62→      })
+    63→      .catch(() => {})
+    64→      .finally(() => setBookingsLoading(false));
+    65→  }, [member?.email]);
+    66→
+    67→  if (!isMemberLoggedIn || !member) {
+    68→    navigate('login');
+    69→    return null;
+    70→  }
+    71→
+    72→  const config = tierConfig[member.tier];
+    73→  const TierIcon = config.icon;
+    74→
+    75→  const tabs = [
+    76→    { id: 'overview' as const, label: 'Overview', icon: TrendingUp },
+    77→    { id: 'bookings' as const, label: 'My Bookings', icon: Calendar },
+    78→    { id: 'services' as const, label: 'Services', icon: BookOpen },
+    79→    { id: 'rewards' as const, label: 'Rewards', icon: Gift },
+    80→    { id: 'settings' as const, label: 'Settings', icon: Settings },
+    81→  ];
+    82→
+    83→  return (
+    84→    <div>
+    85→      {/* Header */}
+    86→      <section className="pt-28 pb-8 relative overflow-hidden" style={{ background: '#030102' }}>
+    87→        <div className={`absolute inset-0 bg-gradient-to-br ${config.color} opacity-[0.03]`} />
+    88→        <div className="container-tinas relative z-10">
+    89→          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+    90→            <div className="flex items-center gap-5">
+    91→              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${config.color} flex items-center justify-center shadow-lg`}>
+    92→                <TierIcon className="w-7 h-7 text-white" />
+    93→              </div>
+    94→              <div>
+    95→                <div className="flex items-center gap-3 mb-1">
+    96→                  <h1 className="text-2xl md:text-3xl font-bold heading-display">Welcome, {member.name.split(' ')[0]}</h1>
+    97→                </div>
+    98→                <div className="flex items-center gap-3">
+    99→                  <span className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wider border ${config.badge}`}>
+   100→                    {member.tier.toUpperCase()} MEMBER
+   101→                  </span>
+   102→                  <span className="text-xs text-gray-500">Since {new Date(member.memberSince).toLocaleDateString('en-ZM', { month: 'long', year: 'numeric' })}</span>
+   103→                </div>
+   104→              </div>
+   105→            </div>
+   106→
+   107→            <div className="flex items-center gap-3">
+   108→              {member.tier === 'Platinum' && (
+   109→                <button
+   110→                  onClick={() => navigate('analytics')}
+   111→                  className="flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold transition cursor-pointer border border-gold/20 text-gold hover:bg-gold/10"
+   112→                >
+   113→                  <BarChart3 className="w-3.5 h-3.5" /> Analytics
+   114→                </button>
+   115→              )}
+   116→              <a
+   117→                href={`https://wa.me/260761404555?text=Hello%20Serenity%20Touch%20Spa.%20This%20is%20${encodeURIComponent(member.name)}%20(${member.tier}%20member).`}
+   118→                target="_blank"
+   119→                rel="noopener noreferrer"
+   120→                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-full text-xs font-semibold transition cursor-pointer"
+   121→              >
+   122→                <MessageCircle className="w-3.5 h-3.5" />
+   123→                Concierge
+   124→              </a>
+   125→              <button
+   126→                onClick={logoutMember}
+   127→                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-gold/15 text-gray-300 px-4 py-2.5 rounded-full text-xs font-medium transition cursor-pointer"
+   128→              >
+   129→                <LogOut className="w-3.5 h-3.5" />
+   130→                Sign Out
+   131→              </button>
+   132→            </div>
+   133→          </div>
+   134→
+   135→          {/* Tabs */}
+   136→          <div className="flex gap-1 mt-8 bg-white/5 rounded-xl p-1 max-w-md">
+   137→            {tabs.map((tab) => (
+   138→              <button
+   139→                key={tab.id}
+   140→                onClick={() => setActiveTab(tab.id)}
+   141→                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+   142→                  activeTab === tab.id
+   143→                    ? 'bg-gold/20 text-gold'
+   144→                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+   145→                }`}
+   146→              >
+   147→                <tab.icon className="w-3.5 h-3.5" />
+   148→                <span className="hidden sm:inline">{tab.label}</span>
+   149→              </button>
+   150→            ))}
+   151→          </div>
+   152→        </div>
+   153→      </section>
+   154→
+   155→      <section className="section-padding surface-base min-h-[60vh]">
+   156→        <div className="container-tinas">
+   157→          {activeTab === 'overview' && <OverviewTab member={member} config={config} bookings={realBookings} />}
+   158→          {activeTab === 'bookings' && <BookingsTab member={member} bookings={realBookings} loading={bookingsLoading} />}
+   159→          {activeTab === 'services' && <ServicesTab member={member} />}
+   160→          {activeTab === 'rewards' && <RewardsTab member={member} />}
+   161→          {activeTab === 'settings' && <SettingsTab member={member} />}
+   162→        </div>
+   163→      </section>
+   164→    </div>
+   165→  );
+   166→}
+   167→
+   168→function OverviewTab({ member, config, bookings }: { member: Member; config: typeof tierConfig.Silver; bookings: typeof realBookings }) {
+   169→  const stats = [
+   170→    { label: 'Sessions Used', value: member.bookingsUsed.toString(), icon: Heart },
+   171→    { label: 'Remaining', value: member.bookingsRemaining === -1 ? 'Unlimited' : member.bookingsRemaining.toString(), icon: Calendar },
+   172→    { label: 'Next Billing', value: new Date(member.nextBilling).toLocaleDateString('en-ZM', { day: 'numeric', month: 'short' }), icon: CreditCard },
+   173→    { label: 'Member Since', value: new Date(member.memberSince).toLocaleDateString('en-ZM', { month: 'short', year: 'numeric' }), icon: Shield },
+   174→  ];
+   175→
+   176→  return (
+   177→    <motion.div initial="hidden" animate="visible">
+   178→      <motion.div variants={fadeUp} custom={0} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+   179→        {stats.map((stat) => (
+   180→          <div key={stat.label} className="surface-raised rounded-xl p-5">
+   181→            <stat.icon className="w-4 h-4 text-gold mb-3" />
+   182→            <p className="text-2xl font-bold text-white mb-1">{stat.value}</p>
+   183→            <p className="text-xs text-gray-500">{stat.label}</p>
+   184→          </div>
+   185→        ))}
+   186→      </motion.div>
+   187→
+   188→      <div className="grid md:grid-cols-2 gap-6">
+   189→        <motion.div variants={fadeUp} custom={1}>
+   190→          <div className="surface-raised rounded-2xl p-7 h-full">
+   191→            <h3 className="text-lg font-bold heading-display mb-5 flex items-center gap-2">
+   192→              <Award className="w-4 h-4 text-gold" />
+   193→              {member.tier} Benefits
+   194→            </h3>
+   195→            <div className="space-y-3">
+   196→              {config.perks.map((perk, i) => (
+   197→                <div key={i} className="flex items-center gap-3">
+   198→                  <span className="text-gold text-xs">&#10022;</span>
+   199→                  <span className="text-sm text-gray-300">{perk}</span>
+   200→                </div>
+   201→              ))}
+   202→            </div>
+   203→          </div>
+   204→        </motion.div>
+   205→
+   206→        <motion.div variants={fadeUp} custom={2}>
+   207→          <div className="surface-raised rounded-2xl p-7 h-full">
+   208→            <h3 className="text-lg font-bold heading-display mb-5 flex items-center gap-2">
+   209→              <Clock className="w-4 h-4 text-gold" />
+   210→              Upcoming Sessions
+   211→            </h3>
+   212→            <div className="space-y-3">
+   213→              {bookings.filter(b => b.status !== 'completed' && b.status !== 'cancelled').slice(0, 3).map((booking) => (
+   214→                <div key={booking.bookingId} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-gold/10">
+   215→                  <div>
+   216→                    <p className="text-sm font-semibold text-white">{booking.serviceName}</p>
+   217→                    <p className="text-xs text-gray-500">{booking.date} &middot; {booking.time || 'TBD'} &middot; {booking.therapistName}</p>
+   218→                  </div>
+   219→                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusColors[booking.status] || statusColors.pending}`}>
+   220→                    {booking.status.toUpperCase()}
+   221→                  </span>
+   222→                </div>
+   223→              ))}
+   224→              {bookings.filter(b => b.status !== 'completed' && b.status !== 'cancelled').length === 0 && (
+   225→                <p className="text-sm text-gray-500 body-serif font-light">No upcoming bookings. <button onClick={() => useAppStore.getState().navigate('contact')} className="text-pink-brand hover:underline cursor-pointer">Book a session</button></p>
+   226→              )}
+   227→            </div>
+   228→          </div>
+   229→        </motion.div>
+   230→      </div>
+   231→
+   232→      <motion.div variants={fadeUp} custom={3} className="mt-6">
+   233→        <div className="surface-raised rounded-2xl p-7">
+   234→          <h3 className="text-lg font-bold heading-display mb-4 flex items-center gap-2">
+   235→            <Star className="w-4 h-4 text-gold" />
+   236→            Quick Actions
+   237→          </h3>
+   238→          <div className="grid sm:grid-cols-3 gap-3">
+   239→            {[
+   240→              { label: 'Book New Session', icon: Calendar, action: 'contact' },
+   241→              { label: 'WhatsApp Concierge', icon: MessageSquare, action: 'whatsapp' },
+   242→              { label: 'Upgrade Membership', icon: Crown, action: 'membership' },
+   243→            ].map((item) => (
+   244→              <button
+   245→                key={item.label}
+   246→                onClick={() => {
+   247→                  if (item.action === 'whatsapp') {
+   248→                    window.open(`https://wa.me/260761404555?text=Hello%20Serenity%20Touch%20Spa%20concierge.`, '_blank');
+   249→                  } else if (item.action === 'contact' || item.action === 'membership') {
+   250→                    const { navigate } = useAppStore.getState();
+   251→                    navigate(item.action as 'contact' | 'membership');
+   252→                  }
+   253→                }}
+   254→                className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-gold/15 hover:border-gold/30 hover:bg-white/5 transition cursor-pointer"
+   255→              >
+   256→                <item.icon className="w-4 h-4 text-gold" />
+   257→                <span className="text-sm font-medium text-white">{item.label}</span>
+   258→                <ChevronRight className="w-4 h-4 text-gray-600 ml-auto" />
+   259→              </button>
+   260→            ))}
+   261→          </div>
+   262→        </div>
+   263→      </motion.div>
+   264→
+   265→      {/* Referral Section */}
+   266→      <motion.div variants={fadeUp} custom={4} className="mt-6">
+   267→        <div className="surface-raised rounded-2xl p-7" style={{background: 'linear-gradient(135deg, rgba(212,175,55,0.05) 0%, rgba(233,30,99,0.03) 100%)'}}>
+   268→          <div className="flex items-center gap-3 mb-3">
+   269→            <Gift className="w-5 h-5 text-gold" />
+   270→            <h3 className="text-lg font-bold heading-display">Refer & Earn</h3>
+   271→          </div>
+   272→          <p className="text-sm text-pink-glow/45 mb-4 body-serif font-light">Share your referral code and both you and your friend get 20% off your next treatment.</p>
+   273→          <div className="flex items-center gap-3">
+   274→            <div className="flex-1 px-4 py-3 rounded-xl bg-black/40 border border-gold/15 font-mono text-gold text-sm tracking-wider">
+   275→              SERENITY-{member.name.split(' ')[0].toUpperCase()}-2026
+   276→            </div>
+   277→            <button className="btn-pink px-4 py-3 text-xs cursor-pointer">Copy Code</button>
+   278→          </div>
+   279→          <div className="mt-4 flex items-center gap-6 text-sm text-pink-glow/40">
+   280→            <span>Referrals: <span className="text-gold font-bold">3</span></span>
+   281→            <span>Points earned: <span className="text-gold font-bold">450</span></span>
+   282→          </div>
+   283→        </div>
+   284→      </motion.div>
+   285→    </motion.div>
+   286→  );
+   287→}
+   288→
+   289→function RewardsTab({ member }: { member: Member }) {
+   290→  const [redeemingId, setRedeemingId] = useState<string | null>(null);
+   291→
+   292→  const pointsBalance = 1250;
+   293→  const tierMultiplier: Record<string, number> = { Silver: 1, Gold: 1.5, Platinum: 2 };
+   294→  const multiplier = tierMultiplier[member.tier] || 1;
+   295→  const nextTierPoints = 2000;
+   296→  const pointsToNext = nextTierPoints - pointsBalance;
+   297→  const progress = Math.min((pointsBalance / nextTierPoints) * 100, 100);
+   298→
+   299→  const rewards = [
+   300→    { id: 'r1', points: 500, name: 'Free Aromatherapy Upgrade', desc: 'Enhance any treatment with premium essential oils' },
+   301→    { id: 'r2', points: 1000, name: 'Free 30-min Add-on Treatment', desc: 'Enjoy an additional 30 minutes of relaxation' },
+   302→    { id: 'r3', points: 2000, name: 'Free 60-min Massage', desc: 'Choose any 60-minute massage on the menu' },
+   303→    { id: 'r4', points: 3500, name: 'Free Signature Package', desc: 'Experience our full Serenity Signature treatment' },
+   304→    { id: 'r5', points: 5000, name: 'Free Couples Retreat', desc: 'A luxurious couples retreat for two' },
+   305→  ];
+   306→
+   307→  const pointsHistory = [
+   308→    { id: 'ph1', desc: 'Booking: Swedish Massage', points: 150, type: 'earned' as const, date: '2026-07-10' },
+   309→    { id: 'ph2', desc: 'Referral bonus: Bwalya N.', points: 150, type: 'earned' as const, date: '2026-07-08' },
+   310→    { id: 'ph3', desc: 'Redeemed: Aromatherapy Upgrade', points: -500, type: 'spent' as const, date: '2026-06-28' },
+   311→    { id: 'ph4', desc: 'Booking: Hot Stone Therapy', points: 200, type: 'earned' as const, date: '2026-06-20' },
+   312→    { id: 'ph5', desc: 'Referral bonus: Grace B.', points: 150, type: 'earned' as const, date: '2026-06-15' },
+   313→    { id: 'ph6', desc: 'Booking: Deep Tissue Massage', points: 250, type: 'earned' as const, date: '2026-06-01' },
+   314→  ];
+   315→
+   316→  const handleRedeem = (rewardId: string) => {
+   317→    setRedeemingId(rewardId);
+   318→    setTimeout(() => setRedeemingId(null), 2000);
+   319→  };
+   320→
+   321→  return (
+   322→    <motion.div initial="hidden" animate="visible">
+   323→      {/* Points Balance Card */}
+   324→      <motion.div variants={fadeUp} custom={0} className="mb-8">
+   325→        <div className="rounded-2xl p-8 relative overflow-hidden" style={{background: 'linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(180,140,30,0.06) 50%, rgba(233,30,99,0.04) 100%)'}}>
+   326→          <div className="absolute top-0 right-0 w-40 h-40 bg-gold/5 rounded-full blur-3xl" />
+   327→          <div className="relative z-10">
+   328→            <div className="flex items-center gap-2 mb-2">
+   329→              <Gem className="w-4 h-4 text-gold/60" />
+   330→              <p className="text-xs text-gold/50 tracking-[0.15em] uppercase font-semibold">Loyalty Points Balance</p>
+   331→            </div>
+   332→            <div className="flex items-end gap-4 mb-6">
+   333→              <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gold via-amber-400 to-gold bg-clip-text text-transparent heading-display">
+   334→                {pointsBalance.toLocaleString()}
+   335→              </h2>
+   336→              <span className="text-gold/50 text-lg mb-2 body-serif">Points</span>
+   337→            </div>
+   338→            <div className="flex items-center gap-3 mb-1">
+   339→              <span className="text-sm text-white/70">Tier Multiplier:</span>
+   340→              <span className="px-3 py-1 rounded-full bg-gold/15 border border-gold/25 text-gold text-xs font-bold">
+   341→                {member.tier}: {multiplier}x
+   342→              </span>
+   343→            </div>
+   344→          </div>
+   345→        </div>
+   346→      </motion.div>
+   347→
+   348→      {/* Progress to Next Tier */}
+   349→      <motion.div variants={fadeUp} custom={1} className="surface-raised rounded-2xl p-7 mb-8">
+   350→        <div className="flex items-center justify-between mb-3">
+   351→          <p className="text-sm font-semibold text-white">Progress to Gold Reward</p>
+   352→          <p className="text-xs text-gold font-bold">{pointsToNext.toLocaleString()} points to go</p>
+   353→        </div>
+   354→        <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
+   355→          <motion.div
+   356→            initial={{ width: 0 }}
+   357→            animate={{ width: `${progress}%` }}
+   358→            transition={{ duration: 1.2, ease: 'easeOut' }}
+   359→            className="h-full rounded-full"
+   360→            style={{background: 'linear-gradient(90deg, #d4af37, #f0d060)'}}
+   361→          />
+   362→        </div>
+   363→        <div className="flex justify-between mt-2">
+   364→          <span className="text-[10px] text-gray-500">0 pts</span>
+   365→          <span className="text-[10px] text-gold/50">2,000 pts</span>
+   366→        </div>
+   367→      </motion.div>
+   368→
+   369→      {/* Redeemable Rewards Grid */}
+   370→      <motion.div variants={fadeUp} custom={2} className="mb-8">
+   371→        <h3 className="text-lg font-bold heading-display mb-5 flex items-center gap-2">
+   372→          <Crown className="w-4 h-4 text-gold" />
+   373→          Redeem Rewards
+   374→        </h3>
+   375→        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+   376→          {rewards.map((reward) => {
+   377→            const canRedeem = pointsBalance >= reward.points;
+   378→            const isRedeeming = redeemingId === reward.id;
+   379→            return (
+   380→              <div key={reward.id} className="surface-raised rounded-xl p-6 flex flex-col justify-between">
+   381→                <div>
+   382→                  <div className="flex items-center justify-between mb-3">
+   383→                    <span className="text-xs text-gold font-bold tracking-wider">{reward.points.toLocaleString()} PTS</span>
+   384→                    <Gem className={`w-4 h-4 ${canRedeem ? 'text-gold' : 'text-gray-600'}`} />
+   385→                  </div>
+   386→                  <h4 className="text-sm font-bold text-white mb-2">{reward.name}</h4>
+   387→                  <p className="text-xs text-pink-glow/40 body-serif font-light">{reward.desc}</p>
+   388→                </div>
+   389→                <button
+   390→                  onClick={() => canRedeem && handleRedeem(reward.id)}
+   391→                  disabled={!canRedeem || isRedeeming}
+   392→                  className={`mt-4 w-full py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+   393→                    isRedeeming
+   394→                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+   395→                      : canRedeem
+   396→                        ? 'btn-outline-gold'
+   397→                        : 'bg-white/[0.02] text-gray-600 border border-gold/8 cursor-not-allowed'
+   398→                  }`}
+   399→                >
+   400→                  {isRedeeming ? (
+   401→                    <span className="flex items-center justify-center gap-1.5"><Check className="w-3.5 h-3.5" /> Redeemed!</span>
+   402→                  ) : (
+   403→                    'Redeem'
+   404→                  )}
+   405→                </button>
+   406→              </div>
+   407→            );
+   408→          })}
+   409→        </div>
+   410→      </motion.div>
+   411→
+   412→      {/* Points History */}
+   413→      <motion.div variants={fadeUp} custom={3}>
+   414→        <h3 className="text-lg font-bold heading-display mb-5 flex items-center gap-2">
+   415→          <Star className="w-4 h-4 text-gold" />
+   416→          Points History
+   417→        </h3>
+   418→        <div className="surface-raised rounded-2xl overflow-hidden">
+   419→          {pointsHistory.map((item, idx) => (
+   420→            <div
+   421→              key={item.id}
+   422→              className={`flex items-center justify-between p-4 ${idx < pointsHistory.length - 1 ? 'border-b border-gold/8' : ''}`}
+   423→            >
+   424→              <div className="flex items-center gap-3">
+   425→                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.type === 'earned' ? 'bg-emerald-500/10' : 'bg-red-500/10'}`}>
+   426→                  {item.type === 'earned'
+   427→                    ? <ArrowUpRight className="w-4 h-4 text-emerald-400" />
+   428→                    : <ArrowDownRight className="w-4 h-4 text-red-400" />
+   429→                  }
+   430→                </div>
+   431→                <div>
+   432→                  <p className="text-sm text-white">{item.desc}</p>
+   433→                  <p className="text-[10px] text-gray-500">{item.date}</p>
+   434→                </div>
+   435→              </div>
+   436→              <span className={`text-sm font-bold ${item.type === 'earned' ? 'text-emerald-400' : 'text-red-400'}`}>
+   437→                {item.type === 'earned' ? '+' : ''}{item.points}
+   438→              </span>
+   439→            </div>
+   440→          ))}
+   441→        </div>
+   442→      </motion.div>
+   443→    </motion.div>
+   444→  );
+   445→}
+   446→
+   447→function BookingsTab({ member, bookings, loading }: { member: Member; bookings: typeof realBookings; loading: boolean }) {
+   448→  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all');
+   449→  const filtered = bookings.filter(b => {
+   450→    if (filter === 'upcoming') return b.status !== 'completed' && b.status !== 'cancelled';
+   451→    if (filter === 'past') return b.status === 'completed';
+   452→    return true;
+   453→  });
+   454→
+   455→  return (
+   456→    <motion.div initial="hidden" animate="visible">
+   457→      <motion.div variants={fadeUp} custom={0} className="flex items-center justify-between mb-6">
+   458→        <h2 className="text-xl font-bold heading-display">Booking History</h2>
+   459→        <div className="flex gap-1 bg-white/5 rounded-lg p-1">
+   460→          {(['all', 'upcoming', 'past'] as const).map((f) => (
+   461→            <button
+   462→              key={f}
+   463→              onClick={() => setFilter(f)}
+   464→              className={`px-3 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
+   465→                filter === f ? 'bg-gold/20 text-gold' : 'text-gray-400 hover:text-white'
+   466→              }`}
+   467→            >
+   468→              {f.charAt(0).toUpperCase() + f.slice(1)}
+   469→            </button>
+   470→          ))}
+   471→        </div>
+   472→      </motion.div>
+   473→
+   474→      {loading && (
+   475→        <motion.div variants={fadeUp} custom={1} className="text-center py-12">
+   476→          <div className="w-8 h-8 border-2 border-gold/20 border-t-gold rounded-full animate-spin mx-auto mb-3" />
+   477→          <p className="text-sm text-gray-500">Loading bookings...</p>
+   478→        </motion.div>
+   479→      )}
+   480→      {!loading && filtered.length === 0 && (
+   481→        <motion.div variants={fadeUp} custom={1} className="text-center py-12">
+   482→          <Calendar className="w-10 h-10 text-gray-700 mx-auto mb-3" />
+   483→          <p className="text-sm text-gray-500">No bookings found.</p>
+   484→        </motion.div>
+   485→      )}
+   486→      <motion.div variants={fadeUp} custom={1} className="space-y-3">
+   487→        {filtered.map((booking) => (
+   488→          <div key={booking.bookingId} className="surface-raised rounded-xl p-5 hover:border-gold/30 transition-all">
+   489→            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+   490→              <div className="flex items-start gap-4">
+   491→                <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
+   492→                  <Calendar className="w-4 h-4 text-gold" />
+   493→                </div>
+   494→                <div>
+   495→                  <p className="font-semibold text-white text-sm">{booking.serviceName}</p>
+   496→                  <p className="text-xs text-gray-500 mt-0.5">
+   497→                    {booking.therapistName} &middot; {booking.date} at {booking.time || 'TBD'}
+   498→                  </p>
+   499→                  <p className="text-[10px] text-gray-600 mt-0.5">Booking ID: {booking.bookingId}</p>
+   500→                </div>
+   501→              </div>
+   502→              <div className="flex items-center gap-3 sm:flex-col sm:items-end">
+   503→                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusColors[booking.status] || statusColors.pending}`}>
+   504→                  {booking.status.toUpperCase()}
+   505→                </span>
+   506→                <span className="text-lg font-bold text-white">K{booking.totalAmount?.toLocaleString()}</span>
+   507→              </div>
+   508→            </div>
+   509→          </div>
+   510→        ))}
+   511→      </motion.div>
+   512→    </motion.div>
+   513→  );
+   514→}
+   515→
+   516→function ServicesTab({ member }: { member: Member }) {
+   517→  const allServices = [
+   518→    { name: 'Swedish Massage', duration: '60 min', price: 'K800', memberPrice: member.tier === 'Silver' ? 'K720' : member.tier === 'Gold' ? 'K640' : 'K560' },
+   519→    { name: 'Deep Tissue Massage', duration: '90 min', price: 'K1,200', memberPrice: member.tier === 'Silver' ? 'K1,080' : member.tier === 'Gold' ? 'K960' : 'K840' },
+   520→    { name: 'Hot Stone Therapy', duration: '75 min', price: 'K1,000', memberPrice: member.tier === 'Silver' ? 'K900' : member.tier === 'Gold' ? 'K800' : 'K700' },
+   521→    { name: 'Aromatherapy Treatment', duration: '60 min', price: 'K900', memberPrice: member.tier === 'Silver' ? 'K810' : member.tier === 'Gold' ? 'K720' : 'K630' },
+   522→    { name: 'Couples Massage', duration: '90 min', price: 'K2,000', memberPrice: member.tier === 'Silver' ? 'K1,800' : member.tier === 'Gold' ? 'K1,600' : 'K1,400' },
+   523→    { name: 'Reflexology', duration: '60 min', price: 'K850', memberPrice: member.tier === 'Silver' ? 'K765' : member.tier === 'Gold' ? 'K680' : 'K595' },
+   524→  ];
+   525→
+   526→  const discount = member.tier === 'Silver' ? 10 : member.tier === 'Gold' ? 20 : 30;
+   527→
+   528→  return (
+   529→    <motion.div initial="hidden" animate="visible">
+   530→      <motion.div variants={fadeUp} custom={0} className="surface-raised rounded-2xl p-6 mb-8 flex items-center gap-4">
+   531→        <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center">
+   532→          <Gift className="w-5 h-5 text-gold" />
+   533→        </div>
+   534→        <div>
+   535→          <h2 className="text-lg font-bold heading-display">{member.tier} Member Pricing</h2>
+   536→          <p className="text-sm text-gray-400">You enjoy <span className="text-gold font-bold">{discount}% off</span> all services</p>
+   537→        </div>
+   538→      </motion.div>
+   539→
+   540→      <motion.div variants={fadeUp} custom={1} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+   541→        {allServices.map((service) => (
+   542→          <div key={service.name} className="surface-raised rounded-xl p-5 hover:border-gold/30 transition-all group">
+   543→            <p className="text-[10px] tracking-[0.1em] text-gray-500 mb-2">{service.duration.toUpperCase()}</p>
+   544→            <h3 className="font-bold text-white mb-3 heading-display">{service.name}</h3>
+   545→            <div className="flex items-baseline gap-3 mb-4">
+   546→              <span className="text-xl font-bold text-gold">{service.memberPrice}</span>
+   547→              <span className="text-sm text-gray-600 line-through">{service.price}</span>
+   548→            </div>
+   549→            <button
+   550→              onClick={() => useAppStore.getState().navigate('contact')}
+   551→              className="w-full btn-gold py-2 text-xs cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+   552→            >
+   553→              Book Now
+   554→            </button>
+   555→          </div>
+   556→        ))}
+   557→      </motion.div>
+   558→    </motion.div>
+   559→  );
+   560→}
+   561→
+   562→function SettingsTab({ member }: { member: Member }) {
+   563→  const [notifications, setNotifications] = useState({ email: true, sms: true, whatsapp: true });
+   564→  const [saved, setSaved] = useState(false);
+   565→
+   566→  const handleSave = () => {
+   567→    setSaved(true);
+   568→    setTimeout(() => setSaved(false), 2000);
+   569→  };
+   570→
+   571→  return (
+   572→    <motion.div initial="hidden" animate="visible">
+   573→      <motion.div variants={fadeUp} custom={0} className="max-w-2xl">
+   574→        {/* Profile */}
+   575→        <div className="surface-raised rounded-2xl p-7 mb-6">
+   576→          <h2 className="text-lg font-bold heading-display mb-6 flex items-center gap-2">
+   577→            <User className="w-4 h-4 text-gold" />
+   578→            Profile Information
+   579→          </h2>
+   580→          <div className="grid sm:grid-cols-2 gap-5">
+   581→            <div>
+   582→              <label className="block text-xs font-semibold text-gray-400 mb-1.5">Full Name</label>
+   583→              <input type="text" defaultValue={member.name} className="w-full px-4 py-3 border border-gold/20 rounded-xl bg-white/5 focus:outline-none focus:border-gold text-sm text-white transition" />
+   584→            </div>
+   585→            <div>
+   586→              <label className="block text-xs font-semibold text-gray-400 mb-1.5">Email</label>
+   587→              <input type="email" defaultValue={member.email} className="w-full px-4 py-3 border border-gold/20 rounded-xl bg-white/5 focus:outline-none focus:border-gold text-sm text-white transition" />
+   588→            </div>
+   589→            <div>
+   590→              <label className="block text-xs font-semibold text-gray-400 mb-1.5">Phone</label>
+   591→              <input type="tel" defaultValue={member.phone} className="w-full px-4 py-3 border border-gold/20 rounded-xl bg-white/5 focus:outline-none focus:border-gold text-sm text-white transition" />
+   592→            </div>
+   593→            <div>
+   594→              <label className="block text-xs font-semibold text-gray-400 mb-1.5">Member ID</label>
+   595→              <input type="text" value={member.id} readOnly className="w-full px-4 py-3 border border-gold/20 rounded-xl bg-white/[0.02] text-sm text-gray-500 cursor-not-allowed" />
+   596→            </div>
+   597→          </div>
+   598→        </div>
+   599→
+   600→        {/* Notifications */}
+   601→        <div className="surface-raised rounded-2xl p-7 mb-6">
+   602→          <h2 className="text-lg font-bold heading-display mb-6 flex items-center gap-2">
+   603→            <Bell className="w-4 h-4 text-gold" />
+   604→            Notification Preferences
+   605→          </h2>
+   606→          <div className="space-y-4">
+   607→            {[
+   608→              { key: 'email' as const, label: 'Email Notifications', desc: 'Booking confirmations, reminders, and newsletters' },
+   609→              { key: 'sms' as const, label: 'SMS Notifications', desc: 'Booking reminders and urgent updates' },
+   610→              { key: 'whatsapp' as const, label: 'WhatsApp Notifications', desc: 'Concierge messages and booking updates' },
+   611→            ].map((item) => (
+   612→              <div key={item.key} className="flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-gold/10">
+   613→                <div>
+   614→                  <p className="text-sm font-semibold text-white">{item.label}</p>
+   615→                  <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
+   616→                </div>
+   617→                <button
+   618→                  onClick={() => setNotifications(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
+   619→                  className={`w-12 h-7 rounded-full transition-all cursor-pointer relative ${
+   620→                    notifications[item.key] ? 'bg-gold' : 'bg-gray-700'
+   621→                  }`}
+   622→                >
+   623→                  <div className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+   624→                    notifications[item.key] ? 'translate-x-6' : 'translate-x-1'
+   625→                  }`} />
+   626→                </button>
+   627→              </div>
+   628→            ))}
+   629→          </div>
+   630→        </div>
+   631→
+   632→        {/* Security */}
+   633→        <div className="surface-raised rounded-2xl p-7 mb-6">
+   634→          <h2 className="text-lg font-bold heading-display mb-6 flex items-center gap-2">
+   635→            <Shield className="w-4 h-4 text-gold" />
+   636→            Security
+   637→          </h2>
+   638→          <div className="space-y-4">
+   639→            <div>
+   640→              <button className="w-full flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-gold/10 hover:border-gold/20 transition cursor-pointer">
+   641→                <div className="text-left">
+   642→                  <p className="text-sm font-semibold text-white">Change Password</p>
+   643→                  <p className="text-xs text-gray-500">Last changed 30 days ago</p>
+   644→                </div>
+   645→                <ChevronRight className="w-4 h-4 text-gray-600" />
+   646→              </button>
+   647→            </div>
+   648→            <div>
+   649→              <button className="w-full flex items-center justify-between p-4 rounded-xl bg-white/[0.02] border border-gold/10 hover:border-gold/20 transition cursor-pointer">
+   650→                <div className="text-left">
+   651→                  <p className="text-sm font-semibold text-white">Two-Factor Authentication</p>
+   652→                  <p className="text-xs text-gray-500">Add an extra layer of security</p>
+   653→                </div>
+   654→                <ChevronRight className="w-4 h-4 text-gray-600" />
+   655→              </button>
+   656→            </div>
+   657→          </div>
+   658→        </div>
+   659→
+   660→        <button
+   661→          onClick={handleSave}
+   662→          className="w-full btn-gold py-3.5 text-sm font-semibold cursor-pointer"
+   663→        >
+   664→          {saved ? 'Saved!' : 'Save Changes'}
+   665→        </button>
+   666→      </motion.div>
+   667→    </motion.div>
+   668→  );
+   669→}

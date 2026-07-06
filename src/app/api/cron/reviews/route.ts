@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { sendWhatsApp, buildReviewRequestWA } from '@/lib/whatsapp';
+import { validateCronKey, unauthorizedResponse } from '@/lib/api-auth';
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' };
 export async function OPTIONS() { return new NextResponse(null, { status: 204, headers: CORS }); }
@@ -11,6 +12,7 @@ export async function OPTIONS() { return new NextResponse(null, { status: 204, h
  * Call 2-3 hours after appointments typically end (e.g. 7 PM daily).
  */
 export async function POST(request: NextRequest) {
+  if (!validateCronKey(request)) return unauthorizedResponse();
   try {
     const today = new Date().toISOString().split('T')[0];
 

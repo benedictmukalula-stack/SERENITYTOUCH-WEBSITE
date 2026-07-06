@@ -1,0 +1,657 @@
+     1→'use client';
+     2→
+     3→import { useState } from 'react';
+     4→import { motion } from 'framer-motion';
+     5→import {
+     6→  BarChart3, TrendingUp, Users, Calendar, DollarSign, Star,
+     7→  ArrowUpRight, ArrowDownRight, Activity, Clock, Eye,
+     8→} from 'lucide-react';
+     9→import { useAppStore } from '@/lib/store';
+    10→
+    11→const fadeUp = {
+    12→  hidden: { opacity: 0, y: 20 },
+    13→  visible: (i: number) => ({
+    14→    opacity: 1,
+    15→    y: 0,
+    16→    transition: { delay: i * 0.06, duration: 0.5, ease: 'easeOut' as const },
+    17→  }),
+    18→};
+    19→
+    20→type TabId = 'overview' | 'bookings' | 'revenue' | 'clients';
+    21→
+    22→const tabs: { id: TabId; label: string; icon: typeof BarChart3 }[] = [
+    23→  { id: 'overview', label: 'Overview', icon: Activity },
+    24→  { id: 'bookings', label: 'Bookings', icon: Calendar },
+    25→  { id: 'revenue', label: 'Revenue', icon: DollarSign },
+    26→  { id: 'clients', label: 'Clients', icon: Users },
+    27→];
+    28→
+    29→const statCards = [
+    30→  { label: 'Total Revenue', value: 'K285,400', change: '+12.5%', positive: true, icon: DollarSign, color: 'from-gold to-amber-600' },
+    31→  { label: 'Total Bookings', value: '1,247', change: '+8.3%', positive: true, icon: Calendar, color: 'from-pink-brand to-pink-deep' },
+    32→  { label: 'Active Members', value: '89', change: '+15.2%', positive: true, icon: Users, color: 'from-emerald-500 to-emerald-700' },
+    33→  { label: 'Avg Rating', value: '4.9', change: '+0.3', positive: true, icon: Star, color: 'from-amber-400 to-orange-500' },
+    34→];
+    35→
+    36→const popularTreatments = [
+    37→  { name: 'Swedish Massage', percentage: 35, color: 'from-pink-brand to-pink-hot' },
+    38→  { name: 'Deep Tissue', percentage: 28, color: 'from-gold to-amber-600' },
+    39→  { name: 'Thai Massage', percentage: 18, color: 'from-emerald-500 to-emerald-600' },
+    40→  { name: 'Aromatherapy', percentage: 12, color: 'from-purple-500 to-purple-700' },
+    41→  { name: 'Other', percentage: 7, color: 'from-gray-500 to-gray-600' },
+    42→];
+    43→
+    44→const recentActivity = [
+    45→  { text: 'New booking by Chipo Mwale', sub: 'Swedish Massage — Tomorrow 10:00 AM', time: '2 min ago', type: 'booking' as const },
+    46→  { text: 'Grace Banda joined Gold tier', sub: 'Upgraded from Silver membership', time: '18 min ago', type: 'member' as const },
+    47→  { text: 'Payment received — K1,200', sub: 'Bwalya Nkomo — Deep Tissue session', time: '1 hour ago', type: 'payment' as const },
+    48→  { text: '5-star review from Thandiwe Phiri', sub: 'Aromatherapy Treatment', time: '2 hours ago', type: 'review' as const },
+    49→  { text: 'Corporate booking — Zambia Airways', sub: '12 staff members, team wellness day', time: '3 hours ago', type: 'booking' as const },
+    50→];
+    51→
+    52→const recentBookings = [
+    53→  { id: 'ST-A1B2C', guest: 'Chipo Mwale', treatment: 'Swedish Massage', date: 'Jul 15, 2026', time: '10:00 AM', status: 'Confirmed' as const, therapist: 'Taonga Phiri' },
+    54→  { id: 'ST-D3E4F', guest: 'Bwalya Nkomo', treatment: 'Deep Tissue Massage', date: 'Jul 15, 2026', time: '2:00 PM', status: 'Confirmed' as const, therapist: 'Grace Banda' },
+    55→  { id: 'ST-G5H6I', guest: 'Thandiwe Phiri', treatment: 'Hot Stone Therapy', date: 'Jul 16, 2026', time: '11:00 AM', status: 'Pending' as const, therapist: 'Patricia Nkomo' },
+    56→  { id: 'ST-J7K8L', guest: 'Mwamba Chilufya', treatment: 'Aromatherapy', date: 'Jul 14, 2026', time: '3:00 PM', status: 'Completed' as const, therapist: 'Taonga Phiri' },
+    57→  { id: 'ST-M9N0P', guest: 'Linda Tembo', treatment: 'Thai Massage', date: 'Jul 13, 2026', time: '9:00 AM', status: 'Completed' as const, therapist: 'Grace Banda' },
+    58→  { id: 'ST-Q1R2S', guest: 'Joseph Mwanza', treatment: 'Swedish Massage', date: 'Jul 14, 2026', time: '4:00 PM', status: 'Cancelled' as const, therapist: 'Patricia Nkomo' },
+    59→  { id: 'ST-T3U4V', guest: 'Natasha Banda', treatment: 'Prenatal Massage', date: 'Jul 17, 2026', time: '10:00 AM', status: 'Pending' as const, therapist: 'Taonga Phiri' },
+    60→  { id: 'ST-W5X6Y', guest: 'Peter Sakala', treatment: 'Deep Tissue Massage', date: 'Jul 12, 2026', time: '1:00 PM', status: 'Completed' as const, therapist: 'Grace Banda' },
+    61→];
+    62→
+    63→const monthlyRevenue = [
+    64→  { month: 'Feb', value: 32, revenue: 'K32,100' },
+    65→  { month: 'Mar', value: 45, revenue: 'K45,800' },
+    66→  { month: 'Apr', value: 38, revenue: 'K38,500' },
+    67→  { month: 'May', value: 55, revenue: 'K55,200' },
+    68→  { month: 'Jun', value: 62, revenue: 'K62,400' },
+    69→  { month: 'Jul', value: 78, revenue: 'K78,600' },
+    70→];
+    71→
+    72→const revenueByService = [
+    73→  { service: 'Swedish Massage', amount: 'K85,200', percentage: 30, color: 'from-pink-brand to-pink-hot' },
+    74→  { service: 'Deep Tissue Massage', amount: 'K68,400', percentage: 24, color: 'from-gold to-amber-600' },
+    75→  { service: 'Hot Stone Therapy', amount: 'K42,700', percentage: 15, color: 'from-emerald-500 to-emerald-600' },
+    76→  { service: 'Aromatherapy', amount: 'K39,900', percentage: 14, color: 'from-purple-500 to-purple-700' },
+    77→  { service: 'Thai Massage', amount: 'K28,500', percentage: 10, color: 'from-amber-400 to-orange-500' },
+    78→  { service: 'Other Services', amount: 'K20,700', percentage: 7, color: 'from-gray-500 to-gray-600' },
+    79→];
+    80→
+    81→const topClients = [
+    82→  { name: 'Grace Banda', tier: 'Platinum', totalSpend: 'K48,600', visits: 52, avatar: 'GB' },
+    83→  { name: 'Bwalya Nkomo', tier: 'Gold', totalSpend: 'K32,100', visits: 34, avatar: 'BN' },
+    84→  { name: 'Chipo Mwale', tier: 'Silver', totalSpend: 'K18,400', visits: 22, avatar: 'CM' },
+    85→  { name: 'Thandiwe Phiri', tier: 'Gold', totalSpend: 'K15,800', visits: 18, avatar: 'TP' },
+    86→  { name: 'Mwamba Chilufya', tier: 'Platinum', totalSpend: 'K12,200', visits: 15, avatar: 'MC' },
+    87→  { name: 'Linda Tembo', tier: 'Silver', totalSpend: 'K9,600', visits: 12, avatar: 'LT' },
+    88→];
+    89→
+    90→const statusStyles: Record<string, string> = {
+    91→  Confirmed: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    92→  Pending: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    93→  Completed: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+    94→  Cancelled: 'bg-red-500/10 text-red-400 border-red-500/20',
+    95→};
+    96→
+    97→const tierBadge: Record<string, string> = {
+    98→  Platinum: 'bg-pink-brand/15 text-pink-brand border-pink-brand/25',
+    99→  Gold: 'bg-gold/15 text-gold border-gold/25',
+   100→  Silver: 'bg-gray-400/15 text-gray-300 border-gray-400/25',
+   101→};
+   102→
+   103→const activityIconColors: Record<string, string> = {
+   104→  booking: 'bg-pink-brand/10 text-pink-brand border-pink-brand/20',
+   105→  member: 'bg-gold/10 text-gold border-gold/20',
+   106→  payment: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+   107→  review: 'bg-amber-400/10 text-amber-400 border-amber-400/20',
+   108→};
+   109→
+   110→export default function AnalyticsDashboard() {
+   111→  const { isMemberLoggedIn, member, navigate } = useAppStore();
+   112→  const [activeTab, setActiveTab] = useState<TabId>('overview');
+   113→
+   114→  if (!isMemberLoggedIn || !member) {
+   115→    navigate('login');
+   116→    return null;
+   117→  }
+   118→
+   119→  const newClients = 34;
+   120→  const returningClients = 55;
+   121→  const totalClientsForRatio = newClients + returningClients;
+   122→
+   123→  return (
+   124→    <div>
+   125→      {/* Header */}
+   126→      <section className="pt-28 pb-8 relative overflow-hidden" style={{ background: '#030102' }}>
+   127→        <div className="absolute inset-0 bg-gradient-to-br from-gold to-pink-brand opacity-[0.03]" />
+   128→        <div className="container-tinas relative z-10">
+   129→          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+   130→            <div className="flex items-center gap-4">
+   131→              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold to-pink-brand flex items-center justify-center shadow-lg">
+   132→                <BarChart3 className="w-6 h-6 text-white" />
+   133→              </div>
+   134→              <div>
+   135→                <h1 className="text-2xl md:text-3xl font-bold heading-display">Analytics Dashboard</h1>
+   136→                <p className="text-xs text-gold/40 mt-0.5">Business performance overview · Last updated 5 min ago</p>
+   137→              </div>
+   138→            </div>
+   139→            <div className="flex items-center gap-2">
+   140→              <span className="badge-new flex items-center gap-1.5">
+   141→                <Eye className="w-3 h-3" />
+   142→                Admin View
+   143→              </span>
+   144→              <span className="px-3 py-1 rounded-full text-[11px] font-semibold border bg-gold/5 text-gold border-gold/20">
+   145→                {member.tier} Member
+   146→              </span>
+   147→            </div>
+   148→          </div>
+   149→        </div>
+   150→      </section>
+   151→
+   152→      {/* Tab Navigation */}
+   153→      <div className="border-b border-gold/10 surface-base sticky top-0 z-30" style={{ background: 'rgba(10,5,8,0.95)', backdropFilter: 'blur(20px)' }}>
+   154→        <div className="container-tinas">
+   155→          <div className="flex gap-1 overflow-x-auto scrollbar-hide -mb-px">
+   156→            {tabs.map((tab) => {
+   157→              const Icon = tab.icon;
+   158→              return (
+   159→                <button
+   160→                  key={tab.id}
+   161→                  onClick={() => setActiveTab(tab.id)}
+   162→                  className={`flex items-center gap-2 px-5 py-3.5 text-sm font-medium heading-display whitespace-nowrap transition cursor-pointer relative border-b-2 ${
+   163→                    activeTab === tab.id
+   164→                      ? 'text-gold border-gold'
+   165→                      : 'text-gray-500 border-transparent hover:text-gray-300 hover:border-gold/20'
+   166→                  }`}
+   167→                >
+   168→                  <Icon className="w-4 h-4" />
+   169→                  {tab.label}
+   170→                </button>
+   171→              );
+   172→            })}
+   173→          </div>
+   174→        </div>
+   175→      </div>
+   176→
+   177→      {/* Tab Content */}
+   178→      <section className="section-padding surface-base">
+   179→        <div className="container-tinas">
+   180→          {/* ===================== OVERVIEW TAB ===================== */}
+   181→          {activeTab === 'overview' && (
+   182→            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
+   183→              {/* Stat Cards */}
+   184→              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+   185→                {statCards.map((stat, idx) => {
+   186→                  const Icon = stat.icon;
+   187→                  return (
+   188→                    <motion.div
+   189→                      key={stat.label}
+   190→                      variants={fadeUp}
+   191→                      initial="hidden"
+   192→                      animate="visible"
+   193→                      custom={idx}
+   194→                      className="surface-raised rounded-2xl p-5 hover-lift"
+   195→                    >
+   196→                      <div className="flex items-start justify-between mb-3">
+   197→                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+   198→                          <Icon className="w-5 h-5 text-white" />
+   199→                        </div>
+   200→                        <span className={`flex items-center gap-0.5 text-xs font-semibold ${stat.positive ? 'text-emerald-400' : 'text-red-400'}`}>
+   201→                          {stat.positive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+   202→                          {stat.change}
+   203→                        </span>
+   204→                      </div>
+   205→                      <p className="text-2xl font-bold heading-display text-white">{stat.value}</p>
+   206→                      <p className="text-[11px] text-gray-500 mt-0.5">{stat.label}</p>
+   207→                    </motion.div>
+   208→                  );
+   209→                })}
+   210→              </div>
+   211→
+   212→              <div className="grid lg:grid-cols-5 gap-6">
+   213→                {/* Popular Treatments Chart */}
+   214→                <motion.div
+   215→                  initial={{ opacity: 0, y: 20 }}
+   216→                  animate={{ opacity: 1, y: 0 }}
+   217→                  transition={{ delay: 0.3 }}
+   218→                  className="lg:col-span-3 surface-raised rounded-2xl p-6"
+   219→                >
+   220→                  <div className="flex items-center justify-between mb-6">
+   221→                    <div>
+   222→                      <h2 className="text-base font-semibold heading-display text-white">Popular Treatments</h2>
+   223→                      <p className="text-[11px] text-gray-500 mt-0.5">Booking distribution this month</p>
+   224→                    </div>
+   225→                    <BarChart3 className="w-5 h-5 text-gold/30" />
+   226→                  </div>
+   227→
+   228→                  <div className="space-y-4">
+   229→                    {popularTreatments.map((treatment, idx) => (
+   230→                      <div key={treatment.name}>
+   231→                        <div className="flex items-center justify-between mb-1.5">
+   232→                          <span className="text-sm text-gray-300">{treatment.name}</span>
+   233→                          <span className="text-xs font-semibold text-white">{treatment.percentage}%</span>
+   234→                        </div>
+   235→                        <div className="h-7 rounded-lg overflow-hidden bg-gold/[0.06] relative">
+   236→                          <motion.div
+   237→                            initial={{ width: 0 }}
+   238→                            animate={{ width: `${treatment.percentage}%` }}
+   239→                            transition={{ duration: 0.8, delay: 0.1 * idx, ease: 'easeOut' }}
+   240→                            className={`h-full rounded-lg bg-gradient-to-r ${treatment.color} relative`}
+   241→                          >
+   242→                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+   243→                          </motion.div>
+   244→                        </div>
+   245→                      </div>
+   246→                    ))}
+   247→                  </div>
+   248→                </motion.div>
+   249→
+   250→                {/* Recent Activity */}
+   251→                <motion.div
+   252→                  initial={{ opacity: 0, y: 20 }}
+   253→                  animate={{ opacity: 1, y: 0 }}
+   254→                  transition={{ delay: 0.45 }}
+   255→                  className="lg:col-span-2 surface-raised rounded-2xl p-6"
+   256→                >
+   257→                  <div className="flex items-center justify-between mb-5">
+   258→                    <h2 className="text-base font-semibold heading-display text-white">Recent Activity</h2>
+   259→                    <Activity className="w-5 h-5 text-pink-brand/40" />
+   260→                  </div>
+   261→
+   262→                  <div className="space-y-1 max-h-96 overflow-y-auto pr-1">
+   263→                    {recentActivity.map((item, idx) => {
+   264→                      const iconMap = {
+   265→                        booking: Calendar,
+   266→                        member: Users,
+   267→                        payment: DollarSign,
+   268→                        review: Star,
+   269→                      };
+   270→                      const ItemIcon = iconMap[item.type];
+   271→                      return (
+   272→                        <motion.div
+   273→                          key={idx}
+   274→                          variants={fadeUp}
+   275→                          initial="hidden"
+   276→                          animate="visible"
+   277→                          custom={idx + 2}
+   278→                          className="flex gap-3 p-3 rounded-xl hover:bg-gold/[0.03] transition group"
+   279→                        >
+   280→                          <div className={`w-9 h-9 rounded-lg border flex items-center justify-center flex-shrink-0 ${activityIconColors[item.type]}`}>
+   281→                            <ItemIcon className="w-4 h-4" />
+   282→                          </div>
+   283→                          <div className="min-w-0 flex-1">
+   284→                            <p className="text-sm text-white truncate group-hover:text-gold transition">{item.text}</p>
+   285→                            <p className="text-[11px] text-gray-500 truncate">{item.sub}</p>
+   286→                          </div>
+   287→                          <span className="text-[10px] text-gray-600 flex-shrink-0 pt-0.5">{item.time}</span>
+   288→                        </motion.div>
+   289→                      );
+   290→                    })}
+   291→                  </div>
+   292→                </motion.div>
+   293→              </div>
+   294→            </motion.div>
+   295→          )}
+   296→
+   297→          {/* ===================== BOOKINGS TAB ===================== */}
+   298→          {activeTab === 'bookings' && (
+   299→            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+   300→              <motion.div
+   301→                initial={{ opacity: 0, y: 20 }}
+   302→                animate={{ opacity: 1, y: 0 }}
+   303→                className="surface-raised rounded-2xl overflow-hidden"
+   304→              >
+   305→                <div className="p-5 border-b border-gold/8 flex items-center justify-between">
+   306→                  <div>
+   307→                    <h2 className="text-base font-semibold heading-display text-white">Recent Bookings</h2>
+   308→                    <p className="text-[11px] text-gray-500 mt-0.5">{recentBookings.length} bookings · Last 7 days</p>
+   309→                  </div>
+   310→                  <div className="flex items-center gap-2">
+   311→                    {['All', 'Confirmed', 'Pending'].map((filter) => (
+   312→                      <button
+   313→                        key={filter}
+   314→                        className="px-3 py-1.5 rounded-full text-[11px] font-medium transition cursor-pointer bg-gold/[0.06] text-gold/70 hover:bg-gold/[0.1] border border-gold/10"
+   315→                      >
+   316→                        {filter}
+   317→                      </button>
+   318→                    ))}
+   319→                  </div>
+   320→                </div>
+   321→
+   322→                {/* Table Header */}
+   323→                <div className="hidden md:grid grid-cols-12 gap-4 px-5 py-3 text-[10px] tracking-wider text-gray-500 font-semibold uppercase border-b border-gold/5">
+   324→                  <div className="col-span-1">ID</div>
+   325→                  <div className="col-span-2">Guest</div>
+   326→                  <div className="col-span-2">Treatment</div>
+   327→                  <div className="col-span-2">Date</div>
+   328→                  <div className="col-span-1">Time</div>
+   329→                  <div className="col-span-2">Therapist</div>
+   330→                  <div className="col-span-2 text-right">Status</div>
+   331→                </div>
+   332→
+   333→                {/* Table Rows */}
+   334→                <div className="max-h-[480px] overflow-y-auto">
+   335→                  {recentBookings.map((booking, idx) => (
+   336→                    <motion.div
+   337→                      key={booking.id}
+   338→                      variants={fadeUp}
+   339→                      initial="hidden"
+   340→                      animate="visible"
+   341→                      custom={idx}
+   342→                      className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-5 py-4 border-b border-gold/[0.04] hover:bg-gold/[0.02] transition items-center"
+   343→                    >
+   344→                      <div className="col-span-1 text-xs text-gray-500 font-mono">{booking.id}</div>
+   345→                      <div className="col-span-2 text-sm text-white font-medium">{booking.guest}</div>
+   346→                      <div className="col-span-2 text-sm text-gray-300">{booking.treatment}</div>
+   347→                      <div className="col-span-2 text-sm text-gray-400 flex items-center gap-1.5">
+   348→                        <Clock className="w-3 h-3 text-gray-600" />
+   349→                        {booking.date}
+   350→                      </div>
+   351→                      <div className="col-span-1 text-sm text-gray-400">{booking.time}</div>
+   352→                      <div className="col-span-2 text-sm text-gray-300">{booking.therapist}</div>
+   353→                      <div className="col-span-2 flex justify-end">
+   354→                        <span className={`px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider border ${statusStyles[booking.status]}`}>
+   355→                          {booking.status}
+   356→                        </span>
+   357→                      </div>
+   358→                    </motion.div>
+   359→                  ))}
+   360→                </div>
+   361→              </motion.div>
+   362→            </motion.div>
+   363→          )}
+   364→
+   365→          {/* ===================== REVENUE TAB ===================== */}
+   366→          {activeTab === 'revenue' && (
+   367→            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+   368→              <div className="grid lg:grid-cols-2 gap-6">
+   369→                {/* Monthly Revenue Chart */}
+   370→                <motion.div
+   371→                  initial={{ opacity: 0, y: 20 }}
+   372→                  animate={{ opacity: 1, y: 0 }}
+   373→                  className="surface-raised rounded-2xl p-6"
+   374→                >
+   375→                  <div className="flex items-center justify-between mb-6">
+   376→                    <div>
+   377→                      <h2 className="text-base font-semibold heading-display text-white">Monthly Revenue</h2>
+   378→                      <p className="text-[11px] text-gray-500 mt-0.5">Last 6 months performance</p>
+   379→                    </div>
+   380→                    <div className="flex items-center gap-1.5 text-emerald-400">
+   381→                      <TrendingUp className="w-4 h-4" />
+   382→                      <span className="text-xs font-semibold">+24.3%</span>
+   383→                    </div>
+   384→                  </div>
+   385→
+   386→                  {/* CSS Bar Chart */}
+   387→                  <div className="flex items-end gap-3 h-48 px-2">
+   388→                    {monthlyRevenue.map((m, idx) => (
+   389→                      <div key={m.month} className="flex-1 flex flex-col items-center gap-2">
+   390→                        <motion.div
+   391→                          initial={{ height: 0 }}
+   392→                          animate={{ height: `${(m.value / 80) * 100}%` }}
+   393→                          transition={{ duration: 0.8, delay: idx * 0.1, ease: 'easeOut' }}
+   394→                          className="w-full rounded-t-lg bg-gradient-to-t from-gold/80 to-pink-brand relative group cursor-pointer min-h-[8px]"
+   395→                        >
+   396→                          {/* Tooltip */}
+   397→                          <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 border border-gold/20 rounded-lg px-3 py-1.5 opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap z-10">
+   398→                            <p className="text-xs font-semibold text-white">{m.revenue}</p>
+   399→                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-transparent border-t-gray-900" />
+   400→                          </div>
+   401→                          <div className="absolute inset-0 rounded-t-lg bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+   402→                        </motion.div>
+   403→                        <span className="text-[10px] text-gray-500 font-medium">{m.month}</span>
+   404→                      </div>
+   405→                    ))}
+   406→                  </div>
+   407→                </motion.div>
+   408→
+   409→                {/* Revenue by Service */}
+   410→                <motion.div
+   411→                  initial={{ opacity: 0, y: 20 }}
+   412→                  animate={{ opacity: 1, y: 0 }}
+   413→                  transition={{ delay: 0.15 }}
+   414→                  className="surface-raised rounded-2xl p-6"
+   415→                >
+   416→                  <div className="flex items-center justify-between mb-6">
+   417→                    <div>
+   418→                      <h2 className="text-base font-semibold heading-display text-white">Revenue by Service</h2>
+   419→                      <p className="text-[11px] text-gray-500 mt-0.5">Year-to-date breakdown</p>
+   420→                    </div>
+   421→                    <DollarSign className="w-5 h-5 text-gold/30" />
+   422→                  </div>
+   423→
+   424→                  <div className="space-y-4 max-h-80 overflow-y-auto pr-1">
+   425→                    {revenueByService.map((item, idx) => (
+   426→                      <div key={item.service}>
+   427→                        <div className="flex items-center justify-between mb-1.5">
+   428→                          <span className="text-sm text-gray-300">{item.service}</span>
+   429→                          <div className="flex items-center gap-3">
+   430→                            <span className="text-xs font-semibold text-white">{item.amount}</span>
+   431→                            <span className="text-[10px] text-gray-500 w-8 text-right">{item.percentage}%</span>
+   432→                          </div>
+   433→                        </div>
+   434→                        <div className="h-5 rounded-md overflow-hidden bg-gold/[0.06]">
+   435→                          <motion.div
+   436→                            initial={{ width: 0 }}
+   437→                            animate={{ width: `${(item.percentage / 30) * 100}%` }}
+   438→                            transition={{ duration: 0.7, delay: idx * 0.08, ease: 'easeOut' }}
+   439→                            className={`h-full rounded-md progress-bar-fill relative`}
+   440→                          >
+   441→                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+   442→                          </motion.div>
+   443→                        </div>
+   444→                      </div>
+   445→                    ))}
+   446→                  </div>
+   447→                </motion.div>
+   448→              </div>
+   449→
+   450→              {/* Revenue Summary Cards */}
+   451→              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+   452→                {[
+   453→                  { label: 'This Month', value: 'K78,600', sub: 'vs K62,400 last month', positive: true },
+   454→                  { label: 'Avg per Booking', value: 'K229', sub: '+5.2% from last month', positive: true },
+   455→                  { label: 'Membership Revenue', value: 'K124,500', sub: '43.6% of total', positive: true },
+   456→                  { label: 'Outstanding', value: 'K8,200', sub: '3 pending payments', positive: false },
+   457→                ].map((card, idx) => (
+   458→                  <motion.div
+   459→                    key={card.label}
+   460→                    variants={fadeUp}
+   461→                    initial="hidden"
+   462→                    animate="visible"
+   463→                    custom={idx + 4}
+   464→                    className="surface-raised rounded-2xl p-5"
+   465→                  >
+   466→                    <p className="text-[11px] text-gray-500 mb-1">{card.label}</p>
+   467→                    <p className="text-xl font-bold heading-display text-white">{card.value}</p>
+   468→                    <p className={`text-[11px] mt-1 flex items-center gap-1 ${card.positive ? 'text-emerald-400' : 'text-amber-400'}`}>
+   469→                      {card.positive ? <ArrowUpRight className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+   470→                      {card.sub}
+   471→                    </p>
+   472→                  </motion.div>
+   473→                ))}
+   474→              </div>
+   475→            </motion.div>
+   476→          )}
+   477→
+   478→          {/* ===================== CLIENTS TAB ===================== */}
+   479→          {activeTab === 'clients' && (
+   480→            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+   481→              <div className="grid lg:grid-cols-3 gap-6">
+   482→                {/* New vs Returning */}
+   483→                <motion.div
+   484→                  initial={{ opacity: 0, y: 20 }}
+   485→                  animate={{ opacity: 1, y: 0 }}
+   486→                  className="surface-raised rounded-2xl p-6"
+   487→                >
+   488→                  <h2 className="text-base font-semibold heading-display text-white mb-1">Client Breakdown</h2>
+   489→                  <p className="text-[11px] text-gray-500 mb-6">New vs returning this month</p>
+   490→
+   491→                  {/* Visual Ratio */}
+   492→                  <div className="flex items-center gap-4 mb-6">
+   493→                    <div className="relative w-32 h-32 flex-shrink-0">
+   494→                      {/* CSS donut chart */}
+   495→                      <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+   496→                        <circle
+   497→                          cx="18" cy="18" r="14"
+   498→                          fill="none"
+   499→                          stroke="rgba(212,175,55,0.1)"
+   500→                          strokeWidth="4"
+   501→                        />
+   502→                        <circle
+   503→                          cx="18" cy="18" r="14"
+   504→                          fill="none"
+   505→                          stroke="url(#returningGrad)"
+   506→                          strokeWidth="4"
+   507→                          strokeDasharray={`${(returningClients / totalClientsForRatio) * 88} 88`}
+   508→                          strokeLinecap="round"
+   509→                          className="transition-all duration-1000"
+   510→                        />
+   511→                        <defs>
+   512→                          <linearGradient id="returningGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+   513→                            <stop offset="0%" stopColor="#D4AF37" />
+   514→                            <stop offset="100%" stopColor="#E91E63" />
+   515→                          </linearGradient>
+   516→                        </defs>
+   517→                      </svg>
+   518→                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+   519→                        <span className="text-lg font-bold heading-display text-white">{totalClientsForRatio}</span>
+   520→                        <span className="text-[10px] text-gray-500">Total</span>
+   521→                      </div>
+   522→                    </div>
+   523→                    <div className="space-y-3">
+   524→                      <div>
+   525→                        <div className="flex items-center gap-2 mb-0.5">
+   526→                          <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-gold to-pink-brand" />
+   527→                          <span className="text-sm text-gray-300">Returning</span>
+   528→                        </div>
+   529→                        <p className="text-xl font-bold heading-display text-white">{returningClients}</p>
+   530→                        <p className="text-[11px] text-emerald-400">{((returningClients / totalClientsForRatio) * 100).toFixed(0)}%</p>
+   531→                      </div>
+   532→                      <div>
+   533→                        <div className="flex items-center gap-2 mb-0.5">
+   534→                          <div className="w-2.5 h-2.5 rounded-full bg-gray-600" />
+   535→                          <span className="text-sm text-gray-300">New</span>
+   536→                        </div>
+   537→                        <p className="text-xl font-bold heading-display text-white">{newClients}</p>
+   538→                        <p className="text-[11px] text-gray-400">{((newClients / totalClientsForRatio) * 100).toFixed(0)}%</p>
+   539→                      </div>
+   540→                    </div>
+   541→                  </div>
+   542→
+   543→                  <div className="pt-4 border-t border-gold/8">
+   544→                    <div className="flex items-center justify-between">
+   545→                      <span className="text-[11px] text-gray-500">Retention Rate</span>
+   546→                      <span className="text-sm font-semibold text-emerald-400">76%</span>
+   547→                    </div>
+   548→                    <div className="progress-bar mt-2">
+   549→                      <motion.div
+   550→                        className="progress-bar-fill"
+   551→                        initial={{ width: 0 }}
+   552→                        animate={{ width: '76%' }}
+   553→                        transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
+   554→                      />
+   555→                    </div>
+   556→                  </div>
+   557→                </motion.div>
+   558→
+   559→                {/* Top Clients */}
+   560→                <motion.div
+   561→                  initial={{ opacity: 0, y: 20 }}
+   562→                  animate={{ opacity: 1, y: 0 }}
+   563→                  transition={{ delay: 0.15 }}
+   564→                  className="lg:col-span-2 surface-raised rounded-2xl p-6"
+   565→                >
+   566→                  <div className="flex items-center justify-between mb-5">
+   567→                    <div>
+   568→                      <h2 className="text-base font-semibold heading-display text-white">Top Clients</h2>
+   569→                      <p className="text-[11px] text-gray-500 mt-0.5">By total spend</p>
+   570→                    </div>
+   571→                    <Users className="w-5 h-5 text-gold/30" />
+   572→                  </div>
+   573→
+   574→                  <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+   575→                    {topClients.map((client, idx) => (
+   576→                      <motion.div
+   577→                        key={client.name}
+   578→                        variants={fadeUp}
+   579→                        initial="hidden"
+   580→                        animate="visible"
+   581→                        custom={idx + 1}
+   582→                        className="flex items-center gap-4 p-3 rounded-xl hover:bg-gold/[0.03] transition group"
+   583→                      >
+   584→                        {/* Rank */}
+   585→                        <span className="text-xs font-bold text-gray-600 w-5 text-center flex-shrink-0">
+   586→                          {idx + 1}
+   587→                        </span>
+   588→
+   589→                        {/* Avatar */}
+   590→                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+   591→                          client.tier === 'Platinum'
+   592→                            ? 'bg-pink-brand/15 text-pink-brand border border-pink-brand/20'
+   593→                            : client.tier === 'Gold'
+   594→                              ? 'bg-gold/15 text-gold border border-gold/20'
+   595→                              : 'bg-gray-500/15 text-gray-300 border border-gray-500/20'
+   596→                        }`}>
+   597→                          {client.avatar}
+   598→                        </div>
+   599→
+   600→                        {/* Info */}
+   601→                        <div className="flex-1 min-w-0">
+   602→                          <div className="flex items-center gap-2">
+   603→                            <p className="text-sm font-medium text-white truncate group-hover:text-gold transition">{client.name}</p>
+   604→                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold tracking-wider border ${tierBadge[client.tier]}`}>
+   605→                              {client.tier}
+   606→                            </span>
+   607→                          </div>
+   608→                          <p className="text-[11px] text-gray-500">{client.visits} visits</p>
+   609→                        </div>
+   610→
+   611→                        {/* Spend */}
+   612→                        <div className="text-right flex-shrink-0">
+   613→                          <p className="text-sm font-bold heading-display text-white">{client.totalSpend}</p>
+   614→                          <p className="text-[10px] text-gray-500">lifetime</p>
+   615→                        </div>
+   616→                      </motion.div>
+   617→                    ))}
+   618→                  </div>
+   619→                </motion.div>
+   620→              </div>
+   621→
+   622→              {/* Client Growth Cards */}
+   623→              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+   624→                {[
+   625→                  { label: 'New This Month', value: '34', change: '+12 vs last month', positive: true, icon: Users },
+   626→                  { label: 'Avg Lifetime Value', value: 'K3,206', change: '+8.1% growth', positive: true, icon: DollarSign },
+   627→                  { label: 'Referral Signups', value: '18', change: '53% of new clients', positive: true, icon: TrendingUp },
+   628→                  { label: 'Churn Rate', value: '3.2%', change: '-0.8% improvement', positive: true, icon: Activity },
+   629→                ].map((card, idx) => {
+   630→                  const Icon = card.icon;
+   631→                  return (
+   632→                    <motion.div
+   633→                      key={card.label}
+   634→                      variants={fadeUp}
+   635→                      initial="hidden"
+   636→                      animate="visible"
+   637→                      custom={idx + 4}
+   638→                      className="surface-raised rounded-2xl p-5 hover-lift"
+   639→                    >
+   640→                      <Icon className="w-5 h-5 text-gold/30 mb-3" />
+   641→                      <p className="text-xl font-bold heading-display text-white">{card.value}</p>
+   642→                      <p className="text-[11px] text-gray-500 mt-0.5">{card.label}</p>
+   643→                      <p className={`text-[10px] mt-1.5 flex items-center gap-1 ${card.positive ? 'text-emerald-400' : 'text-red-400'}`}>
+   644→                        {card.positive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+   645→                        {card.change}
+   646→                      </p>
+   647→                    </motion.div>
+   648→                  );
+   649→                })}
+   650→              </div>
+   651→            </motion.div>
+   652→          )}
+   653→        </div>
+   654→      </section>
+   655→    </div>
+   656→  );
+   657→}
