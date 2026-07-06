@@ -183,3 +183,117 @@ export async function sendBookingNotifications(params: {
     bookingId, serviceName, date, time, totalAmount, bookingType,
   })).catch(() => {});
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ADDITIONAL NOTIFICATION BUILDERS
+   ═══════════════════════════════════════════════════════════════ */
+
+export function buildReminderWA(data: { name: string; serviceName: string; date: string; time: string; bookingId: string; bookingType: string }): string {
+  const loc = data.bookingType === 'callout' ? 'your location (call-out)' : '183 Ibex Hill, Lusaka';
+  return [
+    `🌿 *Appointment Reminder*`,
+    ``,
+    `Hi ${data.name}! This is a friendly reminder:`,
+    ``,
+    `💆 *${data.serviceName}*`,
+    `📅 *Tomorrow* — ${data.date}`,
+    `🕐 ${data.time || 'Time to be confirmed'}`,
+    `📍 ${loc}`,
+    `📋 Booking: ${data.bookingId}`,
+    ``,
+    `Please arrive 10 minutes early.`,
+    `Questions? Reply here or call +260 572 782 539`,
+    ``,
+    `We look forward to seeing you! 🌸`,
+  ].join('\n');
+}
+
+export function buildReviewRequestWA(data: { name: string; serviceName: string }): string {
+  return [
+    `Hi ${data.name}! 🌸`,
+    ``,
+    `We hope you loved your *${data.serviceName}* today!`,
+    ``,
+    `Would you mind leaving us a quick review? It helps us so much and only takes 30 seconds.`,
+    ``,
+    `⭐⭐⭐⭐⭐ How was your experience?`,
+    ``,
+    `Just reply with your thoughts — we read every one!`,
+    ``,
+    `Thank you for choosing Serenity Touch Spa 💛`,
+  ].join('\n');
+}
+
+export function buildStatusUpdateWA(data: { name: string; bookingId: string; serviceName: string; date: string; time: string; status: string; reason?: string }): string {
+  if (data.status === 'cancelled') {
+    return [
+      `⚠️ *Booking Update*`,
+      ``,
+      `Hi ${data.name}, unfortunately your booking has been cancelled.`,
+      ``,
+      `📋 ${data.bookingId} — ${data.serviceName}`,
+      `📅 ${data.date} ${data.time}`,
+      data.reason ? `📝 Reason: ${data.reason}` : '',
+      ``,
+      `We'd love to reschedule! Visit serenitytouch.co.za or WhatsApp us to book a new time.`,
+    ].filter(Boolean).join('\n');
+  }
+  // confirmed
+  return [
+    `✅ *Booking Confirmed*`,
+    ``,
+    `Great news ${data.name}! Your booking is confirmed.`,
+    ``,
+    `📋 ${data.bookingId} — ${data.serviceName}`,
+    `📅 ${data.date} ${data.time}`,
+    `📍 183 Ibex Hill, Lusaka`,
+    ``,
+    `See you soon! 🌸`,
+  ].join('\n');
+}
+
+export function buildVoucherWA(data: { recipientName: string; code: string; amount: number; senderName: string; message?: string }): string {
+  return [
+    `🎁 *Gift Voucher*`,
+    ``,
+    `Hi ${data.recipientName}!`,
+    ``,
+    `${data.senderName} has gifted you a *K${data.amount.toLocaleString()}* voucher for Serenity Touch Spa!`,
+    ``,
+    `🎫 *Your voucher code: ${data.code}*`,
+    data.message ? `\n💬 "${data.message}"` : '',
+    ``,
+    `Redeem online at serenitytouch.co.za or show this code at the spa.`,
+    `Valid for 12 months from today.`,
+    ``,
+    `Treat yourself — you deserve it! 🌸`,
+  ].filter(Boolean).join('\n');
+}
+
+export function buildFollowUpWA(data: { name: string; lastService: string; lastDate: string }): string {
+  return [
+    `Hi ${data.name}! 🌸`,
+    ``,
+    `It's been a while since your last visit for *${data.lastService}* on ${data.lastDate}.`,
+    ``,
+    `We miss you! Book your next treatment and enjoy a moment of calm.`,
+    ``,
+    `🔗 serenitytouch.co.za`,
+    `💬 WhatsApp: +260 761 404 555`,
+    ``,
+    `Use code *WELCOMEBACK10* for 10% off your next visit!`,
+  ].join('\n');
+}
+
+export function buildPaymentConfirmedWA(data: { name: string; bookingId: string; serviceName: string; amount: number }): string {
+  return [
+    `✅ *Payment Received*`,
+    ``,
+    `Thank you ${data.name}!`,
+    ``,
+    `📋 ${data.bookingId} — ${data.serviceName}`,
+    `💰 K${data.amount.toLocaleString()} — *Paid*`,
+    ``,
+    `All set! We look forward to your visit. 🌸`,
+  ].join('\n');
+}
