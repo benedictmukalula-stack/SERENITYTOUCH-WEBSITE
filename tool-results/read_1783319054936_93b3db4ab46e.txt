@@ -1,0 +1,502 @@
+     1→'use client';
+     2→
+     3→import { useState, useMemo, useCallback } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import {
+     6→  MapPin, Phone, Mail, Clock, Loader2, CheckCircle, AlertCircle, MessageCircle,
+     7→  CreditCard, Building2, Smartphone, Home, Car, Navigation,
+     8→  ChevronLeft, ChevronRight, Calendar, ToggleLeft, ToggleRight,
+     9→  Send, Bot, ExternalLink, Sparkles, Clock4, Zap, Footprints, Timer,
+    10→} from 'lucide-react';
+    11→
+    12→/* ──────────────────────── animation variant ──────────────────────── */
+    13→
+    14→const fadeUp = {
+    15→  hidden: { opacity: 0, y: 30 },
+    16→  visible: (i: number) => ({
+    17→    opacity: 1, y: 0,
+    18→    transition: { delay: i * 0.08, duration: 0.6, ease: 'easeOut' },
+    19→  }),
+    20→};
+    21→
+    22→/* ──────────────────────── static data ──────────────────────── */
+    23→
+    24→const contactInfo = [
+    25→  { icon: MapPin, label: 'Address', value: '183 Ibex Hill, Lusaka, Zambia', link: null },
+    26→  { icon: Phone, label: 'Phone', value: '+260 572 782 539', link: 'tel:+260572782539' },
+    27→  { icon: MessageCircle, label: 'WhatsApp', value: '+260 761 404 555', link: 'https://wa.me/260761404555' },
+    28→  { icon: Mail, label: 'Email', value: 'info@serenitytouch.co.zm', link: 'mailto:info@serenitytouch.co.zm' },
+    29→  { icon: Clock, label: 'Hours', value: 'Mon-Fri: 9AM-6PM\nSat: 10AM-5PM\nSun: Closed', link: null },
+    30→];
+    31→
+    32→const serviceOptions = [
+    33→  { value: 'headscalp', label: 'Head & Scalp Massage (30 min) — K400' },
+    34→  { value: 'foot', label: 'Foot Massage (45 min) — K500' },
+    35→  { value: 'backneck', label: 'Back, Neck & Shoulder (45 min) — K600' },
+    36→  { value: 'swedish', label: 'Swedish Massage (60 min) — K800' },
+    37→  { value: 'deeptissue', label: 'Deep Tissue Massage (90 min) — K1,200' },
+    38→  { value: 'thai', label: 'Thai Massage (90 min) — K1,100' },
+    39→  { value: 'aromatherapy', label: 'Aromatherapy Massage (60 min) — K900' },
+    40→  { value: 'reflexology', label: 'Reflexology (60 min) — K850' },
+    41→  { value: 'pregnancy', label: 'Pregnancy Massage (60 min) — K900' },
+    42→  { value: 'fullbody', label: 'Full Body Massage (90 min) — K1,000' },
+    43→  { value: 'couples', label: 'Couples Massage (90 min) — K2,000' },
+    44→];
+    45→
+    46→const therapistOptions = [
+    47→  { value: 'any', label: 'No Preference (First Available)' },
+    48→  { value: 'tina', label: 'Tina Mulenga — Founder & Lead Therapist' },
+    49→  { value: 'grace', label: 'Grace Banda — Senior Massage Therapist' },
+    50→  { value: 'patricia', label: 'Patricia Nkomo — Aromatherapy Specialist' },
+    51→  { value: 'chipo', label: 'Chipo Mwale — Therapeutic Massage Specialist' },
+    52→];
+    53→
+    54→const calloutZones = [
+    55→  { id: 'zone1', label: 'Ibex Hill & Surrounds', desc: 'Within 5km radius', fee: 200, areas: 'Ibex Hill, Woodlands, Kabulonga' },
+    56→  { id: 'zone2', label: 'Lusaka Central', desc: '5–15km from spa', fee: 350, areas: 'CBD, Northmead, Rhodes Park, Longacres' },
+    57→  { id: 'zone3', label: 'Greater Lusaka', desc: '15–30km from spa', fee: 500, areas: 'Manda Hill, East Park, Chelstone, Roma' },
+    58→  { id: 'zone4', label: 'Outside Lusaka', desc: '30km+ — custom quote', fee: 0, areas: 'Kabwe, Chongwe, Kafue, etc.' },
+    59→];
+    60→
+    61→const servicePrices: Record<string, number> = { headscalp: 400, foot: 500, backneck: 600, swedish: 800, deeptissue: 1200, thai: 1100, aromatherapy: 900, reflexology: 850, pregnancy: 900, fullbody: 1000, couples: 2000 };
+    62→
+    63→const paymentMethods = [
+    64→  { id: 'mobile_money', label: 'Mobile Money', icon: Smartphone, desc: 'MTN Mobile Money, Airtel Money, Zamtel' },
+    65→  { id: 'bank_transfer', label: 'Bank EFT', icon: Building2, desc: 'Direct bank transfer' },
+    66→  { id: 'card', label: 'Card Payment', icon: CreditCard, desc: 'Visa, Mastercard (online)' },
+    67→  { id: 'cash', label: 'Pay at Spa', icon: MapPin, desc: 'Cash on arrival' },
+    68→];
+    69→
+    70→const faqs = [
+    71→  { q: 'How do I book an appointment?', a: 'You can book through this form, call us at +260 572 782 539, or message us on WhatsApp. Members can also use our WhatsApp concierge line for priority booking.' },
+    72→  { q: 'What is your cancellation policy?', a: 'Cancellations made 24 hours in advance receive a full refund. Cancellations within 24 hours are subject to a 50% fee. No-shows will be charged in full.' },
+    73→  { q: 'Do you offer membership plans?', a: 'Yes! We offer three membership tiers: Silver (K800/mo), Gold (K1,600/mo), and Platinum (K3,200/mo). Each includes different benefits and service inclusions.' },
+    74→  { q: 'Are your therapists certified?', a: "Yes, every therapist at Serenity Touch Spa is internationally certified and continually trained in the latest therapeutic techniques." },
+    75→  { q: 'What should I bring to my appointment?', a: 'Just bring yourself! We provide all linens, oils, and amenities. Arrive 10 minutes early to complete a brief wellness consultation.' },
+    76→  { q: 'What payment methods do you accept?', a: 'We accept MTN Mobile Money, Airtel Money, Zamtel, bank EFT, Visa/Mastercard, and cash payments at the spa.' },
+    77→];
+    78→
+    79→/* ──────────────────────── treatment add-ons ──────────────────────── */
+    80→
+    81→const addonOptions = [
+    82→  { id: 'aroma', name: 'Aromatherapy Upgrade', price: 150, icon: Sparkles, desc: 'Custom-blended essential oils to deepen your relaxation experience' },
+    83→  { id: 'hotstone', name: 'Hot Stone Add-On', price: 200, icon: Zap, desc: 'Heated volcanic stones placed on key tension points' },
+    84→  { id: 'scalp', name: 'Scalp Treatment', price: 100, icon: Clock4, desc: '15 min invigorating scalp massage with nourishing oils' },
+    85→  { id: 'foot_reflex', name: 'Foot Reflexology', price: 150, icon: Footprints, desc: 'Targeted pressure point therapy for feet and lower legs' },
+    86→  { id: 'extended', name: 'Extended Time 30min', price: 400, icon: Timer, desc: 'Add 30 extra minutes to any treatment session' },
+    87→];
+    88→
+    89→/* ──────────────────────── time slots ──────────────────────── */
+    90→
+    91→const weekdaySlots = [
+    92→  '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
+    93→  '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM',
+    94→];
+    95→const saturdaySlots = [
+    96→  '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM',
+    97→  '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM',
+    98→];
+    99→
+   100→/* ──────────────────────── helpers ──────────────────────── */
+   101→
+   102→function getServiceLabel(val: string) { return serviceOptions.find(s => s.value === val)?.label || val; }
+   103→function getTherapistLabel(val: string) { return therapistOptions.find(t => t.value === val)?.label || val; }
+   104→function getPaymentLabel(val: string) { return paymentMethods.find(p => p.id === val)?.label || val; }
+   105→
+   106→function getCalloutLabel(val: string) {
+   107→  const z = calloutZones.find(z => z.id === val);
+   108→  return z ? (z.fee > 0 ? `${z.label} (K${z.fee} call-out fee)` : `${z.label} (Custom quote)`) : val;
+   109→}
+   110→
+   111→// Deterministic "booked" check for realistic slot availability
+   112→function isSlotBooked(dateStr: string, time: string): boolean {
+   113→  let hash = 0;
+   114→  const str = dateStr + time;
+   115→  for (let i = 0; i < str.length; i++) {
+   116→    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+   117→    hash |= 0;
+   118→  }
+   119→  return Math.abs(hash) % 5 === 0;
+   120→}
+   121→
+   122→function formatDateDisplay(dateStr: string): string {
+   123→  if (!dateStr) return '';
+   124→  const d = new Date(dateStr + 'T00:00:00');
+   125→  return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+   126→}
+   127→
+   128→function formatCalendarMonth(year: number, month: number): string {
+   129→  return new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+   130→}
+   131→
+   132→function pad(n: number): string { return n < 10 ? `0${n}` : `${n}`; }
+   133→
+   134→function toDateString(year: number, month: number, day: number): string {
+   135→  return `${year}-${pad(month + 1)}-${pad(day)}`;
+   136→}
+   137→
+   138→function isSunday(year: number, month: number, day: number): boolean {
+   139→  return new Date(year, month, day).getDay() === 0;
+   140→}
+   141→
+   142→function isSameDay(dateStr: string, year: number, month: number, day: number): boolean {
+   143→  return dateStr === toDateString(year, month, day);
+   144→}
+   145→
+   146→function isToday(year: number, month: number, day: number): boolean {
+   147→  const today = new Date();
+   148→  return year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+   149→}
+   150→
+   151→function isPastDate(year: number, month: number, day: number): boolean {
+   152→  const today = new Date();
+   153→  today.setHours(0, 0, 0, 0);
+   154→  return new Date(year, month, day) < today;
+   155→}
+   156→
+   157→/* ──────────────────────── WhatsApp message builder ──────────────────────── */
+   158→
+   159→function buildWhatsAppMessage(data: typeof defaultFormData): string {
+   160→  const lines = [
+   161→    `*Serenity Touch Spa — Booking Request*`, ``,
+   162→    `*Name:* ${data.name}`, `*Email:* ${data.email}`, `*Phone:* ${data.phone || 'Not provided'}`,
+   163→    `*Date:* ${data.date ? formatDateDisplay(data.date) : 'Not selected'}`,
+   164→    `*Time:* ${data.time || 'Not selected'}`,
+   165→    `*Service:* ${getServiceLabel(data.service)}`,
+   166→    `*Booking Type:* ${data.bookingType === 'callout' ? 'Call-Out Service' : 'In-Spa'}`,
+   167→  ];
+   168→  if (data.bookingType === 'callout') {
+   169→    lines.push(`*Call-Out Zone:* ${getCalloutLabel(data.calloutZone)}`);
+   170→    if (data.calloutAddress) lines.push(`*Address:* ${data.calloutAddress}`);
+   171→    const svcPrice = servicePrices[data.service] || 0;
+   172→    const zone = calloutZones.find(z => z.id === data.calloutZone);
+   173→    const fee = zone?.fee || 0;
+   174→    if (fee > 0) lines.push(`*Total:* K${svcPrice} + K${fee} call-out = K${svcPrice + fee}`);
+   175→    else lines.push(`*Total:* K${svcPrice} + call-out fee (TBD)`);
+   176→  }
+   177→  lines.push(`*Therapist:* ${getTherapistLabel(data.therapist)}`, `*Payment:* ${getPaymentLabel(data.paymentMethod)}`);
+   178→  if (data.message) lines.push(`*Notes:* ${data.message}`);
+   179→  lines.push('', 'Please confirm my booking. Thank you!');
+   180→  return encodeURIComponent(lines.join('\n'));
+   181→}
+   182→
+   183→/* ──────────────────────── default form data ──────────────────────── */
+   184→
+   185→const defaultFormData = {
+   186→  name: '', email: '', phone: '', service: '', therapist: 'any',
+   187→  date: '', time: '', message: '', paymentMethod: 'cash',
+   188→  bookingType: 'in_spa' as 'in_spa' | 'callout', calloutZone: '', calloutAddress: '',
+   189→};
+   190→
+   191→/* ──────────────────────── WhatsApp quick reply templates ──────────────────────── */
+   192→
+   193→const whatsappTemplates = [
+   194→  { trigger: 'hours', reply: 'Our hours: Mon-Fri 9AM-6PM, Sat 10AM-5PM, Sun Closed.' },
+   195→  { trigger: 'services', reply: 'We offer Swedish, Deep Tissue, Thai, Aromatherapy, Pregnancy, Couples & more.' },
+   196→  { trigger: 'prices', reply: 'Prices start from K400. Visit our website for the full price list.' },
+   197→  { trigger: 'location', reply: 'We are at 183 Ibex Hill, Lusaka, Zambia.' },
+   198→  { trigger: 'book', reply: 'To book, please fill out our online form or call +260 572 782 539.' },
+   199→];
+   200→
+   201→/* ════════════════════════════════════════════════════════════════════
+   202→   COMPONENT
+   203→   ════════════════════════════════════════════════════════════════════ */
+   204→
+   205→export default function ContactPage() {
+   206→  const [formData, setFormData] = useState(defaultFormData);
+   207→  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+   208→  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+   209→  const [showPayment, setShowPayment] = useState(false);
+   210→  const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
+   211→
+   212→  /* ── calendar state ── */
+   213→  const today = useMemo(() => {
+   214→    const t = new Date(); t.setHours(0, 0, 0, 0); return t;
+   215→  }, []);
+   216→  const [calendarYear, setCalendarYear] = useState(today.getFullYear());
+   217→  const [calendarMonth, setCalendarMonth] = useState(today.getMonth());
+   218→
+   219→  /* ── integration UI state ── */
+   220→  const [smsEnabled, setSmsEnabled] = useState(false);
+   221→  const [smsPhone, setSmsPhone] = useState('');
+   222→
+   223→  /* ── add-on total ── */
+   224→  const addonTotal = useMemo(() => {
+   225→    let total = 0;
+   226→    selectedAddons.forEach(id => {
+   227→      const addon = addonOptions.find(a => a.id === id);
+   228→      if (addon) total += addon.price;
+   229→    });
+   230→    return total;
+   231→  }, [selectedAddons]);
+   232→
+   233→  /* ── calendar helpers ── */
+   234→  const calendarDays = useMemo(() => {
+   235→    const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+   236→    // 0=Sun, 1=Mon, ..., 6=Sat — we want Mon first
+   237→    let firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
+   238→    const offset = firstDay === 0 ? 6 : firstDay - 1; // Mon=0 ... Sun=6
+   239→    const days: (number | null)[] = [];
+   240→    for (let i = 0; i < offset; i++) days.push(null);
+   241→    for (let d = 1; d <= daysInMonth; d++) days.push(d);
+   242→    return days;
+   243→  }, [calendarYear, calendarMonth]);
+   244→
+   245→  const prevMonth = useCallback(() => {
+   246→    setCalendarMonth(m => {
+   247→      if (m === 0) { setCalendarYear(y => y - 1); return 11; }
+   248→      return m - 1;
+   249→    });
+   250→  }, []);
+   251→
+   252→  const nextMonth = useCallback(() => {
+   253→    setCalendarMonth(m => {
+   254→      if (m === 11) { setCalendarYear(y => y + 1); return 0; }
+   255→      return m + 1;
+   256→    });
+   257→  }, []);
+   258→
+   259→  const handleDateSelect = useCallback((day: number) => {
+   260→    const ds = toDateString(calendarYear, calendarMonth, day);
+   261→    setFormData(prev => ({ ...prev, date: ds, time: '' }));
+   262→  }, [calendarYear, calendarMonth]);
+   263→
+   264→  /* ── time slots for selected date ── */
+   265→  const timeSlots = useMemo(() => {
+   266→    if (!formData.date) return [];
+   267→    const d = new Date(formData.date + 'T00:00:00');
+   268→    const day = d.getDay(); // 0=Sun
+   269→    if (day === 0) return [];
+   270→    return day === 6 ? saturdaySlots : weekdaySlots;
+   271→  }, [formData.date]);
+   272→
+   273→  /* ── form handlers ── */
+   274→  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+   275→    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+   276→  };
+   277→
+   278→  const handleSubmit = async (e: React.FormEvent) => {
+   279→    e.preventDefault();
+   280→    setStatus('loading');
+   281→    try {
+   282→      const res = await fetch('/api/booking', {
+   283→        method: 'POST',
+   284→        headers: { 'Content-Type': 'application/json' },
+   285→        body: JSON.stringify({ ...formData, addons: Array.from(selectedAddons) }),
+   286→      });
+   287→      const data = await res.json();
+   288→      if (data.success) {
+   289→        setStatus('success');
+   290→        setFormData(defaultFormData);
+   291→        setShowPayment(false);
+   292→        setSelectedAddons(new Set());
+   293→      } else setStatus('error');
+   294→    } catch { setStatus('error'); }
+   295→  };
+   296→
+   297→  const handleWhatsAppBooking = () => {
+   298→    const msg = buildWhatsAppMessage(formData);
+   299→    window.open(`https://wa.me/260761404555?text=${msg}`, '_blank');
+   300→  };
+   301→
+   302→  /* ═══════════════════════ RENDER ═══════════════════════ */
+   303→
+   304→  return (
+   305→    <div>
+   306→      {/* ───────── Hero ───────── */}
+   307→      <section className="pt-32 pb-16 section-dark">
+   308→        <div className="container-tinas text-center">
+   309→          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">
+   310→            Get in <span className="text-pink-brand">Touch</span>
+   311→          </motion.h1>
+   312→          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">
+   313→            Ready to relax to the experience? Book your first session with us.
+   314→          </motion.p>
+   315→        </div>
+   316→      </section>
+   317→
+   318→      {/* ───────── Main: Contact Info + Booking Form ───────── */}
+   319→      <section className="section-padding surface-base">
+   320→        <div className="container-tinas">
+   321→          <div className="grid lg:grid-cols-3 gap-10 lg:gap-14 mb-20">
+   322→
+   323→            {/* ═══════ Left Column: Contact Info ═══════ */}
+   324→            <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0} className="lg:col-span-1">
+   325→              <h2 className="text-2xl font-bold mb-8 heading-display">Contact Information</h2>
+   326→              <div className="space-y-7">
+   327→                {contactInfo.map((item, idx) => (
+   328→                  <div key={idx}>
+   329→                    <div className="flex items-center gap-2.5 mb-1.5">
+   330→                      <item.icon className="w-4 h-4 text-pink-brand" />
+   331→                      <h3 className="font-bold text-sm text-white">{item.label}</h3>
+   332→                    </div>
+   333→                    {item.link ? (
+   334→                      <a href={item.link} className="text-pink-brand hover:text-pink-light transition text-sm ml-[26px] block">{item.value}</a>
+   335→                    ) : (
+   336→                      <p className="text-pink-glow/35 text-sm ml-[26px] whitespace-pre-line">{item.value}</p>
+   337→                    )}
+   338→                  </div>
+   339→                ))}
+   340→              </div>
+   341→
+   342→              {/* ── Google Maps Embed ── */}
+   343→              <div className="mt-8 surface-raised rounded-2xl overflow-hidden">
+   344→                <div className="relative">
+   345→                  <iframe
+   346→                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3878.5!2d28.3!3d-15.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sIbex+Hill+Lusaka+Zambia!5e0!3m2!1sen!2szm!4v1700000000000"
+   347→                    width="100%" height="220"
+   348→                    style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) brightness(0.8) contrast(1.2)' }}
+   349→                    allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+   350→                    title="Serenity Touch Spa Location"
+   351→                  />
+   352→                </div>
+   353→                <a
+   354→                  href="https://www.google.com/maps/dir/?api=1&destination=183+Ibex+Hill+Lusaka+Zambia"
+   355→                  target="_blank" rel="noopener noreferrer"
+   356→                  className="flex items-center justify-center gap-2 px-4 py-3 border-t border-gold/10 text-sm text-gold hover:text-gold-light hover:bg-gold/[0.04] transition"
+   357→                >
+   358→                  <Navigation className="w-3.5 h-3.5" />
+   359→                  Get Directions
+   360→                  <ExternalLink className="w-3 h-3" />
+   361→                </a>
+   362→              </div>
+   363→
+   364→              {/* ── Call-Out Fees Quick Reference ── */}
+   365→              <div className="mt-6 surface-raised rounded-2xl p-5">
+   366→                <div className="flex items-center gap-2 mb-4">
+   367→                  <Car className="w-4 h-4 text-pink-brand" />
+   368→                  <h3 className="font-bold text-sm text-white">Call-Out Fees</h3>
+   369→                </div>
+   370→                <div className="space-y-2.5">
+   371→                  {[
+   372→                    { zone: 'Ibex Hill & Surrounds', fee: 'K200' },
+   373→                    { zone: 'Lusaka Central', fee: 'K350' },
+   374→                    { zone: 'Greater Lusaka', fee: 'K500' },
+   375→                    { zone: 'Outside Lusaka', fee: 'Quote' },
+   376→                  ].map((z, i) => (
+   377→                    <div key={i} className="flex justify-between items-center">
+   378→                      <span className="text-xs text-pink-glow/45">Zone {i + 1}</span>
+   379→                      <span className="text-xs font-bold text-gold">{z.fee}</span>
+   380→                    </div>
+   381→                  ))}
+   382→                </div>
+   383→                <p className="text-[10px] text-gold/35 mt-3 body-serif font-light leading-relaxed">Members enjoy discounts. Select &quot;Call-Out&quot; in the booking form to get started.</p>
+   384→              </div>
+   385→            </motion.div>
+   386→
+   387→            {/* ═══════ Right Column: Booking Form ═══════ */}
+   388→            <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1} className="lg:col-span-2">
+   389→              <div className="surface-raised rounded-2xl p-7 md:p-9 glow-gold">
+   390→                <div className="flex items-center justify-between mb-6">
+   391→                  <h2 className="text-2xl font-bold heading-display">Book Your <span className="text-pink-brand">Escape</span></h2>
+   392→                  <button onClick={handleWhatsAppBooking} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full text-xs font-semibold transition cursor-pointer" title="Book via WhatsApp">
+   393→                    <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
+   394→                  </button>
+   395→                </div>
+   396→
+   397→                <AnimatePresence mode="wait">
+   398→                  {status === 'success' ? (
+   399→                    <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-8 text-center">
+   400→                      <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
+   401→                      <p className="text-emerald-300 font-semibold text-lg mb-2 heading-display">Thank you for your inquiry!</p>
+   402→                      <p className="text-emerald-400/70 text-sm body-serif mb-4 font-light">We&apos;ll contact you shortly to confirm your booking.</p>
+   403→                      <p className="text-emerald-400/70 text-xs mb-6">A confirmation has been sent via email and WhatsApp.</p>
+   404→                      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+   405→                        <button onClick={() => setStatus('idle')} className="text-sm text-emerald-400 underline cursor-pointer">Book another session</button>
+   406→                        <button onClick={handleWhatsAppBooking} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-full text-xs font-semibold transition cursor-pointer mx-auto sm:mx-0">
+   407→                          <MessageCircle className="w-3.5 h-3.5" /> Follow up on WhatsApp
+   408→                        </button>
+   409→                      </div>
+   410→                    </motion.div>
+   411→                  ) : (
+   412→                    <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onSubmit={handleSubmit} className="space-y-5">
+   413→
+   414→                      {/* ── Name & Email ── */}
+   415→                      <div className="grid sm:grid-cols-2 gap-5">
+   416→                        <div>
+   417→                          <label className="block text-sm font-semibold text-white mb-2">Full Name *</label>
+   418→                          <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full input-dark" placeholder="Your name" />
+   419→                        </div>
+   420→                        <div>
+   421→                          <label className="block text-sm font-semibold text-white mb-2">Email *</label>
+   422→                          <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full input-dark" placeholder="your@email.com" />
+   423→                        </div>
+   424→                      </div>
+   425→
+   426→                      {/* ── Phone & Preferred Date (calendar trigger) ── */}
+   427→                      <div className="grid sm:grid-cols-2 gap-5">
+   428→                        <div>
+   429→                          <label className="block text-sm font-semibold text-white mb-2">Phone</label>
+   430→                          <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full input-dark" placeholder="+260 XXX XXX XXX" />
+   431→                        </div>
+   432→                        <div>
+   433→                          <label className="block text-sm font-semibold text-white mb-2">Preferred Date *</label>
+   434→                          {/* Hidden native date input for form validation — the calendar UI sets the value */}
+   435→                          <input type="hidden" name="date" value={formData.date} />
+   436→                          <button
+   437→                            type="button"
+   438→                            onClick={() => {
+   439→                              const el = document.getElementById('calendar-section');
+   440→                              el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+   441→                            }}
+   442→                            className="w-full input-dark text-left flex items-center gap-2 cursor-pointer"
+   443→                          >
+   444→                            <Calendar className="w-4 h-4 text-gold/50 shrink-0" />
+   445→                            <span className={formData.date ? 'text-white' : 'placeholder:text-gold/30'}>
+   446→                              {formData.date ? formatDateDisplay(formData.date) : 'Select a date from the calendar below'}
+   447→                            </span>
+   448→                          </button>
+   449→                        </div>
+   450→                      </div>
+   451→
+   452→                      {/* ═══════ FEATURE 1: Interactive Booking Calendar ═══════ */}
+   453→                      <div id="calendar-section">
+   454→                        <label className="block text-sm font-semibold text-white mb-3">Select Date</label>
+   455→                        <div className="surface-raised rounded-2xl p-5">
+   456→                          {/* Month Navigation */}
+   457→                          <div className="flex items-center justify-between mb-4">
+   458→                            <button type="button" onClick={prevMonth} className="p-2 rounded-lg hover:bg-gold/10 transition cursor-pointer text-gold/60 hover:text-gold">
+   459→                              <ChevronLeft className="w-5 h-5" />
+   460→                            </button>
+   461→                            <span className="text-sm font-semibold text-white heading-display">
+   462→                              {formatCalendarMonth(calendarYear, calendarMonth)}
+   463→                            </span>
+   464→                            <button type="button" onClick={nextMonth} className="p-2 rounded-lg hover:bg-gold/10 transition cursor-pointer text-gold/60 hover:text-gold">
+   465→                              <ChevronRight className="w-5 h-5" />
+   466→                            </button>
+   467→                          </div>
+   468→                          {/* Day Headers */}
+   469→                          <div className="calendar-grid mb-1">
+   470→                            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+   471→                              <div key={day} className="calendar-day-header">{day}</div>
+   472→                            ))}
+   473→                          </div>
+   474→                          {/* Day Grid */}
+   475→                          <div className="calendar-grid">
+   476→                            {calendarDays.map((day, idx) => {
+   477→                              if (day === null) return <div key={`empty-${idx}`} />;
+   478→                              const disabled = isSunday(calendarYear, calendarMonth, day) || isPastDate(calendarYear, calendarMonth, day);
+   479→                              const selected = isSameDay(formData.date, calendarYear, calendarMonth, day);
+   480→                              const todayCls = isToday(calendarYear, calendarMonth, day);
+   481→                              let cls = 'calendar-day';
+   482→                              if (disabled) cls += ' disabled';
+   483→                              if (selected) cls += ' selected';
+   484→                              if (todayCls && !selected) cls += ' today';
+   485→                              return (
+   486→                                <div
+   487→                                  key={day}
+   488→                                  className={cls}
+   489→                                  onClick={disabled ? undefined : () => handleDateSelect(day)}
+   490→                                >
+   491→                                  {day}
+   492→                                </div>
+   493→                              );
+   494→                            })}
+   495→                          </div>
+   496→                          {/* Selected Date Display */}
+   497→                          {formData.date && (
+   498→                            <motion.div
+   499→                              initial={{ opacity: 0, y: -5 }}
+   500→                              animate={{ opacity: 1, y: 0 }}
+
+[showing lines 1-500 of 1005; use offset=501 with limit to continue reading]

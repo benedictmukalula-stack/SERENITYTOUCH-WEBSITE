@@ -1,212 +1,214 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
 
-interface BookingBody {
-  name: string;
-  email: string;
-  phone?: string;
-  service: string;
-  therapist?: string;
-  date: string;
-  time?: string;
-  message?: string;
-  paymentMethod?: string;
-  bookingType?: string;
-  calloutZone?: string;
-  calloutAddress?: string;
-}
-
-const serviceLabels: Record<string, string> = {
-  headscalp: 'Head & Scalp Massage (30 min) — K400',
-  foot: 'Foot Massage (45 min) — K500',
-  backneck: 'Back, Neck & Shoulder (45 min) — K600',
-  swedish: 'Swedish Massage (60 min) — K800',
-  deeptissue: 'Deep Tissue Massage (90 min) — K1,200',
-  thai: 'Thai Massage (90 min) — K1,100',
-  aromatherapy: 'Aromatherapy Massage (60 min) — K900',
-  reflexology: 'Reflexology (60 min) — K850',
-  pregnancy: 'Pregnancy Massage (60 min) — K900',
-  fullbody: 'Full Body Massage (90 min) — K1,000',
-  couples: 'Couples Massage (90 min) — K2,000',
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
-const therapistLabels: Record<string, string> = {
-  any: 'No Preference (First Available)',
-  tina: 'Tina Mulenga — Founder & Lead Therapist',
-  grace: 'Grace Banda — Senior Massage Therapist',
-  patricia: 'Patricia Nkomo — Aromatherapy Specialist',
-  chipo: 'Chipo Mwale — Therapeutic Massage Specialist',
+// Callout zone fees
+const CALLOUT_FEES: Record<string, number> = {
+  zone_1: 200,
+  zone_2: 350,
+  zone_3: 500,
 };
 
-const paymentLabels: Record<string, string> = {
-  mobile_money: 'Mobile Money',
-  bank_transfer: 'Bank EFT',
-  card: 'Card Payment (Online)',
-  cash: 'Cash at Spa',
-};
-
-function buildEmailHtml(body: BookingBody, bookingId: string) {
-  const service = serviceLabels[body.service] || body.service;
-  const therapist = therapistLabels[body.therapist || ''] || body.therapist || 'No preference';
-  const payment = paymentLabels[body.paymentMethod || ''] || body.paymentMethod || 'Cash at Spa';
-
-  return `
-<!DOCTYPE html>
-<html><head><meta charset="utf-8"><style>
-body { font-family: Georgia, serif; background: #0a0a0a; color: #e5e5e5; margin: 0; padding: 20px; }
-.container { max-width: 600px; margin: 0 auto; background: #1a1a1a; border: 1px solid rgba(212,175,55,0.15); border-radius: 16px; overflow: hidden; }
-.header { background: linear-gradient(135deg, #D4AF37, #E91E63); padding: 30px; text-align: center; }
-.header h1 { margin: 0; color: #0a0a0a; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; }
-.content { padding: 30px; }
-.field { margin-bottom: 16px; }
-.label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 4px; }
-.value { font-size: 15px; color: #e5e5e5; }
-.highlight { color: #D4AF37; font-weight: bold; }
-.footer { padding: 20px 30px; border-top: 1px solid rgba(212,175,55,0.1); text-align: center; }
-.footer p { font-size: 12px; color: #666; margin: 4px 0; }
-</style></head><body>
-<div class="container">
-  <div class="header"><h1>Serenity Touch Spa</h1></div>
-  <div class="content">
-    <h2 style="color: #D4AF37; font-family: 'Cormorant Garamond', Georgia, serif; margin-top: 0;">New Booking Request</h2>
-    <p style="color: #888; font-size: 13px;">Booking ID: <span class="highlight">${bookingId}</span></p>
-    <div class="field"><div class="label">Client Name</div><div class="value">${body.name}</div></div>
-    <div class="field"><div class="label">Email</div><div class="value">${body.email}</div></div>
-    <div class="field"><div class="label">Phone</div><div class="value">${body.phone || 'Not provided'}</div></div>
-    <div class="field"><div class="label">Preferred Date</div><div class="value">${body.date}</div></div>
-    <div class="field"><div class="label">Service</div><div class="value highlight">${service}</div></div>
-    <div class="field"><div class="label">Booking Type</div><div class="value">${body.bookingType === 'callout' ? 'Call-Out Service' : 'In-Spa'}</div></div>
-    ${body.bookingType === 'callout' ? `<div class="field"><div class="label">Call-Out Zone</div><div class="value">${body.calloutZone || 'TBD'}</div></div><div class="field"><div class="label">Call-Out Address</div><div class="value">${body.calloutAddress || 'Not provided'}</div></div>` : ''}
-    <div class="field"><div class="label">Preferred Therapist</div><div class="value">${therapist}</div></div>
-    <div class="field"><div class="label">Payment Method</div><div class="value">${payment}</div></div>
-    ${body.message ? `<div class="field"><div class="label">Additional Notes</div><div class="value">${body.message}</div></div>` : ''}
-  </div>
-  <div class="footer">
-    <p>Serenity Touch Spa &middot; 183 Ibex Hill, Lusaka, Zambia</p>
-    <p>+260 572 782 539 &middot; info@serenitytouch.co.zm</p>
-    <p style="margin-top: 12px; color: #555;"></p>
-  </div>
-</div>
-</body></html>`;
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
 }
 
-function buildWhatsAppNotification(body: BookingBody, bookingId: string): string {
-  const service = serviceLabels[body.service] || body.service;
-  const therapist = therapistLabels[body.therapist || ''] || body.therapist || 'No preference';
-  const payment = paymentLabels[body.paymentMethod || ''] || body.paymentMethod || 'Cash at Spa';
-  return [
-    `*NEW BOOKING — Serenity Touch Spa*`,
-    `Booking ID: ${bookingId}`,
-    ``,
-    `*Client:* ${body.name}`,
-    `*Email:* ${body.email}`,
-    `*Phone:* ${body.phone || 'N/A'}`,
-    `*Date:* ${body.date}`,
-    `*Booking Type:* ${body.bookingType === 'callout' ? 'Call-Out Service' : 'In-Spa'}`,
-    `*Service:* ${service}`,
-    ...(body.bookingType === 'callout' ? [`*Call-Out Zone:* ${body.calloutZone || 'TBD'}`, `*Address:* ${body.calloutAddress || 'Not provided'}`] : []),
-    `*Therapist:* ${therapist}`,
-    `*Payment:* ${payment}`,
-    body.message ? `*Notes:* ${body.message}` : '',
-  ].filter(Boolean).join('\n');
-}
-
-function buildSmsMessage(body: BookingBody, bookingId: string): string {
-  const service = serviceLabels[body.service] || body.service;
-  return `Serenity Touch Spa: Booking ${bookingId} confirmed for ${body.name} on ${body.date}. Service: ${service}. We will contact you shortly to confirm. +260572782539`;
-}
-
+// POST: Create a new booking
 export async function POST(request: NextRequest) {
   try {
-    const body: BookingBody = await request.json();
-    const { name, email, service, date } = body;
+    const body = await request.json();
+    const {
+      name,
+      email,
+      phone,
+      service,
+      therapist,
+      date,
+      time,
+      bookingType,
+      calloutZone,
+      calloutAddress,
+      addons,
+      paymentMethod,
+      notes,
+    } = body;
 
+    // Validate required fields
     if (!name || !email || !service || !date) {
       return NextResponse.json(
-        { success: false, error: 'Please fill in all required fields' },
-        { status: 400 }
+        { success: false, error: 'Name, email, service, and date are required' },
+        { status: 400, headers: CORS_HEADERS }
       );
     }
 
-    const bookingId = `ST-${Date.now().toString(36).toUpperCase()}`;
-
-    // Simulate processing
-    await new Promise(resolve => setTimeout(resolve, 1200));
-
-    // === EMAIL NOTIFICATION ===
-    // In production, integrate with Resend, SendGrid, or Nodemailer:
-    // await fetch('https://api.resend.com/emails', {
-    //   method: 'POST',
-    //   headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     from: 'bookings@serenitytouch.co.zm',
-    //     to: ['info@serenitytouch.co.zm', email],
-    //     subject: `New Booking Request — ${bookingId}`,
-    //     html: buildEmailHtml(body, bookingId),
-    //   }),
-    // });
-
-    // === WHATSAPP NOTIFICATION ===
-    // In production, use WhatsApp Business API:
-    // const whatsappMsg = buildWhatsAppNotification(body, bookingId);
-    // await fetch('https://api.whatsapp.com/v1/messages', {
-    //   method: 'POST',
-    //   headers: { Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`, 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     to: '260761404555',
-    //     type: 'text',
-    //     text: { body: whatsappMsg },
-    //   }),
-    // });
-
-    // === SMS NOTIFICATION ===
-    // In production, use Africa's Talking API:
-    // const smsMsg = buildSmsMessage(body, bookingId);
-    // await fetch('https://api.africastalking.com/v1/messaging', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/x-www-form-urlencoded',
-    //     apiKey: process.env.AFRICASTALKING_API_KEY,
-    //   },
-    //   body: new URLSearchParams({
-    //     username: 'serenity_touch',
-    //     to: body.phone || '',
-    //     message: smsMsg,
-    //     from: 'SerenityTouchSpa',
-    //   }),
-    // });
-
-    console.log(`[Booking] ${bookingId} — Email, WhatsApp, and SMS notifications queued.`);
-    console.log(`[WhatsApp MSG] ${buildWhatsAppNotification(body, bookingId)}`);
-    console.log(`[SMS MSG] ${buildSmsMessage(body, bookingId)}`);
-
-    return NextResponse.json({
-      success: true,
-      message: 'Booking request submitted successfully! You will receive confirmation via email and WhatsApp.',
-      booking: {
-        id: bookingId,
-        name,
-        email,
-        phone: body.phone,
-        service,
-        therapist: body.therapist,
-        date,
-        bookingType: body.bookingType || 'in_spa',
-        calloutZone: body.calloutZone,
-        calloutAddress: body.calloutAddress,
-        paymentMethod: body.paymentMethod,
-        message: body.message,
-        status: 'pending_confirmation',
-        notifications: {
-          email: 'queued',
-          whatsapp: 'queued',
-          sms: body.phone ? 'queued' : 'skipped',
+    // Look up service by slug
+    const serviceRecord = await db.service.findUnique({
+      where: { slug: service },
+      include: {
+        addons: {
+          where: { active: true },
+          select: { id: true, name: true, price: true },
         },
       },
     });
-  } catch {
+
+    if (!serviceRecord) {
+      return NextResponse.json(
+        { success: false, error: `Service "${service}" not found` },
+        { status: 404, headers: CORS_HEADERS }
+      );
+    }
+
+    // Calculate total
+    let totalAmount = serviceRecord.price;
+
+    // Add addon prices
+    let addonsData: Array<{ id: string; name: string; price: number }> = [];
+    if (Array.isArray(addons) && addons.length > 0) {
+      for (const addonId of addons) {
+        const addon = serviceRecord.addons.find((a) => a.id === addonId);
+        if (addon) {
+          totalAmount += addon.price;
+          addonsData.push({ id: addon.id, name: addon.name, price: addon.price });
+        }
+      }
+    }
+
+    // Add callout fee if applicable
+    const isCallout = bookingType === 'callout';
+    if (isCallout && calloutZone) {
+      const zoneKey = `zone_${calloutZone.replace('zone_', '').replace('Zone ', '').toLowerCase()}`;
+      const fee = CALLOUT_FEES[zoneKey] || CALLOUT_FEES[`zone_${calloutZone}`] || 0;
+      totalAmount += fee;
+    }
+
+    // Resolve therapist
+    let therapistName = 'First Available';
+    let therapistId: string | undefined;
+    if (therapist && therapist !== 'any') {
+      const therapistRecord = await db.therapist.findFirst({
+        where: { id: therapist, active: true },
+      });
+      if (therapistRecord) {
+        therapistId = therapistRecord.id;
+        therapistName = therapistRecord.name;
+      }
+    }
+
+    // Convert time from 12h to 24h format if needed
+    let time24 = time || '';
+    if (time) {
+      const tm = time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+      if (tm) {
+        let h = parseInt(tm[1]);
+        const m = parseInt(tm[2]);
+        const p = tm[3].toUpperCase();
+        if (p === 'PM' && h !== 12) h += 12;
+        if (p === 'AM' && h === 12) h = 0;
+        time24 = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+      }
+    }
+
+    // Generate unique booking ID
+    const bookingId = `ST-${Array.from({ length: 6 }, () =>
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)]
+    ).join('')}`;
+
+    // Create booking in database
+    const booking = await db.booking.create({
+      data: {
+        bookingId,
+        name,
+        email,
+        phone: phone || '',
+        serviceName: serviceRecord.name,
+        serviceId: serviceRecord.id,
+        therapistId,
+        therapistName,
+        date,
+        time: time24,
+        bookingType: bookingType || 'in_spa',
+        calloutZone: calloutZone || '',
+        calloutAddress: calloutAddress || '',
+        addons: JSON.stringify(addonsData),
+        totalAmount,
+        paymentMethod: paymentMethod || 'cash',
+        paymentStatus: 'pending',
+        notes: notes || '',
+        status: 'confirmed',
+      },
+    });
+
     return NextResponse.json(
-      { success: false, error: 'Failed to process booking' },
-      { status: 500 }
+      {
+        success: true,
+        bookingId: booking.bookingId,
+        totalAmount: booking.totalAmount,
+        message: 'Booking confirmed! You will receive a confirmation via email and WhatsApp.',
+      },
+      { headers: CORS_HEADERS }
+    );
+  } catch (error) {
+    console.error('[Booking POST]', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to create booking. Please try again or contact us via WhatsApp.' },
+      { status: 500, headers: CORS_HEADERS }
+    );
+  }
+}
+
+// GET: Retrieve bookings by email
+export async function GET(request: NextRequest) {
+  try {
+    const email = request.nextUrl.searchParams.get('email');
+
+    if (!email) {
+      return NextResponse.json(
+        { success: false, error: 'Email parameter is required' },
+        { status: 400, headers: CORS_HEADERS }
+      );
+    }
+
+    const bookings = await db.booking.findMany({
+      where: { email: email.toLowerCase() },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        bookingId: true,
+        name: true,
+        serviceName: true,
+        date: true,
+        time: true,
+        bookingType: true,
+        calloutZone: true,
+        status: true,
+        totalAmount: true,
+        paymentMethod: true,
+        paymentStatus: true,
+        therapistName: true,
+        createdAt: true,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        bookings: bookings.map((b) => ({
+          ...b,
+          createdAt: b.createdAt.toISOString(),
+        })),
+      },
+      { headers: CORS_HEADERS }
+    );
+  } catch (error) {
+    console.error('[Booking GET]', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch bookings' },
+      { status: 500, headers: CORS_HEADERS }
     );
   }
 }

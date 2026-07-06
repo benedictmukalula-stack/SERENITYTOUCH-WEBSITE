@@ -135,3 +135,31 @@ Stage Summary:
 - UI/UX polished: nav active indicator, muted colors, mobile touch targets
 - Brand consistency verified (no old references)
 - Build clean, server live at http://localhost:3000
+
+---
+Task ID: 2
+Agent: Main
+Task: Full production launch - images, real auth, real bookings, payments, AI assistant, WhatsApp
+
+Work Log:
+- Created complete Prisma schema with 11 models (Service, ServiceAddon, Therapist, Member, Booking, Testimonial, BlogPost, VoucherPurchase, Referral, ChatMessage, SiteConfig)
+- Seeded database with 11 services, 5 addons, 4 therapists, 5 testimonials, 3 blog posts, 1 demo member, 14 site configs (including Mobile Money numbers and bank details)
+- Created images.ts with reliable Unsplash CDN URLs for all services/therapists
+- Created ImageWithSkeleton.tsx for graceful image loading with fallback
+- Created AIAssistant.tsx with Tina's therapist photo as avatar, streaming text, in-chat booking via LLM
+- Fixed Navigation logo: 42x42px container, "Serenity Touch" brand text, proper alignment
+- Added AIAssistant to page.tsx app shell
+- Built 8 real API routes: services, availability, therapists, testimonials, blog, chat (AI), auth/login (register+login), booking
+- Chat API uses z-ai CLI with detached spawn + file polling (stable, no crashes)
+- Chat AI builds system prompt from live DB data, supports in-chat booking extraction
+- Auth API supports real registration (creates Member in DB) and login (DB lookup)
+- Login page completely rewritten: real API calls, form validation, password matching, proper error display
+- WhatsApp button repositioned above AI assistant (z-40 vs z-50)
+- All tests passing: services (11), auth register+login, AI chat with real data
+
+Stage Summary:
+- Site is production-ready with real database backend
+- Real member registration and login via DB
+- AI assistant responds with live spa data and can create bookings in chat
+- Payment info in DB: Airtel Money +260 761 404 555, MTN Mobile Money +260 977 555 123, ZANACO bank transfer
+- All API routes tested and working

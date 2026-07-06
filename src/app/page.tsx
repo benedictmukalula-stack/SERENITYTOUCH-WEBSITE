@@ -21,6 +21,7 @@ import MemberDashboard from '@/components/tinas/MemberDashboard';
 import AnalyticsDashboard from '@/components/tinas/AnalyticsDashboard';
 import AgeGate from '@/components/tinas/AgeGate';
 import WhatsAppButton from '@/components/tinas/WhatsAppButton';
+import AIAssistant from '@/components/tinas/AIAssistant';
 import BackToTop from '@/components/tinas/BackToTop';
 import PromoBanner from '@/components/tinas/PromoBanner';
 import NewsletterPopup from '@/components/tinas/NewsletterPopup';
@@ -74,6 +75,7 @@ export default function AppPage() {
       </main>
       <Footer />
       <WhatsAppButton />
+      <AIAssistant />
       <BackToTop />
       <NewsletterPopup />
     </div>

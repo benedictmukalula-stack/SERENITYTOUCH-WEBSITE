@@ -1,0 +1,1005 @@
+     1→     1→'use client';
+     2→     2→
+     3→     3→import { useState, useMemo, useCallback } from 'react';
+     4→     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→     5→import {
+     6→     6→  MapPin, Phone, Mail, Clock, Loader2, CheckCircle, AlertCircle, MessageCircle,
+     7→     7→  CreditCard, Building2, Smartphone, Home, Car, Navigation,
+     8→     8→  ChevronLeft, ChevronRight, Calendar, ToggleLeft, ToggleRight,
+     9→     9→  Send, Bot, ExternalLink, Sparkles, Clock4, Zap, Footprints, Timer,
+    10→    10→} from 'lucide-react';
+    11→    11→
+    12→    12→/* ──────────────────────── animation variant ──────────────────────── */
+    13→    13→
+    14→    14→const fadeUp = {
+    15→    15→  hidden: { opacity: 0, y: 30 },
+    16→    16→  visible: (i: number) => ({
+    17→    17→    opacity: 1, y: 0,
+    18→    18→    transition: { delay: i * 0.08, duration: 0.6, ease: 'easeOut' },
+    19→    19→  }),
+    20→    20→};
+    21→    21→
+    22→    22→/* ──────────────────────── static data ──────────────────────── */
+    23→    23→
+    24→    24→const contactInfo = [
+    25→    25→  { icon: MapPin, label: 'Address', value: '183 Ibex Hill, Lusaka, Zambia', link: null },
+    26→    26→  { icon: Phone, label: 'Phone', value: '+260 572 782 539', link: 'tel:+260572782539' },
+    27→    27→  { icon: MessageCircle, label: 'WhatsApp', value: '+260 761 404 555', link: 'https://wa.me/260761404555' },
+    28→    28→  { icon: Mail, label: 'Email', value: 'info@serenitytouch.co.zm', link: 'mailto:info@serenitytouch.co.zm' },
+    29→    29→  { icon: Clock, label: 'Hours', value: 'Mon-Fri: 9AM-6PM\nSat: 10AM-5PM\nSun: Closed', link: null },
+    30→    30→];
+    31→    31→
+    32→    32→const serviceOptions = [
+    33→    33→  { value: 'headscalp', label: 'Head & Scalp Massage (30 min) — K400' },
+    34→    34→  { value: 'foot', label: 'Foot Massage (45 min) — K500' },
+    35→    35→  { value: 'backneck', label: 'Back, Neck & Shoulder (45 min) — K600' },
+    36→    36→  { value: 'swedish', label: 'Swedish Massage (60 min) — K800' },
+    37→    37→  { value: 'deeptissue', label: 'Deep Tissue Massage (90 min) — K1,200' },
+    38→    38→  { value: 'thai', label: 'Thai Massage (90 min) — K1,100' },
+    39→    39→  { value: 'aromatherapy', label: 'Aromatherapy Massage (60 min) — K900' },
+    40→    40→  { value: 'reflexology', label: 'Reflexology (60 min) — K850' },
+    41→    41→  { value: 'pregnancy', label: 'Pregnancy Massage (60 min) — K900' },
+    42→    42→  { value: 'fullbody', label: 'Full Body Massage (90 min) — K1,000' },
+    43→    43→  { value: 'couples', label: 'Couples Massage (90 min) — K2,000' },
+    44→    44→];
+    45→    45→
+    46→    46→const therapistOptions = [
+    47→    47→  { value: 'any', label: 'No Preference (First Available)' },
+    48→    48→  { value: 'tina', label: 'Tina Mulenga — Founder & Lead Therapist' },
+    49→    49→  { value: 'grace', label: 'Grace Banda — Senior Massage Therapist' },
+    50→    50→  { value: 'patricia', label: 'Patricia Nkomo — Aromatherapy Specialist' },
+    51→    51→  { value: 'chipo', label: 'Chipo Mwale — Therapeutic Massage Specialist' },
+    52→    52→];
+    53→    53→
+    54→    54→const calloutZones = [
+    55→    55→  { id: 'zone1', label: 'Ibex Hill & Surrounds', desc: 'Within 5km radius', fee: 200, areas: 'Ibex Hill, Woodlands, Kabulonga' },
+    56→    56→  { id: 'zone2', label: 'Lusaka Central', desc: '5–15km from spa', fee: 350, areas: 'CBD, Northmead, Rhodes Park, Longacres' },
+    57→    57→  { id: 'zone3', label: 'Greater Lusaka', desc: '15–30km from spa', fee: 500, areas: 'Manda Hill, East Park, Chelstone, Roma' },
+    58→    58→  { id: 'zone4', label: 'Outside Lusaka', desc: '30km+ — custom quote', fee: 0, areas: 'Kabwe, Chongwe, Kafue, etc.' },
+    59→    59→];
+    60→    60→
+    61→    61→const servicePrices: Record<string, number> = { headscalp: 400, foot: 500, backneck: 600, swedish: 800, deeptissue: 1200, thai: 1100, aromatherapy: 900, reflexology: 850, pregnancy: 900, fullbody: 1000, couples: 2000 };
+    62→    62→
+    63→    63→const paymentMethods = [
+    64→    64→  { id: 'mobile_money', label: 'Mobile Money', icon: Smartphone, desc: 'MTN Mobile Money, Airtel Money, Zamtel' },
+    65→    65→  { id: 'bank_transfer', label: 'Bank EFT', icon: Building2, desc: 'Direct bank transfer' },
+    66→    66→  { id: 'card', label: 'Card Payment', icon: CreditCard, desc: 'Visa, Mastercard (online)' },
+    67→    67→  { id: 'cash', label: 'Pay at Spa', icon: MapPin, desc: 'Cash on arrival' },
+    68→    68→];
+    69→    69→
+    70→    70→const faqs = [
+    71→    71→  { q: 'How do I book an appointment?', a: 'You can book through this form, call us at +260 572 782 539, or message us on WhatsApp. Members can also use our WhatsApp concierge line for priority booking.' },
+    72→    72→  { q: 'What is your cancellation policy?', a: 'Cancellations made 24 hours in advance receive a full refund. Cancellations within 24 hours are subject to a 50% fee. No-shows will be charged in full.' },
+    73→    73→  { q: 'Do you offer membership plans?', a: 'Yes! We offer three membership tiers: Silver (K800/mo), Gold (K1,600/mo), and Platinum (K3,200/mo). Each includes different benefits and service inclusions.' },
+    74→    74→  { q: 'Are your therapists certified?', a: "Yes, every therapist at Serenity Touch Spa is internationally certified and continually trained in the latest therapeutic techniques." },
+    75→    75→  { q: 'What should I bring to my appointment?', a: 'Just bring yourself! We provide all linens, oils, and amenities. Arrive 10 minutes early to complete a brief wellness consultation.' },
+    76→    76→  { q: 'What payment methods do you accept?', a: 'We accept MTN Mobile Money, Airtel Money, Zamtel, bank EFT, Visa/Mastercard, and cash payments at the spa.' },
+    77→    77→];
+    78→    78→
+    79→    79→/* ──────────────────────── treatment add-ons ──────────────────────── */
+    80→    80→
+    81→    81→const addonOptions = [
+    82→    82→  { id: 'aroma', name: 'Aromatherapy Upgrade', price: 150, icon: Sparkles, desc: 'Custom-blended essential oils to deepen your relaxation experience' },
+    83→    83→  { id: 'hotstone', name: 'Hot Stone Add-On', price: 200, icon: Zap, desc: 'Heated volcanic stones placed on key tension points' },
+    84→    84→  { id: 'scalp', name: 'Scalp Treatment', price: 100, icon: Clock4, desc: '15 min invigorating scalp massage with nourishing oils' },
+    85→    85→  { id: 'foot_reflex', name: 'Foot Reflexology', price: 150, icon: Footprints, desc: 'Targeted pressure point therapy for feet and lower legs' },
+    86→    86→  { id: 'extended', name: 'Extended Time 30min', price: 400, icon: Timer, desc: 'Add 30 extra minutes to any treatment session' },
+    87→    87→];
+    88→    88→
+    89→    89→/* ──────────────────────── time slots ──────────────────────── */
+    90→    90→
+    91→    91→const weekdaySlots = [
+    92→    92→  '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
+    93→    93→  '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM',
+    94→    94→];
+    95→    95→const saturdaySlots = [
+    96→    96→  '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM',
+    97→    97→  '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM',
+    98→    98→];
+    99→    99→
+   100→   100→/* ──────────────────────── helpers ──────────────────────── */
+   101→   101→
+   102→   102→function getServiceLabel(val: string) { return serviceOptions.find(s => s.value === val)?.label || val; }
+   103→   103→function getTherapistLabel(val: string) { return therapistOptions.find(t => t.value === val)?.label || val; }
+   104→   104→function getPaymentLabel(val: string) { return paymentMethods.find(p => p.id === val)?.label || val; }
+   105→   105→
+   106→   106→function getCalloutLabel(val: string) {
+   107→   107→  const z = calloutZones.find(z => z.id === val);
+   108→   108→  return z ? (z.fee > 0 ? `${z.label} (K${z.fee} call-out fee)` : `${z.label} (Custom quote)`) : val;
+   109→   109→}
+   110→   110→
+   111→   111→// Deterministic "booked" check for realistic slot availability
+   112→   112→function isSlotBooked(dateStr: string, time: string): boolean {
+   113→   113→  let hash = 0;
+   114→   114→  const str = dateStr + time;
+   115→   115→  for (let i = 0; i < str.length; i++) {
+   116→   116→    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+   117→   117→    hash |= 0;
+   118→   118→  }
+   119→   119→  return Math.abs(hash) % 5 === 0;
+   120→   120→}
+   121→   121→
+   122→   122→function formatDateDisplay(dateStr: string): string {
+   123→   123→  if (!dateStr) return '';
+   124→   124→  const d = new Date(dateStr + 'T00:00:00');
+   125→   125→  return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+   126→   126→}
+   127→   127→
+   128→   128→function formatCalendarMonth(year: number, month: number): string {
+   129→   129→  return new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+   130→   130→}
+   131→   131→
+   132→   132→function pad(n: number): string { return n < 10 ? `0${n}` : `${n}`; }
+   133→   133→
+   134→   134→function toDateString(year: number, month: number, day: number): string {
+   135→   135→  return `${year}-${pad(month + 1)}-${pad(day)}`;
+   136→   136→}
+   137→   137→
+   138→   138→function isSunday(year: number, month: number, day: number): boolean {
+   139→   139→  return new Date(year, month, day).getDay() === 0;
+   140→   140→}
+   141→   141→
+   142→   142→function isSameDay(dateStr: string, year: number, month: number, day: number): boolean {
+   143→   143→  return dateStr === toDateString(year, month, day);
+   144→   144→}
+   145→   145→
+   146→   146→function isToday(year: number, month: number, day: number): boolean {
+   147→   147→  const today = new Date();
+   148→   148→  return year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+   149→   149→}
+   150→   150→
+   151→   151→function isPastDate(year: number, month: number, day: number): boolean {
+   152→   152→  const today = new Date();
+   153→   153→  today.setHours(0, 0, 0, 0);
+   154→   154→  return new Date(year, month, day) < today;
+   155→   155→}
+   156→   156→
+   157→   157→/* ──────────────────────── WhatsApp message builder ──────────────────────── */
+   158→   158→
+   159→   159→function buildWhatsAppMessage(data: typeof defaultFormData): string {
+   160→   160→  const lines = [
+   161→   161→    `*Serenity Touch Spa — Booking Request*`, ``,
+   162→   162→    `*Name:* ${data.name}`, `*Email:* ${data.email}`, `*Phone:* ${data.phone || 'Not provided'}`,
+   163→   163→    `*Date:* ${data.date ? formatDateDisplay(data.date) : 'Not selected'}`,
+   164→   164→    `*Time:* ${data.time || 'Not selected'}`,
+   165→   165→    `*Service:* ${getServiceLabel(data.service)}`,
+   166→   166→    `*Booking Type:* ${data.bookingType === 'callout' ? 'Call-Out Service' : 'In-Spa'}`,
+   167→   167→  ];
+   168→   168→  if (data.bookingType === 'callout') {
+   169→   169→    lines.push(`*Call-Out Zone:* ${getCalloutLabel(data.calloutZone)}`);
+   170→   170→    if (data.calloutAddress) lines.push(`*Address:* ${data.calloutAddress}`);
+   171→   171→    const svcPrice = servicePrices[data.service] || 0;
+   172→   172→    const zone = calloutZones.find(z => z.id === data.calloutZone);
+   173→   173→    const fee = zone?.fee || 0;
+   174→   174→    if (fee > 0) lines.push(`*Total:* K${svcPrice} + K${fee} call-out = K${svcPrice + fee}`);
+   175→   175→    else lines.push(`*Total:* K${svcPrice} + call-out fee (TBD)`);
+   176→   176→  }
+   177→   177→  lines.push(`*Therapist:* ${getTherapistLabel(data.therapist)}`, `*Payment:* ${getPaymentLabel(data.paymentMethod)}`);
+   178→   178→  if (data.message) lines.push(`*Notes:* ${data.message}`);
+   179→   179→  lines.push('', 'Please confirm my booking. Thank you!');
+   180→   180→  return encodeURIComponent(lines.join('\n'));
+   181→   181→}
+   182→   182→
+   183→   183→/* ──────────────────────── default form data ──────────────────────── */
+   184→   184→
+   185→   185→const defaultFormData = {
+   186→   186→  name: '', email: '', phone: '', service: '', therapist: 'any',
+   187→   187→  date: '', time: '', message: '', paymentMethod: 'cash',
+   188→   188→  bookingType: 'in_spa' as 'in_spa' | 'callout', calloutZone: '', calloutAddress: '',
+   189→   189→};
+   190→   190→
+   191→   191→/* ──────────────────────── WhatsApp quick reply templates ──────────────────────── */
+   192→   192→
+   193→   193→const whatsappTemplates = [
+   194→   194→  { trigger: 'hours', reply: 'Our hours: Mon-Fri 9AM-6PM, Sat 10AM-5PM, Sun Closed.' },
+   195→   195→  { trigger: 'services', reply: 'We offer Swedish, Deep Tissue, Thai, Aromatherapy, Pregnancy, Couples & more.' },
+   196→   196→  { trigger: 'prices', reply: 'Prices start from K400. Visit our website for the full price list.' },
+   197→   197→  { trigger: 'location', reply: 'We are at 183 Ibex Hill, Lusaka, Zambia.' },
+   198→   198→  { trigger: 'book', reply: 'To book, please fill out our online form or call +260 572 782 539.' },
+   199→   199→];
+   200→   200→
+   201→   201→/* ════════════════════════════════════════════════════════════════════
+   202→   202→   COMPONENT
+   203→   203→   ════════════════════════════════════════════════════════════════════ */
+   204→   204→
+   205→   205→export default function ContactPage() {
+   206→   206→  const [formData, setFormData] = useState(defaultFormData);
+   207→   207→  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+   208→   208→  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+   209→   209→  const [showPayment, setShowPayment] = useState(false);
+   210→   210→  const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
+   211→   211→
+   212→   212→  /* ── calendar state ── */
+   213→   213→  const today = useMemo(() => {
+   214→   214→    const t = new Date(); t.setHours(0, 0, 0, 0); return t;
+   215→   215→  }, []);
+   216→   216→  const [calendarYear, setCalendarYear] = useState(today.getFullYear());
+   217→   217→  const [calendarMonth, setCalendarMonth] = useState(today.getMonth());
+   218→   218→
+   219→   219→  /* ── integration UI state ── */
+   220→   220→  const [smsEnabled, setSmsEnabled] = useState(false);
+   221→   221→  const [smsPhone, setSmsPhone] = useState('');
+   222→   222→
+   223→   223→  /* ── add-on total ── */
+   224→   224→  const addonTotal = useMemo(() => {
+   225→   225→    let total = 0;
+   226→   226→    selectedAddons.forEach(id => {
+   227→   227→      const addon = addonOptions.find(a => a.id === id);
+   228→   228→      if (addon) total += addon.price;
+   229→   229→    });
+   230→   230→    return total;
+   231→   231→  }, [selectedAddons]);
+   232→   232→
+   233→   233→  /* ── calendar helpers ── */
+   234→   234→  const calendarDays = useMemo(() => {
+   235→   235→    const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+   236→   236→    // 0=Sun, 1=Mon, ..., 6=Sat — we want Mon first
+   237→   237→    let firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
+   238→   238→    const offset = firstDay === 0 ? 6 : firstDay - 1; // Mon=0 ... Sun=6
+   239→   239→    const days: (number | null)[] = [];
+   240→   240→    for (let i = 0; i < offset; i++) days.push(null);
+   241→   241→    for (let d = 1; d <= daysInMonth; d++) days.push(d);
+   242→   242→    return days;
+   243→   243→  }, [calendarYear, calendarMonth]);
+   244→   244→
+   245→   245→  const prevMonth = useCallback(() => {
+   246→   246→    setCalendarMonth(m => {
+   247→   247→      if (m === 0) { setCalendarYear(y => y - 1); return 11; }
+   248→   248→      return m - 1;
+   249→   249→    });
+   250→   250→  }, []);
+   251→   251→
+   252→   252→  const nextMonth = useCallback(() => {
+   253→   253→    setCalendarMonth(m => {
+   254→   254→      if (m === 11) { setCalendarYear(y => y + 1); return 0; }
+   255→   255→      return m + 1;
+   256→   256→    });
+   257→   257→  }, []);
+   258→   258→
+   259→   259→  const handleDateSelect = useCallback((day: number) => {
+   260→   260→    const ds = toDateString(calendarYear, calendarMonth, day);
+   261→   261→    setFormData(prev => ({ ...prev, date: ds, time: '' }));
+   262→   262→  }, [calendarYear, calendarMonth]);
+   263→   263→
+   264→   264→  /* ── time slots for selected date ── */
+   265→   265→  const timeSlots = useMemo(() => {
+   266→   266→    if (!formData.date) return [];
+   267→   267→    const d = new Date(formData.date + 'T00:00:00');
+   268→   268→    const day = d.getDay(); // 0=Sun
+   269→   269→    if (day === 0) return [];
+   270→   270→    return day === 6 ? saturdaySlots : weekdaySlots;
+   271→   271→  }, [formData.date]);
+   272→   272→
+   273→   273→  /* ── form handlers ── */
+   274→   274→  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+   275→   275→    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+   276→   276→  };
+   277→   277→
+   278→   278→  const handleSubmit = async (e: React.FormEvent) => {
+   279→   279→    e.preventDefault();
+   280→   280→    setStatus('loading');
+   281→   281→    try {
+   282→   282→      const res = await fetch('/api/booking', {
+   283→   283→        method: 'POST',
+   284→   284→        headers: { 'Content-Type': 'application/json' },
+   285→   285→        body: JSON.stringify({ ...formData, addons: Array.from(selectedAddons) }),
+   286→   286→      });
+   287→   287→      const data = await res.json();
+   288→   288→      if (data.success) {
+   289→   289→        setStatus('success');
+   290→   290→        setFormData(defaultFormData);
+   291→   291→        setShowPayment(false);
+   292→   292→        setSelectedAddons(new Set());
+   293→   293→      } else setStatus('error');
+   294→   294→    } catch { setStatus('error'); }
+   295→   295→  };
+   296→   296→
+   297→   297→  const handleWhatsAppBooking = () => {
+   298→   298→    const msg = buildWhatsAppMessage(formData);
+   299→   299→    window.open(`https://wa.me/260761404555?text=${msg}`, '_blank');
+   300→   300→  };
+   301→   301→
+   302→   302→  /* ═══════════════════════ RENDER ═══════════════════════ */
+   303→   303→
+   304→   304→  return (
+   305→   305→    <div>
+   306→   306→      {/* ───────── Hero ───────── */}
+   307→   307→      <section className="pt-32 pb-16 section-dark">
+   308→   308→        <div className="container-tinas text-center">
+   309→   309→          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 heading-display">
+   310→   310→            Get in <span className="text-pink-brand">Touch</span>
+   311→   311→          </motion.h1>
+   312→   312→          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-lg text-pink-glow/35 max-w-2xl mx-auto body-serif font-light">
+   313→   313→            Ready to relax to the experience? Book your first session with us.
+   314→   314→          </motion.p>
+   315→   315→        </div>
+   316→   316→      </section>
+   317→   317→
+   318→   318→      {/* ───────── Main: Contact Info + Booking Form ───────── */}
+   319→   319→      <section className="section-padding surface-base">
+   320→   320→        <div className="container-tinas">
+   321→   321→          <div className="grid lg:grid-cols-3 gap-10 lg:gap-14 mb-20">
+   322→   322→
+   323→   323→            {/* ═══════ Left Column: Contact Info ═══════ */}
+   324→   324→            <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0} className="lg:col-span-1">
+   325→   325→              <h2 className="text-2xl font-bold mb-8 heading-display">Contact Information</h2>
+   326→   326→              <div className="space-y-7">
+   327→   327→                {contactInfo.map((item, idx) => (
+   328→   328→                  <div key={idx}>
+   329→   329→                    <div className="flex items-center gap-2.5 mb-1.5">
+   330→   330→                      <item.icon className="w-4 h-4 text-pink-brand" />
+   331→   331→                      <h3 className="font-bold text-sm text-white">{item.label}</h3>
+   332→   332→                    </div>
+   333→   333→                    {item.link ? (
+   334→   334→                      <a href={item.link} className="text-pink-brand hover:text-pink-light transition text-sm ml-[26px] block">{item.value}</a>
+   335→   335→                    ) : (
+   336→   336→                      <p className="text-pink-glow/35 text-sm ml-[26px] whitespace-pre-line">{item.value}</p>
+   337→   337→                    )}
+   338→   338→                  </div>
+   339→   339→                ))}
+   340→   340→              </div>
+   341→   341→
+   342→   342→              {/* ── Google Maps Embed ── */}
+   343→   343→              <div className="mt-8 surface-raised rounded-2xl overflow-hidden">
+   344→   344→                <div className="relative">
+   345→   345→                  <iframe
+   346→   346→                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3878.5!2d28.3!3d-15.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sIbex+Hill+Lusaka+Zambia!5e0!3m2!1sen!2szm!4v1700000000000"
+   347→   347→                    width="100%" height="220"
+   348→   348→                    style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) brightness(0.8) contrast(1.2)' }}
+   349→   349→                    allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+   350→   350→                    title="Serenity Touch Spa Location"
+   351→   351→                  />
+   352→   352→                </div>
+   353→   353→                <a
+   354→   354→                  href="https://www.google.com/maps/dir/?api=1&destination=183+Ibex+Hill+Lusaka+Zambia"
+   355→   355→                  target="_blank" rel="noopener noreferrer"
+   356→   356→                  className="flex items-center justify-center gap-2 px-4 py-3 border-t border-gold/10 text-sm text-gold hover:text-gold-light hover:bg-gold/[0.04] transition"
+   357→   357→                >
+   358→   358→                  <Navigation className="w-3.5 h-3.5" />
+   359→   359→                  Get Directions
+   360→   360→                  <ExternalLink className="w-3 h-3" />
+   361→   361→                </a>
+   362→   362→              </div>
+   363→   363→
+   364→   364→              {/* ── Call-Out Fees Quick Reference ── */}
+   365→   365→              <div className="mt-6 surface-raised rounded-2xl p-5">
+   366→   366→                <div className="flex items-center gap-2 mb-4">
+   367→   367→                  <Car className="w-4 h-4 text-pink-brand" />
+   368→   368→                  <h3 className="font-bold text-sm text-white">Call-Out Fees</h3>
+   369→   369→                </div>
+   370→   370→                <div className="space-y-2.5">
+   371→   371→                  {[
+   372→   372→                    { zone: 'Ibex Hill & Surrounds', fee: 'K200' },
+   373→   373→                    { zone: 'Lusaka Central', fee: 'K350' },
+   374→   374→                    { zone: 'Greater Lusaka', fee: 'K500' },
+   375→   375→                    { zone: 'Outside Lusaka', fee: 'Quote' },
+   376→   376→                  ].map((z, i) => (
+   377→   377→                    <div key={i} className="flex justify-between items-center">
+   378→   378→                      <span className="text-xs text-pink-glow/45">Zone {i + 1}</span>
+   379→   379→                      <span className="text-xs font-bold text-gold">{z.fee}</span>
+   380→   380→                    </div>
+   381→   381→                  ))}
+   382→   382→                </div>
+   383→   383→                <p className="text-[10px] text-gold/35 mt-3 body-serif font-light leading-relaxed">Members enjoy discounts. Select &quot;Call-Out&quot; in the booking form to get started.</p>
+   384→   384→              </div>
+   385→   385→            </motion.div>
+   386→   386→
+   387→   387→            {/* ═══════ Right Column: Booking Form ═══════ */}
+   388→   388→            <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={1} className="lg:col-span-2">
+   389→   389→              <div className="surface-raised rounded-2xl p-7 md:p-9 glow-gold">
+   390→   390→                <div className="flex items-center justify-between mb-6">
+   391→   391→                  <h2 className="text-2xl font-bold heading-display">Book Your <span className="text-pink-brand">Escape</span></h2>
+   392→   392→                  <button onClick={handleWhatsAppBooking} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full text-xs font-semibold transition cursor-pointer" title="Book via WhatsApp">
+   393→   393→                    <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
+   394→   394→                  </button>
+   395→   395→                </div>
+   396→   396→
+   397→   397→                <AnimatePresence mode="wait">
+   398→   398→                  {status === 'success' ? (
+   399→   399→                    <motion.div key="success" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-8 text-center">
+   400→   400→                      <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
+   401→   401→                      <p className="text-emerald-300 font-semibold text-lg mb-2 heading-display">Thank you for your inquiry!</p>
+   402→   402→                      <p className="text-emerald-400/70 text-sm body-serif mb-4 font-light">We&apos;ll contact you shortly to confirm your booking.</p>
+   403→   403→                      <p className="text-emerald-400/70 text-xs mb-6">A confirmation has been sent via email and WhatsApp.</p>
+   404→   404→                      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+   405→   405→                        <button onClick={() => setStatus('idle')} className="text-sm text-emerald-400 underline cursor-pointer">Book another session</button>
+   406→   406→                        <button onClick={handleWhatsAppBooking} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-full text-xs font-semibold transition cursor-pointer mx-auto sm:mx-0">
+   407→   407→                          <MessageCircle className="w-3.5 h-3.5" /> Follow up on WhatsApp
+   408→   408→                        </button>
+   409→   409→                      </div>
+   410→   410→                    </motion.div>
+   411→   411→                  ) : (
+   412→   412→                    <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onSubmit={handleSubmit} className="space-y-5">
+   413→   413→
+   414→   414→                      {/* ── Name & Email ── */}
+   415→   415→                      <div className="grid sm:grid-cols-2 gap-5">
+   416→   416→                        <div>
+   417→   417→                          <label className="block text-sm font-semibold text-white mb-2">Full Name *</label>
+   418→   418→                          <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full input-dark" placeholder="Your name" />
+   419→   419→                        </div>
+   420→   420→                        <div>
+   421→   421→                          <label className="block text-sm font-semibold text-white mb-2">Email *</label>
+   422→   422→                          <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full input-dark" placeholder="your@email.com" />
+   423→   423→                        </div>
+   424→   424→                      </div>
+   425→   425→
+   426→   426→                      {/* ── Phone & Preferred Date (calendar trigger) ── */}
+   427→   427→                      <div className="grid sm:grid-cols-2 gap-5">
+   428→   428→                        <div>
+   429→   429→                          <label className="block text-sm font-semibold text-white mb-2">Phone</label>
+   430→   430→                          <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full input-dark" placeholder="+260 XXX XXX XXX" />
+   431→   431→                        </div>
+   432→   432→                        <div>
+   433→   433→                          <label className="block text-sm font-semibold text-white mb-2">Preferred Date *</label>
+   434→   434→                          {/* Hidden native date input for form validation — the calendar UI sets the value */}
+   435→   435→                          <input type="hidden" name="date" value={formData.date} />
+   436→   436→                          <button
+   437→   437→                            type="button"
+   438→   438→                            onClick={() => {
+   439→   439→                              const el = document.getElementById('calendar-section');
+   440→   440→                              el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+   441→   441→                            }}
+   442→   442→                            className="w-full input-dark text-left flex items-center gap-2 cursor-pointer"
+   443→   443→                          >
+   444→   444→                            <Calendar className="w-4 h-4 text-gold/50 shrink-0" />
+   445→   445→                            <span className={formData.date ? 'text-white' : 'placeholder:text-gold/30'}>
+   446→   446→                              {formData.date ? formatDateDisplay(formData.date) : 'Select a date from the calendar below'}
+   447→   447→                            </span>
+   448→   448→                          </button>
+   449→   449→                        </div>
+   450→   450→                      </div>
+   451→   451→
+   452→   452→                      {/* ═══════ FEATURE 1: Interactive Booking Calendar ═══════ */}
+   453→   453→                      <div id="calendar-section">
+   454→   454→                        <label className="block text-sm font-semibold text-white mb-3">Select Date</label>
+   455→   455→                        <div className="surface-raised rounded-2xl p-5">
+   456→   456→                          {/* Month Navigation */}
+   457→   457→                          <div className="flex items-center justify-between mb-4">
+   458→   458→                            <button type="button" onClick={prevMonth} className="p-2 rounded-lg hover:bg-gold/10 transition cursor-pointer text-gold/60 hover:text-gold">
+   459→   459→                              <ChevronLeft className="w-5 h-5" />
+   460→   460→                            </button>
+   461→   461→                            <span className="text-sm font-semibold text-white heading-display">
+   462→   462→                              {formatCalendarMonth(calendarYear, calendarMonth)}
+   463→   463→                            </span>
+   464→   464→                            <button type="button" onClick={nextMonth} className="p-2 rounded-lg hover:bg-gold/10 transition cursor-pointer text-gold/60 hover:text-gold">
+   465→   465→                              <ChevronRight className="w-5 h-5" />
+   466→   466→                            </button>
+   467→   467→                          </div>
+   468→   468→                          {/* Day Headers */}
+   469→   469→                          <div className="calendar-grid mb-1">
+   470→   470→                            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+   471→   471→                              <div key={day} className="calendar-day-header">{day}</div>
+   472→   472→                            ))}
+   473→   473→                          </div>
+   474→   474→                          {/* Day Grid */}
+   475→   475→                          <div className="calendar-grid">
+   476→   476→                            {calendarDays.map((day, idx) => {
+   477→   477→                              if (day === null) return <div key={`empty-${idx}`} />;
+   478→   478→                              const disabled = isSunday(calendarYear, calendarMonth, day) || isPastDate(calendarYear, calendarMonth, day);
+   479→   479→                              const selected = isSameDay(formData.date, calendarYear, calendarMonth, day);
+   480→   480→                              const todayCls = isToday(calendarYear, calendarMonth, day);
+   481→   481→                              let cls = 'calendar-day';
+   482→   482→                              if (disabled) cls += ' disabled';
+   483→   483→                              if (selected) cls += ' selected';
+   484→   484→                              if (todayCls && !selected) cls += ' today';
+   485→   485→                              return (
+   486→   486→                                <div
+   487→   487→                                  key={day}
+   488→   488→                                  className={cls}
+   489→   489→                                  onClick={disabled ? undefined : () => handleDateSelect(day)}
+   490→   490→                                >
+   491→   491→                                  {day}
+   492→   492→                                </div>
+   493→   493→                              );
+   494→   494→                            })}
+   495→   495→                          </div>
+   496→   496→                          {/* Selected Date Display */}
+   497→   497→                          {formData.date && (
+   498→   498→                            <motion.div
+   499→   499→                              initial={{ opacity: 0, y: -5 }}
+   500→   500→                              animate={{ opacity: 1, y: 0 }}
+   501→   501→                              className="mt-4 flex items-center gap-2 text-sm"
+   502→   502→                            >
+   503→   503→                              <CheckCircle className="w-4 h-4 text-pink-brand" />
+   504→   504→                              <span className="text-pink-glow/70 body-serif font-light">
+   505→   505→                                Selected: <span className="text-white font-medium">{formatDateDisplay(formData.date)}</span>
+   506→   506→                              </span>
+   507→   507→                            </motion.div>
+   508→   508→                          )}
+   509→   509→                        </div>
+   510→   510→                      </div>
+   511→   511→
+   512→   512→                      {/* ═══════ FEATURE 2: Time Slot Picker ═══════ */}
+   513→   513→                      <AnimatePresence>
+   514→   514→                        {timeSlots.length > 0 && (
+   515→   515→                          <motion.div
+   516→   516→                            initial={{ opacity: 0, height: 0 }}
+   517→   517→                            animate={{ opacity: 1, height: 'auto' }}
+   518→   518→                            exit={{ opacity: 0, height: 0 }}
+   519→   519→                            className="overflow-hidden"
+   520→   520→                          >
+   521→   521→                            <label className="block text-sm font-semibold text-white mb-3">Preferred Time</label>
+   522→   522→                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+   523→   523→                              {timeSlots.map(slot => {
+   524→   524→                                const booked = isSlotBooked(formData.date, slot);
+   525→   525→                                const selected = formData.time === slot;
+   526→   526→                                let cls = 'time-slot';
+   527→   527→                                if (booked) cls += ' disabled';
+   528→   528→                                if (selected) cls += ' selected';
+   529→   529→                                return (
+   530→   530→                                  <div
+   531→   531→                                    key={slot}
+   532→   532→                                    className={cls}
+   533→   533→                                    onClick={booked ? undefined : () => setFormData(prev => ({ ...prev, time: slot }))}
+   534→   534→                                  >
+   535→   535→                                    {slot}
+   536→   536→                                    {booked && <span className="block text-[9px] opacity-60 mt-0.5">Booked</span>}
+   537→   537→                                  </div>
+   538→   538→                                );
+   539→   539→                              })}
+   540→   540→                            </div>
+   541→   541→                            {formData.time && (
+   542→   542→                              <motion.p
+   543→   543→                                initial={{ opacity: 0 }}
+   544→   544→                                animate={{ opacity: 1 }}
+   545→   545→                                className="mt-2.5 text-xs text-pink-glow/50 body-serif font-light"
+   546→   546→                              >
+   547→   547→                                Time selected: <span className="text-white font-medium">{formData.time}</span>
+   548→   548→                              </motion.p>
+   549→   549→                            )}
+   550→   550→                          </motion.div>
+   551→   551→                        )}
+   552→   552→                      </AnimatePresence>
+   553→   553→
+   554→   554→                      {/* ── Service & Therapist ── */}
+   555→   555→                      <div className="grid sm:grid-cols-2 gap-5">
+   556→   556→                        <div>
+   557→   557→                          <label className="block text-sm font-semibold text-white mb-2">Service *</label>
+   558→   558→                          <select name="service" value={formData.service} onChange={handleChange} required className="w-full input-dark">
+   559→   559→                            <option value="">Select a treatment</option>
+   560→   560→                            {serviceOptions.map((opt) => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}
+   561→   561→                          </select>
+   562→   562→                        </div>
+   563→   563→                        <div>
+   564→   564→                          <label className="block text-sm font-semibold text-white mb-2">Preferred Therapist</label>
+   565→   565→                          <select name="therapist" value={formData.therapist} onChange={handleChange} className="w-full input-dark">
+   566→   566→                            {therapistOptions.map((opt) => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}
+   567→   567→                          </select>
+   568→   568→                        </div>
+   569→   569→                      </div>
+   570→   570→
+   571→   571→                      {/* ── Booking Type: In-Spa vs Call-Out ── */}
+   572→   572→                      <div>
+   573→   573→                        <label className="block text-sm font-semibold text-white mb-3">Booking Location</label>
+   574→   574→                        <div className="grid grid-cols-2 gap-3">
+   575→   575→                          <button type="button"
+   576→   576→                            onClick={() => setFormData(prev => ({ ...prev, bookingType: 'in_spa', calloutZone: '', calloutAddress: '' }))}
+   577→   577→                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+   578→   578→                              formData.bookingType === 'in_spa'
+   579→   579→                                ? 'border-pink-brand bg-pink-brand/10'
+   580→   580→                                : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+   581→   581→                            }`}
+   582→   582→                          >
+   583→   583→                            <Home className={`w-5 h-5 mb-2 ${formData.bookingType === 'in_spa' ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
+   584→   584→                            <p className={`text-sm font-semibold ${formData.bookingType === 'in_spa' ? 'text-pink-brand' : 'text-pink-glow/45'}`}>In-Spa</p>
+   585→   585→                            <p className="text-[11px] text-gold/40 mt-1 leading-tight">Visit us at Ibex Hill</p>
+   586→   586→                          </button>
+   587→   587→                          <button type="button"
+   588→   588→                            onClick={() => setFormData(prev => ({ ...prev, bookingType: 'callout' }))}
+   589→   589→                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+   590→   590→                              formData.bookingType === 'callout'
+   591→   591→                                ? 'border-pink-brand bg-pink-brand/10'
+   592→   592→                                : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+   593→   593→                            }`}
+   594→   594→                          >
+   595→   595→                            <Car className={`w-5 h-5 mb-2 ${formData.bookingType === 'callout' ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
+   596→   596→                            <p className={`text-sm font-semibold ${formData.bookingType === 'callout' ? 'text-pink-brand' : 'text-pink-glow/45'}`}>Call-Out</p>
+   597→   597→                            <p className="text-[11px] text-gold/40 mt-1 leading-tight">We come to you</p>
+   598→   598→                          </button>
+   599→   599→                        </div>
+   600→   600→                      </div>
+   601→   601→
+   602→   602→                      {/* ═══════ FEATURE 3: Treatment Add-Ons ═══════ */}
+   603→   603→                      <div className="mb-6">
+   604→   604→                        <div className="flex items-center justify-between mb-3">
+   605→   605→                          <label className="text-xs font-semibold text-gold/50 tracking-wider uppercase">Enhance Your Experience</label>
+   606→   606→                          {addonTotal > 0 && (
+   607→   607→                            <span className="badge-new">
+   608→   608→                              <Sparkles className="w-3 h-3" />
+   609→   609→                              +K{addonTotal.toLocaleString()} total
+   610→   610→                            </span>
+   611→   611→                          )}
+   612→   612→                        </div>
+   613→   613→                        <div className="space-y-2.5">
+   614→   614→                          {addonOptions.map((addon) => {
+   615→   615→                            const isSelected = selectedAddons.has(addon.id);
+   616→   616→                            return (
+   617→   617→                              <button type="button" key={addon.id}
+   618→   618→                                onClick={() => {
+   619→   619→                                  setSelectedAddons(prev => {
+   620→   620→                                    const next = new Set(prev);
+   621→   621→                                    if (next.has(addon.id)) next.delete(addon.id);
+   622→   622→                                    else next.add(addon.id);
+   623→   623→                                    return next;
+   624→   624→                                  });
+   625→   625→                                }}
+   626→   626→                                className={`w-full p-4 rounded-xl border text-left transition-all cursor-pointer group flex items-start gap-4 ${
+   627→   627→                                  isSelected
+   628→   628→                                    ? 'border-pink-brand bg-pink-brand/[0.08]'
+   629→   629→                                    : 'border-gold/12 bg-gold/[0.02] hover:border-gold/25'
+   630→   630→                                }`}
+   631→   631→                              >
+   632→   632→                                {/* Checkbox indicator */}
+   633→   633→                                <div className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+   634→   634→                                  isSelected
+   635→   635→                                    ? 'border-pink-brand bg-pink-brand'
+   636→   636→                                    : 'border-gold/25 group-hover:border-gold/40'
+   637→   637→                                }`}>
+   638→   638→                                  {isSelected && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+   639→   639→                                </div>
+   640→   640→                                <div className="flex-1 min-w-0">
+   641→   641→                                  <div className="flex items-center justify-between mb-1">
+   642→   642→                                    <span className={`text-sm font-semibold group-hover:text-gold transition-colors ${isSelected ? 'text-pink-brand' : 'text-white'}`}>
+   643→   643→                                      {addon.name}
+   644→   644→                                    </span>
+   645→   645→                                    <span className="text-sm font-bold text-gold shrink-0 ml-3">+K{addon.price}</span>
+   646→   646→                                  </div>
+   647→   647→                                  <p className="text-[11px] text-pink-glow/35 leading-relaxed">{addon.desc}</p>
+   648→   648→                                </div>
+   649→   649→                              </button>
+   650→   650→                            );
+   651→   651→                          })}
+   652→   652→                        </div>
+   653→   653→                        {addonTotal > 0 && (
+   654→   654→                          <motion.div
+   655→   655→                            initial={{ opacity: 0, y: -5 }}
+   656→   656→                            animate={{ opacity: 1, y: 0 }}
+   657→   657→                            className="mt-3 surface-raised rounded-xl p-4 flex items-center justify-between"
+   658→   658→                          >
+   659→   659→                            <span className="text-xs text-pink-glow/45">Add-Ons Total</span>
+   660→   660→                            <span className="text-gradient-gold font-bold text-lg heading-display">K{addonTotal.toLocaleString()}</span>
+   661→   661→                          </motion.div>
+   662→   662→                        )}
+   663→   663→                      </div>
+   664→   664→
+   665→   665→                      {/* ── Call-Out Zone Selection ── */}
+   666→   666→                      <AnimatePresence>
+   667→   667→                        {formData.bookingType === 'callout' && (
+   668→   668→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+   669→   669→                            <div className="space-y-4">
+   670→   670→                              <div>
+   671→   671→                                <label className="block text-sm font-semibold text-white mb-3">Call-Out Zone</label>
+   672→   672→                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+   673→   673→                                  {calloutZones.map((zone) => (
+   674→   674→                                    <button key={zone.id} type="button"
+   675→   675→                                      onClick={() => setFormData(prev => ({ ...prev, calloutZone: zone.id }))}
+   676→   676→                                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+   677→   677→                                        formData.calloutZone === zone.id
+   678→   678→                                          ? 'border-pink-brand bg-pink-brand/10'
+   679→   679→                                          : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+   680→   680→                                      }`}
+   681→   681→                                    >
+   682→   682→                                      <div className="flex items-center justify-between mb-1">
+   683→   683→                                        <p className={`text-sm font-semibold ${formData.calloutZone === zone.id ? 'text-pink-brand' : 'text-pink-glow/45'}`}>{zone.label}</p>
+   684→   684→                                        <span className={`text-sm font-bold ${formData.calloutZone === zone.id ? 'text-gold' : 'text-gold/50'}`}>{zone.fee > 0 ? `K${zone.fee}` : 'Quote'}</span>
+   685→   685→                                      </div>
+   686→   686→                                      <p className="text-[11px] text-gold/40 leading-tight">{zone.desc} &middot; {zone.areas}</p>
+   687→   687→                                    </button>
+   688→   688→                                  ))}
+   689→   689→                                </div>
+   690→   690→                              </div>
+   691→   691→                              <div>
+   692→   692→                                <label className="block text-sm font-semibold text-white mb-2">Your Address *</label>
+   693→   693→                                <div className="relative">
+   694→   694→                                  <Navigation className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
+   695→   695→                                  <input type="text" name="calloutAddress" value={formData.calloutAddress} onChange={handleChange} className="w-full pl-10 input-dark" placeholder="Enter your full address for the call-out" />
+   696→   696→                                </div>
+   697→   697→                              </div>
+   698→   698→
+   699→   699→                              {/* Call-Out Fee Summary */}
+   700→   700→                              <div className="surface-raised rounded-xl p-4 border-pink-brand/20">
+   701→   701→                                <div className="flex items-center gap-2 mb-3">
+   702→   702→                                  <Car className="w-4 h-4 text-pink-brand" />
+   703→   703→                                  <p className="text-xs font-semibold text-pink-brand tracking-wider">CALL-OUT FEE SUMMARY</p>
+   704→   704→                                </div>
+   705→   705→                                <div className="space-y-2 text-sm">
+   706→   706→                                  <div className="flex justify-between">
+   707→   707→                                    <span className="text-pink-glow/45">Service</span>
+   708→   708→                                    <span className="text-white font-medium">{serviceOptions.find(s => s.value === formData.service)?.label.split('—')[0]?.trim() || 'Select a service'}</span>
+   709→   709→                                  </div>
+   710→   710→                                  <div className="flex justify-between">
+   711→   711→                                    <span className="text-pink-glow/45">Service Price</span>
+   712→   712→                                    <span className="text-white font-medium">K{servicePrices[formData.service] || 0}</span>
+   713→   713→                                  </div>
+   714→   714→                                  {addonTotal > 0 && (
+   715→   715→                                    <div className="flex justify-between">
+   716→   716→                                      <span className="text-pink-glow/45">Add-Ons</span>
+   717→   717→                                      <span className="text-white font-medium">K{addonTotal.toLocaleString()}</span>
+   718→   718→                                    </div>
+   719→   719→                                  )}
+   720→   720→                                  <div className="h-px bg-gold/10 my-1"></div>
+   721→   721→                                  <div className="flex justify-between">
+   722→   722→                                    <span className="text-pink-glow/45">Call-Out Fee</span>
+   723→   723→                                    <span className="text-gold font-bold">{(() => { const z = calloutZones.find(z => z.id === formData.calloutZone); return z?.fee ? `K${z.fee}` : 'TBD'; })()}</span>
+   724→   724→                                  </div>
+   725→   725→                                  <div className="h-px bg-gold/10 my-1"></div>
+   726→   726→                                  <div className="flex justify-between">
+   727→   727→                                    <span className="text-white font-semibold">Estimated Total</span>
+   728→   728→                                    <span className="text-gradient-gold font-bold">{(() => { const p = (servicePrices[formData.service] || 0) + addonTotal; const z = calloutZones.find(z => z.id === formData.calloutZone); const f = z?.fee || 0; return f > 0 ? `K${(p + f).toLocaleString()}` : `K${p.toLocaleString()} + call-out fee`; })()}</span>
+   729→   729→                                  </div>
+   730→   730→                                </div>
+   731→   731→                              </div>
+   732→   732→                            </div>
+   733→   733→                          </motion.div>
+   734→   734→                        )}
+   735→   735→                      </AnimatePresence>
+   736→   736→
+   737→   737→                      {/* ── Payment Method ── */}
+   738→   738→                      <div>
+   739→   739→                        <label className="block text-sm font-semibold text-white mb-3">Payment Method</label>
+   740→   740→                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+   741→   741→                          {paymentMethods.map((pm) => (
+   742→   742→                            <button key={pm.id} type="button"
+   743→   743→                              onClick={() => { setFormData(prev => ({ ...prev, paymentMethod: pm.id })); setShowPayment(pm.id !== 'cash'); }}
+   744→   744→                              className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+   745→   745→                                formData.paymentMethod === pm.id
+   746→   746→                                  ? 'border-pink-brand bg-pink-brand/10'
+   747→   747→                                  : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+   748→   748→                              }`}
+   749→   749→                            >
+   750→   750→                              <pm.icon className={`w-4 h-4 mb-1.5 ${formData.paymentMethod === pm.id ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
+   751→   751→                              <p className={`text-xs font-semibold ${formData.paymentMethod === pm.id ? 'text-pink-brand' : 'text-pink-glow/45'}`}>{pm.label}</p>
+   752→   752→                              <p className="text-[10px] text-gold/40 mt-0.5 leading-tight">{pm.desc}</p>
+   753→   753→                            </button>
+   754→   754→                          ))}
+   755→   755→                        </div>
+   756→   756→                      </div>
+   757→   757→
+   758→   758→                      {/* ── Payment Panels ── */}
+   759→   759→                      <AnimatePresence>
+   760→   760→                        {showPayment && formData.paymentMethod === 'mobile_money' && (
+   761→   761→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+   762→   762→                            <div className="surface-raised rounded-xl p-5 space-y-4">
+   763→   763→                              <p className="text-xs font-semibold text-pink-brand tracking-wider">MOBILE MONEY PAYMENT</p>
+   764→   764→                              <div className="grid grid-cols-3 gap-3">
+   765→   765→                                {[
+   766→   766→                                  { name: 'MTN', number: '0777 123 456', color: 'border-yellow-500/30 bg-yellow-500/5' },
+   767→   767→                                  { name: 'Airtel', number: '0977 123 456', color: 'border-red-500/30 bg-red-500/5' },
+   768→   768→                                  { name: 'Zamtel', number: '0955 123 456', color: 'border-blue-500/30 bg-blue-500/5' },
+   769→   769→                                ].map((network) => (
+   770→   770→                                  <div key={network.name} className={`border rounded-lg p-3 text-center ${network.color}`}>
+   771→   771→                                    <p className="text-xs font-bold text-white">{network.name}</p>
+   772→   772→                                    <p className="text-[11px] text-pink-glow/35 mt-1">{network.number}</p>
+   773→   773→                                  </div>
+   774→   774→                                ))}
+   775→   775→                              </div>
+   776→   776→                              <p className="text-[11px] text-gold/50 body-serif font-light">Send payment using the reference code you receive after booking confirmation. Screenshot your payment receipt and send via WhatsApp.</p>
+   777→   777→                            </div>
+   778→   778→                          </motion.div>
+   779→   779→                        )}
+   780→   780→                        {showPayment && formData.paymentMethod === 'bank_transfer' && (
+   781→   781→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+   782→   782→                            <div className="surface-raised rounded-xl p-5 space-y-3">
+   783→   783→                              <p className="text-xs font-semibold text-pink-brand tracking-wider">BANK TRANSFER DETAILS</p>
+   784→   784→                              <div className="grid sm:grid-cols-2 gap-3 text-sm">
+   785→   785→                                <div><span className="text-gold/50 text-xs">Bank:</span><p className="text-white font-medium">Stanbic Bank Zambia</p></div>
+   786→   786→                                <div><span className="text-gold/50 text-xs">Account Name:</span><p className="text-white font-medium">Serenity Touch Spa Ltd</p></div>
+   787→   787→                                <div><span className="text-gold/50 text-xs">Account Number:</span><p className="text-white font-medium font-mono">9030-XXXX-XXXX</p></div>
+   788→   788→                                <div><span className="text-gold/50 text-xs">Branch:</span><p className="text-white font-medium">Ibex Hill, Lusaka</p></div>
+   789→   789→                              </div>
+   790→   790→                              <p className="text-[11px] text-gold/50 body-serif font-light">Use your booking ID as the payment reference. Send proof of payment via WhatsApp for confirmation.</p>
+   791→   791→                            </div>
+   792→   792→                          </motion.div>
+   793→   793→                        )}
+   794→   794→                        {showPayment && formData.paymentMethod === 'card' && (
+   795→   795→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+   796→   796→                            <div className="surface-raised rounded-xl p-5 space-y-3">
+   797→   797→                              <p className="text-xs font-semibold text-pink-brand tracking-wider">ONLINE CARD PAYMENT</p>
+   798→   798→                              <p className="text-sm text-pink-glow/35 body-serif font-light">After submitting your booking, you will receive a secure payment link via email and WhatsApp. We accept Visa and Mastercard.</p>
+   799→   799→                              <div className="flex gap-2 items-center">
+   800→   800→                                <div className="bg-gold/8 border border-gold/8 rounded-lg px-3 py-2 text-xs text-pink-glow/45">VISA</div>
+   801→   801→                                <div className="bg-gold/8 border border-gold/8 rounded-lg px-3 py-2 text-xs text-pink-glow/45">MASTERCARD</div>
+   802→   802→                                <div className="ml-auto flex items-center gap-1 text-[10px] text-gold/40">
+   803→   803→                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+   804→   804→                                  Secured by SSL
+   805→   805→                                </div>
+   806→   806→                              </div>
+   807→   807→                            </div>
+   808→   808→                          </motion.div>
+   809→   809→                        )}
+   810→   810→                      </AnimatePresence>
+   811→   811→
+   812→   812→                      {/* ── Additional Notes ── */}
+   813→   813→                      <div>
+   814→   814→                        <label className="block text-sm font-semibold text-white mb-2">Additional Notes</label>
+   815→   815→                        <textarea name="message" value={formData.message} onChange={handleChange} rows={4} className="w-full input-dark resize-none" placeholder="Any special requests or preferences?" />
+   816→   816→                      </div>
+   817→   817→
+   818→   818→                      {/* ── Error ── */}
+   819→   819→                      {status === 'error' && (
+   820→   820→                        <div className="flex items-center gap-2 text-red-400 text-sm">
+   821→   821→                          <AlertCircle className="w-4 h-4" />
+   822→   822→                          <span>Something went wrong. Please try again.</span>
+   823→   823→                        </div>
+   824→   824→                      )}
+   825→   825→
+   826→   826→                      {/* ── Submit Buttons ── */}
+   827→   827→                      <div className="flex flex-col sm:flex-row gap-3">
+   828→   828→                        <button type="submit" disabled={status === 'loading'} className="flex-1 btn-pink py-3.5 text-sm cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2">
+   829→   829→                          {status === 'loading' ? (<><Loader2 className="w-4 h-4 animate-spin" />Processing...</>) : 'Request Booking'}
+   830→   830→                        </button>
+   831→   831→                        <button type="button" onClick={handleWhatsAppBooking} className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3.5 rounded-full text-sm font-semibold transition cursor-pointer">
+   832→   832→                          <MessageCircle className="w-4 h-4" /> Book via WhatsApp
+   833→   833→                        </button>
+   834→   834→                      </div>
+   835→   835→                    </motion.form>
+   836→   836→                  )}
+   837→   837→                </AnimatePresence>
+   838→   838→              </div>
+   839→   839→
+   840→   840→              {/* ═══════ FEATURE 5: SMS & WhatsApp Business Integration UI ═══════ */}
+   841→   841→              <div className="mt-10 grid sm:grid-cols-2 gap-6">
+   842→   842→                {/* Africa's Talking SMS Card */}
+   843→   843→                <motion.div
+   844→   844→                  initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
+   845→   845→                  className="surface-raised rounded-2xl p-6"
+   846→   846→                >
+   847→   847→                  <div className="flex items-center gap-3 mb-5">
+   848→   848→                    <div className="w-10 h-10 rounded-xl bg-pink-brand/10 flex items-center justify-center">
+   849→   849→                      <Send className="w-5 h-5 text-pink-brand" />
+   850→   850→                    </div>
+   851→   851→                    <div>
+   852→   852→                      <h3 className="text-sm font-bold text-white">Africa&apos;s Talking SMS</h3>
+   853→   853→                      <p className="text-[11px] text-gold/40">Booking confirmations via SMS</p>
+   854→   854→                    </div>
+   855→   855→                  </div>
+   856→   856→
+   857→   857→                  <div className="space-y-4">
+   858→   858→                    {/* Phone Input for SMS */}
+   859→   859→                    <div>
+   860→   860→                      <label className="block text-xs font-semibold text-pink-glow/45 mb-2">SMS Phone Number</label>
+   861→   861→                      <input
+   862→   862→                        type="tel"
+   863→   863→                        value={smsPhone}
+   864→   864→                        onChange={e => setSmsPhone(e.target.value)}
+   865→   865→                        className="w-full input-dark"
+   866→   866→                        placeholder="+260 XXX XXX XXX"
+   867→   867→                      />
+   868→   868→                    </div>
+   869→   869→
+   870→   870→                    {/* Toggle for SMS confirmation */}
+   871→   871→                    <button
+   872→   872→                      type="button"
+   873→   873→                      onClick={() => setSmsEnabled(!smsEnabled)}
+   874→   874→                      className="w-full flex items-center justify-between p-4 rounded-xl border border-gold/12 bg-gold/[0.02] hover:border-gold/25 transition cursor-pointer"
+   875→   875→                    >
+   876→   876→                      <div className="flex items-center gap-3">
+   877→   877→                        <span className={`text-xs font-semibold ${smsEnabled ? 'text-pink-brand' : 'text-pink-glow/45'}`}>
+   878→   878→                          Send booking confirmation via SMS
+   879→   879→                        </span>
+   880→   880→                      </div>
+   881→   881→                      {smsEnabled ? (
+   882→   882→                        <ToggleRight className="w-7 h-7 text-pink-brand" />
+   883→   883→                      ) : (
+   884→   884→                        <ToggleLeft className="w-7 h-7 text-gold/25" />
+   885→   885→                      )}
+   886→   886→                    </button>
+   887→   887→
+   888→   888→                    {/* SMS status indicator */}
+   889→   889→                    <div className="flex items-center gap-2 text-[11px]">
+   890→   890→                      <div className={`w-2 h-2 rounded-full ${smsEnabled ? 'bg-emerald-400' : 'bg-gold/20'}`} />
+   891→   891→                      <span className={smsEnabled ? 'text-emerald-400/70' : 'text-gold/30'}>
+   892→   892→                        {smsEnabled ? 'SMS confirmations enabled' : 'SMS confirmations disabled'}
+   893→   893→                      </span>
+   894→   894→                    </div>
+   895→   895→
+   896→   896→                    {smsEnabled && (
+   897→   897→                      <motion.div
+   898→   898→                        initial={{ opacity: 0, y: -5 }}
+   899→   899→                        animate={{ opacity: 1, y: 0 }}
+   900→   900→                        className="surface-raised rounded-lg p-3 text-[11px] text-pink-glow/35 body-serif font-light leading-relaxed"
+   901→   901→                      >
+   902→   902→                        Booking confirmations will be sent to <span className="text-white font-medium">{smsPhone || 'your phone number'}</span> via Africa&apos;s Talking API. Standard SMS rates apply.
+   903→   903→                      </motion.div>
+   904→   904→                    )}
+   905→   905→                  </div>
+   906→   906→                </motion.div>
+   907→   907→
+   908→   908→                {/* WhatsApp Business API Card */}
+   909→   909→                <motion.div
+   910→   910→                  initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1}
+   911→   911→                  className="surface-raised rounded-2xl p-6"
+   912→   912→                >
+   913→   913→                  <div className="flex items-center gap-3 mb-5">
+   914→   914→                    <div className="w-10 h-10 rounded-xl bg-green-600/10 flex items-center justify-center">
+   915→   915→                      <Bot className="w-5 h-5 text-green-400" />
+   916→   916→                    </div>
+   917→   917→                    <div>
+   918→   918→                      <h3 className="text-sm font-bold text-white">WhatsApp Business API</h3>
+   919→   919→                      <p className="text-[11px] text-gold/40">Automated customer engagement</p>
+   920→   920→                    </div>
+   921→   921→                  </div>
+   922→   922→
+   923→   923→                  <div className="space-y-4">
+   924→   924→                    {/* Auto-reply Status */}
+   925→   925→                    <div className="flex items-center justify-between p-4 rounded-xl border border-green-500/15 bg-green-500/[0.03]">
+   926→   926→                      <div className="flex items-center gap-3">
+   927→   927→                        <div className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse" />
+   928→   928→                        <div>
+   929→   929→                          <p className="text-xs font-semibold text-green-400">Auto-reply enabled</p>
+   930→   930→                          <p className="text-[10px] text-gold/35 mt-0.5">Instant responses to customer queries</p>
+   931→   931→                        </div>
+   932→   932→                      </div>
+   933→   933→                      <span className="badge-sexy text-[10px] px-2 py-1">Active</span>
+   934→   934→                    </div>
+   935→   935→
+   936→   936→                    {/* Quick Reply Templates */}
+   937→   937→                    <div>
+   938→   938→                      <label className="block text-xs font-semibold text-pink-glow/45 mb-3">Quick Reply Templates</label>
+   939→   939→                      <div className="space-y-2 max-h-48 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
+   940→   940→                        {whatsappTemplates.map((tpl) => (
+   941→   941→                          <div key={tpl.trigger} className="rounded-lg border border-gold/8 bg-gold/[0.02] p-3">
+   942→   942→                            <div className="flex items-center gap-2 mb-1">
+   943→   943→                              <span className="text-[10px] font-mono text-pink-brand bg-pink-brand/10 px-1.5 py-0.5 rounded">
+   944→   944→                                /{tpl.trigger}
+   945→   945→                              </span>
+   946→   946→                            </div>
+   947→   947→                            <p className="text-[11px] text-pink-glow/35 leading-relaxed">{tpl.reply}</p>
+   948→   948→                          </div>
+   949→   949→                        ))}
+   950→   950→                      </div>
+   951→   951→                    </div>
+   952→   952→
+   953→   953→                    {/* Test Bot Button */}
+   954→   954→                    <button
+   955→   955→                      type="button"
+   956→   956→                      onClick={() => window.open('https://wa.me/260761404555?text=Hi%2C%20I%27d%20like%20to%20test%20the%20WhatsApp%20bot.', '_blank')}
+   957→   957→                      className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-xs font-semibold transition cursor-pointer"
+   958→   958→                    >
+   959→   959→                      <MessageCircle className="w-4 h-4" />
+   960→   960→                      Test WhatsApp Bot
+   961→   961→                    </button>
+   962→   962→                  </div>
+   963→   963→                </motion.div>
+   964→   964→              </div>
+   965→   965→            </motion.div>
+   966→   966→          </div>
+   967→   967→        </div>
+   968→   968→      </section>
+   969→   969→
+   970→   970→      {/* ───────── FAQ Section ───────── */}
+   971→   971→      <section className="section-padding section-dark">
+   972→   972→        <div className="container-tinas max-w-3xl">
+   973→   973→          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold text-center mb-12 heading-display">
+   974→   974→            Frequently Asked <span className="text-pink-brand">Questions</span>
+   975→   975→          </motion.h2>
+   976→   976→          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="space-y-3">
+   977→   977→            {faqs.map((item, idx) => (
+   978→   978→              <div key={idx} className="surface-raised rounded-xl overflow-hidden">
+   979→   979→                <button onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)} className="w-full p-5 text-left flex items-center justify-between hover:bg-gold/[0.03] transition cursor-pointer">
+   980→   980→                  <h3 className="font-bold text-[15px] heading-display pr-4 text-white">{item.q}</h3>
+   981→   981→                  <svg className={`w-4 h-4 shrink-0 text-gold/40 transition-transform duration-300 ${expandedFaq === idx ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+   982→   982→                </button>
+   983→   983→                {expandedFaq === idx && (
+   984→   984→                  <div className="px-5 pb-5 text-pink-glow/35 text-sm body-serif leading-relaxed border-t border-gold/8 pt-4 font-light">{item.a}</div>
+   985→   985→                )}
+   986→   986→              </div>
+   987→   987→            ))}
+   988→   988→          </motion.div>
+   989→   989→        </div>
+   990→   990→      </section>
+   991→   991→
+   992→   992→      {/* ───────── Closing CTA ───────── */}
+   993→   993→      <section className="section-padding gradient-sexy">
+   994→   994→        <div className="container-tinas text-center">
+   995→   995→          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-4xl md:text-5xl font-bold mb-6 heading-display">
+   996→   996→            We look forward to <span className="text-gradient-sexy">welcoming</span> you
+   997→   997→          </motion.h2>
+   998→   998→          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif text-pink-glow/35 leading-relaxed font-light">
+   999→   999→            Experience the transformation that awaits you at Serenity Touch Spa.
+  1000→  1000→          </motion.p>
+  1001→  1001→        </div>
+  1002→  1002→      </section>
+  1003→  1003→    </div>
+  1004→  1004→  );
+  1005→  1005→}

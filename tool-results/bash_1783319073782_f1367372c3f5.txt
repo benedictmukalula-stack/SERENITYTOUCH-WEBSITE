@@ -1,0 +1,565 @@
+     1	'use client';
+     2	
+     3	import { motion } from 'framer-motion';
+     4	import { ChevronRight, ChevronLeft, Star, ArrowRight } from 'lucide-react';
+     5	import { useState, useEffect, useCallback } from 'react';
+     6	import { useAppStore } from '@/lib/store';
+     7	import AnimatedCounter from '@/components/tinas/AnimatedCounter';
+     8	import VideoTestimonials from '@/components/tinas/VideoTestimonials';
+     9	import ReferralProgram from '@/components/tinas/ReferralProgram';
+    10	
+    11	const fadeUp = {
+    12	  hidden: { opacity: 0, y: 30 },
+    13	  visible: (i: number) => ({
+    14	    opacity: 1,
+    15	    y: 0,
+    16	    transition: { delay: i * 0.1, duration: 0.6, ease: 'easeOut' },
+    17	  }),
+    18	};
+    19	
+    20	const testimonials = [
+    21	  { text: "Serenity Touch Spa is my go-to wellness destination. The deep tissue massage was exactly what I needed after weeks of stress. Truly world-class.", author: 'Chipo Mwale', location: 'Lusaka', rating: 5 },
+    22	  { text: 'The hot stone therapy was incredible. I left feeling completely rejuvenated. The ambiance, the service, everything was perfect. Highly recommend.', author: 'Bwalya Nkomo', location: 'Kitwe', rating: 5 },
+    23	  { text: "Patricia's aromatherapy session was a beautiful, calming experience. The essential oils were divine and the technique was flawless. I'll be back.", author: 'Grace Banda', location: 'Lusaka', rating: 5 },
+    24	  { text: 'Professional, luxurious, and deeply relaxing. I recommend Serenity Touch Spa to anyone seeking genuine, world-class pampering in Lusaka.', author: 'Patricia Mulenga', location: 'Lusaka', rating: 5 },
+    25	];
+    26	
+    27	const faqItems = [
+    28	  { question: "What makes Serenity Touch Spa special?", answer: "Certified expertise meets luxurious comfort. Our private suites, premium products, and personalised treatments create a wellness experience that goes beyond ordinary massage." },
+    29	  { question: 'How do I book?', answer: 'Book through our form, call +260 572 782 539, or message us on WhatsApp at +260 761 404 555. Gold and Platinum members enjoy priority booking through our dedicated concierge.' },
+    30	  { question: 'What is your cancellation policy?', answer: "24-hour notice for full refund. Within 24 hours: 50% fee. No-shows charged in full. We respect your time and our therapists' schedules." },
+    31	  { question: 'Are your therapists certified?', answer: 'Every therapist holds international certifications and is trained in the most advanced therapeutic techniques. Excellence and professionalism are our standards.' },
+    32	  { question: 'What should I bring?', answer: 'Nothing but yourself. We provide everything — fresh linens, premium oils, and a serene environment. Just arrive 10 minutes early for your wellness consultation.' },
+    33	];
+    34	
+    35	const whyMembers = [
+    36	  { title: 'Expert Therapists', desc: 'Internationally certified therapists trained in the most advanced wellness techniques.' },
+    37	  { title: 'Private & Peaceful', desc: 'Private treatment suites designed for your absolute comfort and tranquility.' },
+    38	  { title: 'Personalised Treatments', desc: 'Every treatment is tailored to your body, your needs, and your wellness goals.' },
+    39	  { title: 'Dedicated Concierge', desc: 'Gold and Platinum members get a direct WhatsApp line for priority booking.' },
+    40	  { title: 'Premium Products', desc: 'Locally-sourced essential oils and internationally acclaimed wellness products.' },
+    41	  { title: 'Attention to Detail', desc: 'Every detail — from room temperature to ambient scent — is carefully considered.' },
+    42	];
+    43	
+    44	const membershipPlans = [
+    45	  { name: 'Silver', tagline: 'A taste of wellness', price: 'K800', features: ['1 massage per month', '10% off additional services', 'Priority booking', 'Birthday treat', 'Access to member lounge'], popular: false },
+    46	  { name: 'Gold', tagline: 'For the dedicated', price: 'K1,600', features: ['2 massages per month', '20% off all services', 'VIP booking', 'Free aromatherapy upgrade', 'Quarterly wellness consult', 'Guest privileges', 'WhatsApp concierge', 'Exclusive events access'], popular: true },
+    47	  { name: 'Platinum', tagline: 'The ultimate experience', price: 'K3,200', features: ['Unlimited massages', '30% off everything', '24/7 concierge', 'Personal wellness plan', 'Private therapy suite', 'Monthly spa day', 'Home visit service', 'Airport pickup', 'Priority WhatsApp line', 'Annual retreat invitation'], popular: false },
+    48	];
+    49	
+    50	export default function HomePage() {
+    51	  const { navigate } = useAppStore();
+    52	  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+    53	  const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
+    54	
+    55	  const nextTestimonial = useCallback(() => {
+    56	    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    57	  }, []);
+    58	
+    59	  const prevTestimonial = useCallback(() => {
+    60	    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+    61	  }, []);
+    62	
+    63	  useEffect(() => {
+    64	    const timer = setInterval(nextTestimonial, 6000);
+    65	    return () => clearInterval(timer);
+    66	  }, [nextTestimonial]);
+    67	
+    68	  return (
+    69	    <div>
+    70	      {/* ===== HERO SECTION ===== */}
+    71	      <section className="relative min-h-screen flex items-center overflow-hidden">
+    72	        {/* Background image — dark, moody spa */}
+    73	        <div
+    74	          className="absolute inset-0 z-0"
+    75	          style={{
+    76	            backgroundImage: 'url(https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=1920&q=80)',
+    77	            backgroundSize: 'cover',
+    78	            backgroundPosition: 'center 30%',
+    79	          }}
+    80	        />
+    81	        {/* Dark gradient overlay with pink-gold tint */}
+    82	        <div className="absolute inset-0 z-[1]" style={{ background: 'linear-gradient(160deg, rgba(0,0,0,0.82) 0%, rgba(10,5,8,0.6) 35%, rgba(173,20,87,0.15) 70%, rgba(212,175,55,0.08) 100%)' }} />
+    83	        {/* Bottom fade to black */}
+    84	        <div className="absolute bottom-0 left-0 right-0 h-48 z-[2]" style={{ background: 'linear-gradient(to top, #000000, transparent)' }} />
+    85	        {/* Top ambient glow */}
+    86	        <div className="absolute top-0 left-1/3 w-[600px] h-[600px] z-[1] rounded-full" style={{ background: 'radial-gradient(circle, rgba(233,30,99,0.06) 0%, transparent 70%)' }} />
+    87	        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] z-[1] rounded-full" style={{ background: 'radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%)' }} />
+    88	
+    89	        <div className="container-tinas relative z-10 text-center py-32">
+    90	          {/* Badge */}
+    91	          <motion.div
+    92	            initial={{ opacity: 0, y: 20 }}
+    93	            animate={{ opacity: 1, y: 0 }}
+    94	            transition={{ duration: 0.8 }}
+    95	            className="mb-8 inline-block"
+    96	          >
+    97	            <div className="badge-sexy">
+    98	              <span className="w-1.5 h-1.5 rounded-full bg-pink-brand inline-block" />
+    99	              LUSAKA&apos;S PREMIER LUXURY SPA
+   100	            </div>
+   101	          </motion.div>
+   102	
+   103	          {/* Heading */}
+   104	          <motion.h1
+   105	            initial={{ opacity: 0, y: 30 }}
+   106	            animate={{ opacity: 1, y: 0 }}
+   107	            transition={{ duration: 0.8, delay: 0.2 }}
+   108	            className="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-semibold mb-6 leading-[1.05] heading-display text-shadow-sexy"
+   109	          >
+   110	            <span className="text-gradient-sexy">Relax</span>{' '}
+   111	            <span className="text-white">• Restore</span>{' '}
+   112	            <span className="text-gradient-gold">• Rejuvenate</span>
+   113	          </motion.h1>
+   114	
+   115	          {/* Subheading */}
+   116	          <motion.p
+   117	            initial={{ opacity: 0, y: 30 }}
+   118	            animate={{ opacity: 1, y: 0 }}
+   119	            transition={{ duration: 0.8, delay: 0.4 }}
+   120	            className="text-lg sm:text-xl text-pink-glow/60 max-w-2xl mx-auto mb-10 body-serif leading-relaxed font-light"
+   121	          >
+   122	            Serenity Touch Spa is a premium wellness destination in Ibex Hill, Lusaka — where certified therapists, warm oils, and tranquil suites deliver the finest therapeutic experience.
+   123	          </motion.p>
+   124	
+   125	          {/* CTA Buttons */}
+   126	          <motion.div
+   127	            initial={{ opacity: 0, y: 30 }}
+   128	            animate={{ opacity: 1, y: 0 }}
+   129	            transition={{ duration: 0.8, delay: 0.6 }}
+   130	            className="flex flex-col sm:flex-row gap-4 justify-center"
+   131	          >
+   132	            <button
+   133	              onClick={() => navigate('contact')}
+   134	              className="btn-pink px-8 py-3.5 text-sm font-semibold cursor-pointer"
+   135	            >
+   136	              Book Appointment
+   137	            </button>
+   138	            <button
+   139	              onClick={() => navigate('services')}
+   140	              className="btn-outline-gold px-8 py-3.5 text-sm font-semibold cursor-pointer"
+   141	            >
+   142	              Explore Our Treatments
+   143	            </button>
+   144	          </motion.div>
+   145	
+   146	          {/* Scroll indicator */}
+   147	          <motion.div
+   148	            initial={{ opacity: 0 }}
+   149	            animate={{ opacity: 1 }}
+   150	            transition={{ delay: 1.2 }}
+   151	            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+   152	          >
+   153	            <div className="w-6 h-10 border-2 border-gold/20 rounded-full flex justify-center pt-2">
+   154	              <motion.div
+   155	                animate={{ y: [0, 8, 0] }}
+   156	                transition={{ repeat: Infinity, duration: 1.5 }}
+   157	                className="w-1.5 h-1.5 bg-pink-brand rounded-full"
+   158	              />
+   159	            </div>
+   160	          </motion.div>
+   161	        </div>
+   162	      </section>
+   163	
+   164	      {/* ===== SIGNATURE TREATMENTS ===== */}
+   165	      <section className="section-padding section-dark">
+   166	        <div className="container-tinas">
+   167	          <motion.div
+   168	            initial="hidden"
+   169	            whileInView="visible"
+   170	            viewport={{ once: true, margin: '-50px' }}
+   171	            className="text-center mb-16"
+   172	          >
+   173	            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.25em] text-pink-brand/50 mb-4 heading-display uppercase">
+   174	              Signature Treatments
+   175	            </motion.p>
+   176	            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-semibold mb-4 heading-display">
+   177	              Designed for <span className="text-pink-brand">Wellness</span>
+   178	            </motion.h2>
+   179	            <motion.p variants={fadeUp} custom={2} className="text-pink-glow/40 max-w-2xl mx-auto body-serif text-lg font-light">
+   180	              Every treatment is a crafted experience — from the oils blended in-house to the temperature of the silk against your skin.
+   181	            </motion.p>
+   182	          </motion.div>
+   183	
+   184	          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+   185	            {[
+   186	              { duration: '60 min', name: 'Swedish Massage', desc: 'Long, flowing strokes that melt away the world. Full-body relaxation that leaves you floating.', price: 'K800', img: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80' },
+   187	              { duration: '90 min', name: 'Deep Tissue Massage', desc: 'Intense, deliberate pressure that targets your deepest tension. For those who seek release.', price: 'K1,200', img: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=600&q=80' },
+   188	              { duration: '75 min', name: 'Hot Stone Therapy', desc: 'Heated stones glide across your body, melting resistance and inducing deep, euphoric relaxation.', price: 'K1,000', img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80' },
+   189	            ].map((service, idx) => (
+   190	              <motion.div
+   191	                key={service.name}
+   192	                initial="hidden"
+   193	                whileInView="visible"
+   194	                viewport={{ once: true, margin: '-30px' }}
+   195	                variants={fadeUp}
+   196	                custom={idx}
+   197	              >
+   198	                <div className="group surface-raised rounded-2xl overflow-hidden hover:border-pink-brand/25 transition-all duration-500 h-full">
+   199	                  <div className="h-48 relative overflow-hidden">
+   200	                    <img src={service.img} alt={service.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-50 group-hover:opacity-60" />
+   201	                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508] via-[#0a0508]/40 to-transparent" />
+   202	                  </div>
+   203	                  <div className="p-7">
+   204	                    <p className="text-[10px] tracking-[0.2em] text-gold/60 mb-2 uppercase">{service.duration}</p>
+   205	                    <h3 className="text-xl font-semibold mb-3 heading-display">{service.name}</h3>
+   206	                    <p className="text-pink-glow/35 mb-6 text-sm body-serif leading-relaxed font-light">{service.desc}</p>
+   207	                    <div className="flex items-center justify-between mt-auto">
+   208	                      <span className="text-2xl font-semibold text-gradient-gold">{service.price}</span>
+   209	                      <button
+   210	                        onClick={() => navigate('services')}
+   211	                        className="text-sm text-pink-brand/50 hover:text-pink-brand transition-colors flex items-center gap-1 cursor-pointer"
+   212	                      >
+   213	                        Discover <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+   214	                      </button>
+   215	                    </div>
+   216	                  </div>
+   217	                </div>
+   218	              </motion.div>
+   219	            ))}
+   220	          </div>
+   221	        </div>
+   222	      </section>
+   223	
+   224	      {/* Gold-Pink Divider */}
+   225	      <div className="divider-sexy" />
+   226	
+   227	      {/* ===== WHY MEMBERS CHOOSE US ===== */}
+   228	      <section className="section-padding gradient-sexy">
+   229	        <div className="container-tinas">
+   230	          <motion.div
+   231	            initial="hidden"
+   232	            whileInView="visible"
+   233	            viewport={{ once: true, margin: '-50px' }}
+   234	            className="text-center mb-16"
+   235	          >
+   236	            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-semibold heading-display">
+   237	              Why Our <span className="text-pink-brand">Guests Return</span>
+   238	            </motion.h2>
+   239	          </motion.div>
+   240	
+   241	          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
+   242	            {whyMembers.map((item, idx) => (
+   243	              <motion.div
+   244	                key={item.title}
+   245	                initial="hidden"
+   246	                whileInView="visible"
+   247	                viewport={{ once: true, margin: '-30px' }}
+   248	                variants={fadeUp}
+   249	                custom={idx}
+   250	              >
+   251	                <div className="group">
+   252	                  <div className="w-10 h-10 rounded-full bg-pink-brand/8 border border-pink-brand/15 flex items-center justify-center mb-4 group-hover:bg-pink-brand/15 group-hover:border-pink-brand/25 transition-all">
+   253	                    <span className="text-gold text-sm">&#10022;</span>
+   254	                  </div>
+   255	                  <h3 className="text-lg font-semibold mb-2.5 heading-display">{item.title}</h3>
+   256	                  <p className="text-pink-glow/35 text-sm body-serif leading-relaxed font-light">{item.desc}</p>
+   257	                </div>
+   258	              </motion.div>
+   259	            ))}
+   260	          </div>
+   261	        </div>
+   262	      </section>
+   263	
+   264	      {/* ===== STATS BAR ===== */}
+   265	      <section className="py-16 gradient-sexy">
+   266	        <div className="container-tinas">
+   267	          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+   268	            <AnimatedCounter value="2,500+" label="Happy Guests" />
+   269	            <AnimatedCounter value="4.9" label="Average Rating" />
+   270	            <AnimatedCounter value="98%" label="Would Return" />
+   271	            <AnimatedCounter value="15,000+" label="Treatments Delivered" />
+   272	          </div>
+   273	        </div>
+   274	      </section>
+   275	
+   276	      {/* ===== BEFORE & AFTER ===== */}
+   277	      <section className="section-padding section-dark">
+   278	        <div className="container-tinas">
+   279	          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} className="text-center mb-14">
+   280	            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.25em] text-gold/50 mb-4 heading-display uppercase">Real Transformations</motion.p>
+   281	            <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-4xl font-bold heading-display">The <span className="text-pink-brand">Difference</span> We Make</motion.h2>
+   282	          </motion.div>
+   283	          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+   284	            {[
+   285	              { guest: 'Chipo Mwale', treatment: 'Deep Tissue — 4 Sessions', before: 'Chronic lower back pain for 2 years. Could barely sit at my desk for more than 30 minutes without severe discomfort.', after: 'After 4 sessions, the pain is virtually gone. I can work a full day without any discomfort. Life-changing.', image: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=400&q=80' },
+   286	              { guest: 'Grace Banda', treatment: 'Aromatherapy — 6 Sessions', before: 'Severe insomnia and anxiety. Averaging 3-4 hours of sleep per night and feeling constantly on edge.', after: 'Now sleeping 7-8 hours consistently. My anxiety levels have dropped dramatically. The essential oil blends are magical.', image: 'https://images.unsplash.com/photo-1611073615830-4ebed33c0e5b?w=400&q=80' },
+   287	              { guest: 'Bwalya Nkomo', treatment: 'Thai Massage — 3 Sessions', before: 'Office stress causing migraines and neck stiffness. Taking painkillers almost daily.', after: 'Migraines reduced from weekly to almost never. Neck mobility is fully restored. I wish I had found Serenity Touch sooner.', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&q=80' },
+   288	            ].map((story, idx) => (
+   289	              <motion.div key={story.guest} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-30px' }} variants={fadeUp} custom={idx}>
+   290	                <div className="surface-raised rounded-2xl overflow-hidden h-full hover:border-gold/20 transition-all duration-300">
+   291	                  <div className="h-40 relative overflow-hidden">
+   292	                    <img src={story.image} alt={story.guest} className="w-full h-full object-cover opacity-40" />
+   293	                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508] via-[#0a0508]/60 to-transparent" />
+   294	                    <div className="absolute bottom-3 left-4">
+   295	                      <p className="font-bold text-sm text-white heading-display">{story.guest}</p>
+   296	                      <p className="text-[10px] text-gold/50">{story.treatment}</p>
+   297	                    </div>
+   298	                  </div>
+   299	                  <div className="p-6 space-y-4">
+   300	                    <div>
+   301	                      <p className="text-[10px] font-bold text-pink-brand/60 tracking-wider uppercase mb-2">Before</p>
+   302	                      <p className="text-sm text-pink-glow/40 body-serif font-light leading-relaxed">{story.before}</p>
+   303	                    </div>
+   304	                    <div className="border-t border-gold/8 pt-4">
+   305	                      <p className="text-[10px] font-bold text-gold/60 tracking-wider uppercase mb-2">After</p>
+   306	                      <p className="text-sm text-gold/60 body-serif font-light leading-relaxed">{story.after}</p>
+   307	                    </div>
+   308	                  </div>
+   309	                </div>
+   310	              </motion.div>
+   311	            ))}
+   312	          </div>
+   313	        </div>
+   314	      </section>
+   315	
+   316	      {/* ===== TESTIMONIALS ===== */}
+   317	      <section className="section-padding section-dark">
+   318	        <div className="container-tinas">
+   319	          <motion.div
+   320	            initial="hidden"
+   321	            whileInView="visible"
+   322	            viewport={{ once: true, margin: '-50px' }}
+   323	            className="text-center mb-16"
+   324	          >
+   325	            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-semibold heading-display">
+   326	              Whispers from our <span className="text-pink-brand">guests</span>
+   327	            </motion.h2>
+   328	          </motion.div>
+   329	
+   330	          <div className="max-w-3xl mx-auto">
+   331	            <motion.div
+   332	              key={currentTestimonial}
+   333	              initial={{ opacity: 0, x: 20 }}
+   334	              animate={{ opacity: 1, x: 0 }}
+   335	              exit={{ opacity: 0, x: -20 }}
+   336	              transition={{ duration: 0.4 }}
+   337	              className="surface-raised p-10 md:p-14 rounded-2xl mb-8 glow-pink"
+   338	            >
+   339	              <div className="flex gap-1 mb-6">
+   340	                {Array.from({ length: testimonials[currentTestimonial].rating }).map((_, i) => (
+   341	                  <Star key={i} className="w-4 h-4 fill-gold text-gold" />
+   342	                ))}
+   343	              </div>
+   344	              <p className="text-lg md:text-xl mb-6 body-serif leading-relaxed text-pink-glow/70 font-light italic">
+   345	                &ldquo;{testimonials[currentTestimonial].text}&rdquo;
+   346	              </p>
+   347	              <p className="font-semibold text-sm tracking-wider text-gradient-gold">
+   348	                {testimonials[currentTestimonial].author.toUpperCase()} &middot;{' '}
+   349	                {testimonials[currentTestimonial].location.toUpperCase()}
+   350	              </p>
+   351	            </motion.div>
+   352	
+   353	            <div className="flex items-center justify-between">
+   354	              <button
+   355	                onClick={prevTestimonial}
+   356	                className="p-2.5 hover:bg-gold/8 rounded-full transition cursor-pointer"
+   357	                aria-label="Previous testimonial"
+   358	              >
+   359	                <ChevronLeft className="w-5 h-5 text-gold/40" />
+   360	              </button>
+   361	
+   362	              <div className="flex gap-2">
+   363	                {testimonials.map((_, idx) => (
+   364	                  <button
+   365	                    key={idx}
+   366	                    onClick={() => setCurrentTestimonial(idx)}
+   367	                    className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+   368	                      idx === currentTestimonial
+   369	                        ? 'bg-pink-brand w-8'
+   370	                        : 'bg-white/10 w-2.5 hover:bg-white/25'
+   371	                    }`}
+   372	                    aria-label={`Testimonial ${idx + 1}`}
+   373	                  />
+   374	                ))}
+   375	              </div>
+   376	
+   377	              <button
+   378	                onClick={nextTestimonial}
+   379	                className="p-2.5 hover:bg-gold/8 rounded-full transition cursor-pointer"
+   380	                aria-label="Next testimonial"
+   381	              >
+   382	                <ChevronRight className="w-5 h-5 text-gold/40" />
+   383	              </button>
+   384	            </div>
+   385	          </div>
+   386	        </div>
+   387	      </section>
+   388	
+   389	      {/* ===== VIDEO TESTIMONIALS ===== */}
+   390	      <VideoTestimonials />
+   391	
+   392	      {/* ===== MEMBERSHIP ===== */}
+   393	      <section className="section-padding" style={{ background: 'linear-gradient(180deg, #080406 0%, #000000 100%)' }}>
+   394	        <div className="container-tinas">
+   395	          <motion.div
+   396	            initial="hidden"
+   397	            whileInView="visible"
+   398	            viewport={{ once: true, margin: '-50px' }}
+   399	            className="text-center mb-16"
+   400	          >
+   401	            <motion.p variants={fadeUp} custom={0} className="text-[11px] tracking-[0.25em] text-gold/50 mb-4 heading-display uppercase">
+   402	              Membership
+   403	            </motion.p>
+   404	            <motion.h2 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-semibold heading-display">
+   405	              Three Ways to Invest in <span className="text-gradient-sexy">Your Wellness</span>
+   406	            </motion.h2>
+   407	          </motion.div>
+   408	
+   409	          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 items-start">
+   410	            {membershipPlans.map((plan, idx) => (
+   411	              <motion.div
+   412	                key={plan.name}
+   413	                initial="hidden"
+   414	                whileInView="visible"
+   415	                viewport={{ once: true, margin: '-30px' }}
+   416	                variants={fadeUp}
+   417	                custom={idx}
+   418	                className={plan.popular ? 'md:-mt-4' : ''}
+   419	              >
+   420	                <div className="relative">
+   421	                  {plan.popular && (
+   422	                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
+   423	                      <span className="bg-gradient-to-r from-gold to-pink-brand text-black px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider shadow-lg shadow-gold/20" style={{ color: '#000' }}>
+   424	                        MOST POPULAR
+   425	                      </span>
+   426	                    </div>
+   427	                  )}
+   428	                  <div
+   429	                    className={`surface-raised rounded-2xl p-8 h-full transition-all duration-500 hover:border-pink-brand/25 ${
+   430	                      plan.popular ? 'border-gold/30 glow-gold' : ''
+   431	                    }`}
+   432	                  >
+   433	                    <h3 className="text-3xl font-semibold mb-2 heading-display">{plan.name}</h3>
+   434	                    <p className="text-pink-glow/35 mb-6 text-sm font-light">{plan.tagline}</p>
+   435	                    <div className="mb-8">
+   436	                      <span className="text-4xl font-semibold text-gradient-gold">{plan.price}</span>
+   437	                      <span className="text-pink-brand/35 ml-1">/month</span>
+   438	                    </div>
+   439	                    <ul className="space-y-3 mb-8">
+   440	                      {plan.features.map((feature, fidx) => (
+   441	                        <li key={fidx} className="flex items-start gap-3">
+   442	                          <span className="text-gold mt-0.5 text-xs">&#10022;</span>
+   443	                          <span className="text-sm text-pink-glow/50 font-light">{feature}</span>
+   444	                        </li>
+   445	                      ))}
+   446	                    </ul>
+   447	                    <button
+   448	                      onClick={() => navigate('membership')}
+   449	                      className={`w-full py-3 text-sm cursor-pointer font-semibold transition-all ${
+   450	                        plan.popular
+   451	                          ? 'btn-gold'
+   452	                          : 'btn-outline-pink'
+   453	                      }`}
+   454	                    >
+   455	                      {plan.popular ? 'Enjoy Now' : 'Enquire'}
+   456	                    </button>
+   457	                  </div>
+   458	                </div>
+   459	              </motion.div>
+   460	            ))}
+   461	          </div>
+   462	        </div>
+   463	      </section>
+   464	
+   465	      {/* ===== FAQ ===== */}
+   466	      <section className="section-padding section-dark">
+   467	        <div className="container-tinas max-w-3xl">
+   468	          <motion.div
+   469	            initial="hidden"
+   470	            whileInView="visible"
+   471	            viewport={{ once: true, margin: '-50px' }}
+   472	            className="text-center mb-14"
+   473	          >
+   474	            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-semibold heading-display">
+   475	              Frequently Asked <span className="text-pink-brand">Questions</span>
+   476	            </motion.h2>
+   477	          </motion.div>
+   478	
+   479	          <motion.div
+   480	            initial="hidden"
+   481	            whileInView="visible"
+   482	            viewport={{ once: true, margin: '-30px' }}
+   483	            variants={fadeUp}
+   484	            custom={1}
+   485	            className="space-y-3"
+   486	          >
+   487	            {faqItems.map((item, idx) => (
+   488	              <div
+   489	                key={idx}
+   490	                className="surface-raised rounded-xl overflow-hidden transition-all"
+   491	              >
+   492	                <button
+   493	                  onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
+   494	                  className="w-full p-5 md:p-6 text-left flex items-center justify-between hover:bg-pink-brand/[0.02] transition cursor-pointer"
+   495	                >
+   496	                  <h3 className="font-semibold text-[15px] heading-display pr-4 text-white">{item.question}</h3>
+   497	                  <ChevronRight
+   498	                    className={`w-5 h-5 shrink-0 text-gold/40 transition-transform duration-300 ${
+   499	                      expandedFaq === idx ? 'rotate-90' : ''
+   500	                    }`}
+   501	                  />
+   502	                </button>
+   503	                {expandedFaq === idx && (
+   504	                  <div className="px-5 md:px-6 pb-5 md:pb-6 text-pink-glow/35 text-sm body-serif leading-relaxed border-t border-gold/8 pt-4 font-light">
+   505	                    {item.answer}
+   506	                  </div>
+   507	                )}
+   508	              </div>
+   509	            ))}
+   510	          </motion.div>
+   511	        </div>
+   512	      </section>
+   513	
+   514	      {/* ===== CTA SECTION ===== */}
+   515	      <section className="section-padding relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #080406 0%, #100a0e 30%, #0d0510 60%, #000000 100%)' }}>
+   516	        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=800&q=40')] bg-cover bg-center opacity-[0.03]" />
+   517	        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-pink-brand/[0.03] blur-[100px]" />
+   518	        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-gold/[0.03] blur-[80px]" />
+   519	        <div className="container-tinas text-center relative z-10">
+   520	          <motion.div
+   521	            initial="hidden"
+   522	            whileInView="visible"
+   523	            viewport={{ once: true, margin: '-50px' }}
+   524	          >
+   525	            <motion.h2
+   526	              variants={fadeUp}
+   527	              custom={0}
+   528	              className="text-4xl md:text-5xl font-semibold mb-6 heading-display"
+   529	            >
+   530	              Ready to Experience <span className="text-gradient-sexy">Serenity</span>?
+   531	            </motion.h2>
+   532	            <motion.p
+   533	              variants={fadeUp}
+   534	              custom={1}
+   535	              className="text-lg mb-10 max-w-2xl mx-auto body-serif text-pink-glow/40 leading-relaxed font-light"
+   536	            >
+   537	              Book your first appointment and discover why Serenity Touch Spa is Lusaka's premier wellness destination.
+   538	            </motion.p>
+   539	            <motion.div
+   540	              variants={fadeUp}
+   541	              custom={2}
+   542	              className="flex flex-col sm:flex-row gap-4 justify-center"
+   543	            >
+   544	              <button
+   545	                onClick={() => navigate('contact')}
+   546	                className="btn-pink px-8 py-3.5 text-sm font-semibold cursor-pointer"
+   547	              >
+   548	                Book Appointment
+   549	              </button>
+   550	              <button
+   551	                onClick={() => navigate('about')}
+   552	                className="btn-outline-gold px-8 py-3.5 text-sm font-semibold cursor-pointer flex items-center justify-center gap-2"
+   553	              >
+   554	                Learn About Us <ArrowRight className="w-4 h-4" />
+   555	              </button>
+   556	            </motion.div>
+   557	          </motion.div>
+   558	        </div>
+   559	      </section>
+   560	
+   561	      {/* ===== REFERRAL PROGRAM ===== */}
+   562	      <ReferralProgram />
+   563	    </div>
+   564	  );
+   565	}

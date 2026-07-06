@@ -24,11 +24,14 @@ export default function Navigation() {
         {/* Logo */}
         <button
           onClick={() => navigate('home')}
-          className="flex items-center gap-2.5 cursor-pointer group"
+          className="flex items-center shrink-0 cursor-pointer group"
+          style={{ gap: '10px' }}
         >
-          <img src="/logo.jpg" alt="Serenity Touch Spa" className="h-9 w-auto rounded object-contain" />
-          <span className="text-lg font-semibold text-white heading-display tracking-tight group-hover:text-gold transition-colors">
-            Serenity Touch Spa
+          <div className="flex items-center justify-center" style={{ width: '42px', height: '42px' }}>
+            <img src="/logo.jpg" alt="Serenity Touch Spa" className="h-full w-full object-contain" />
+          </div>
+          <span className="text-[17px] font-semibold text-white heading-display tracking-tight group-hover:text-gold transition-colors whitespace-nowrap">
+            Serenity Touch
           </span>
         </button>
 
