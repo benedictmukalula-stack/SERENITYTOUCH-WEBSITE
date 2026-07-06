@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { sendEmail, bookingConfirmationEmail, newBookingNotificationEmail, paymentReceiptEmail, paymentNotificationEmail } from '@/lib/email';
+import { sendEmail, paymentNotificationEmail } from '@/lib/email';
+import { sendBookingNotifications } from '@/lib/whatsapp';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -145,28 +146,13 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Send confirmation emails (fire-and-forget, don't block response)
-    const bookingData = {
-      name, email, phone: phone || '', bookingId: booking.bookingId,
-      serviceName: serviceRecord.name, date, time: time24,
-      therapistName, totalAmount, bookingType: bookingType || 'in_spa',
+    // Send all notifications: email client, email team, WhatsApp client, WhatsApp team
+    sendBookingNotifications({
+      clientName: name, clientEmail: email, clientPhone: phone || '',
+      bookingId: booking.bookingId, serviceName: serviceRecord.name,
+      date, time: time24, therapistName,
+      totalAmount, bookingType: bookingType || 'in_spa',
       paymentMethod: paymentMethod || 'cash', notes: notes || '',
-    };
-
-    // 1. Booking confirmation TO customer (from bookings@)
-    sendEmail({
-      to: email,
-      subject: `Booking Confirmed — ${booking.bookingId} | Serenity Touch Spa`,
-      html: bookingConfirmationEmail(bookingData),
-      from: 'bookings',
-    }).catch(() => {});
-
-    // 2. New booking notification TO bookings@ team (from bookings@)
-    sendEmail({
-      to: 'bookings@serenitytouch.co.za',
-      subject: `New Booking: ${booking.bookingId} — ${serviceRecord.name}`,
-      html: newBookingNotificationEmail(bookingData),
-      from: 'bookings',
     }).catch(() => {});
 
     // 3. If payment method is mobile_money or bank_transfer, notify payments@ (from payments@)

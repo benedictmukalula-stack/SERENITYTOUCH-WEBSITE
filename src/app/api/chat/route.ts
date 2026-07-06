@@ -3,7 +3,7 @@ import { spawn } from 'child_process';
 import { existsSync, readFileSync, unlinkSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { db } from '@/lib/db';
-import { sendEmail, bookingConfirmationEmail, newBookingNotificationEmail } from '@/lib/email';
+import { sendBookingNotifications } from '@/lib/whatsapp';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -101,10 +101,13 @@ export async function POST(request: NextRequest) {
             await db.booking.create({ data: { bookingId: rid, name: ba.name, email: ba.email, phone: ba.phone || '', serviceId: service.id, serviceName: service.name, date: ba.date, time: t24, bookingType, totalAmount: total, paymentMethod: 'cash', paymentStatus: 'pending', status: 'confirmed' } });
             bookingResult = { success: true, bookingId: rid, totalAmount: total };
 
-            // Send confirmation emails (fire-and-forget)
-            const bData = { name: ba.name, email: ba.email, phone: ba.phone || '', bookingId: rid, serviceName: service.name, date: ba.date, time: t24, therapistName: 'First Available', totalAmount: total, bookingType, paymentMethod: 'cash', notes: '' };
-            sendEmail({ to: ba.email, subject: `Booking Confirmed — ${rid} | Serenity Touch Spa`, html: bookingConfirmationEmail(bData), from: 'bookings' }).catch(() => {});
-            sendEmail({ to: 'bookings@serenitytouch.co.za', subject: `New Booking: ${rid} — ${service.name}`, html: newBookingNotificationEmail(bData), from: 'bookings' }).catch(() => {});
+            // Send all notifications: email client, email team, WhatsApp client, WhatsApp team
+            sendBookingNotifications({
+              clientName: ba.name, clientEmail: ba.email, clientPhone: ba.phone || '',
+              bookingId: rid, serviceName: service.name, date: ba.date, time: t24,
+              therapistName: 'First Available', totalAmount: total,
+              bookingType, paymentMethod: 'cash', notes: '',
+            }).catch(() => {});
           } else { bookingResult = { success: false, error: `Service "${ba.service}" not found` }; }
         }
       } catch (err) { console.error('[Booking]', err); bookingResult = { success: false, error: 'Booking failed' }; }
