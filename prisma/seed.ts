@@ -11,7 +11,7 @@ async function seed() {
     { key: 'spa_address', value: '183 Ibex Hill, Lusaka, Zambia' },
     { key: 'spa_phone', value: '+260 572 782 539' },
     { key: 'spa_whatsapp', value: '+260 761 404 555' },
-    { key: 'spa_email', value: 'info@serenitytouch.co.zm' },
+    { key: 'spa_email', value: 'info@serenitytouch.co.za' },
     { key: 'spa_hours_weekday', value: '9:00 AM - 6:00 PM' },
     { key: 'spa_hours_saturday', value: '10:00 AM - 5:00 PM' },
     { key: 'spa_hours_sunday', value: 'Closed' },
@@ -89,10 +89,10 @@ async function seed() {
   // Demo Member
   const hashedPw = 'demo2026'; // In production, use bcrypt
   await db.member.upsert({
-    where: { email: 'demo@serenitytouch.co.zm' },
+    where: { email: 'taonga@serenitytouch.co.za' },
     update: {},
     create: {
-      name: 'Chipo Mwale', email: 'demo@serenitytouch.co.zm', phone: '+260 977 123 456',
+      name: 'Taonga Phiri', email: 'taonga@serenitytouch.co.za', phone: '+260 977 123 456',
       password: hashedPw, tier: 'Gold', points: 1250,
     },
   });

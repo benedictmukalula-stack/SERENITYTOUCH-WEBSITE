@@ -25,7 +25,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://serenitytouch.co.zm'),
+  metadataBase: new URL('https://serenitytouch.co.za'),
   title: "Serenity Touch Spa — Luxury Wellness in Lusaka, Zambia",
   description:
     "Serenity Touch Spa — Lusaka's premier luxury wellness destination. 11 therapeutic treatments, signature packages, corporate wellness programs, and membership plans. Book online or call +260 761 404 555.",
@@ -89,9 +89,9 @@ export default function RootLayout({
               "@type": "HealthAndBeautyBusiness",
               "name": "Serenity Touch Spa",
               "description": "Lusaka's premier luxury wellness spa. 11 therapeutic treatments, signature packages, corporate wellness programs, and membership plans.",
-              "url": "https://serenitytouch.co.zm",
+              "url": "https://serenitytouch.co.za",
               "telephone": "+260572782539",
-              "email": "info@serenitytouch.co.zm",
+              "email": "info@serenitytouch.co.za",
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "183 Ibex Hill",
@@ -108,7 +108,7 @@ export default function RootLayout({
                 { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:00", "closes": "17:00" }
               ],
               "priceRange": "K400-K6000",
-              "image": "https://serenitytouch.co.zm/logo.jpg",
+              "image": "https://serenitytouch.co.za/logo.jpg",
               "aggregateRating": {
                 "@type": "AggregateRating",
                 "ratingValue": "4.9",

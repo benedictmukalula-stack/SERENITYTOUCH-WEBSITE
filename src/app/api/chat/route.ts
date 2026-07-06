@@ -50,7 +50,7 @@ HOURS: Mon-Fri ${gc('spa_hours_weekday') || '9AM-6PM'}, Sat ${gc('spa_hours_satu
 LOCATION: ${gc('spa_address') || '183 Ibex Hill, Lusaka, Zambia'}
 PHONE: ${gc('spa_phone') || '+260 572 782 539'}
 WHATSAPP: ${gc('spa_whatsapp') || '+260 761 404 555'}
-EMAIL: ${gc('spa_email') || 'info@serenitytouch.co.zm'}
+EMAIL: ${gc('spa_email') || 'info@serenitytouch.co.za'}
 MOBILE MONEY: Airtel Money ${gc('mobile_money_airtel') || '+260 761 404 555'}, MTN Mobile Money ${gc('mobile_money_mtn') || '+260 977 555 123'}
 PAYMENT: Cash, Airtel Money, MTN Mobile Money, Bank Transfer (ZANACO 1234567890 Ibex Hill Branch), Card at spa
 MEMBERSHIP: Silver K800/mo, Gold K1,600/mo, Platinum K3,200/mo

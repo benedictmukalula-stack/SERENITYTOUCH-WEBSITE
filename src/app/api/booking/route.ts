@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { sendEmail, bookingConfirmationEmail, newBookingNotificationEmail } from '@/lib/email';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -143,6 +144,28 @@ export async function POST(request: NextRequest) {
         status: 'confirmed',
       },
     });
+
+    // Send confirmation emails (fire-and-forget, don't block response)
+    const bookingData = {
+      name, email, phone: phone || '', bookingId: booking.bookingId,
+      serviceName: serviceRecord.name, date, time: time24,
+      therapistName, totalAmount, bookingType: bookingType || 'in_spa',
+      paymentMethod: paymentMethod || 'cash', notes: notes || '',
+    };
+
+    // Email to customer
+    sendEmail({
+      to: email,
+      subject: `Booking Confirmed — ${booking.bookingId} | Serenity Touch Spa`,
+      html: bookingConfirmationEmail(bookingData),
+    }).catch(() => {});
+
+    // Email to bookings team
+    sendEmail({
+      to: 'bookings@serenitytouch.co.za',
+      subject: `New Booking: ${booking.bookingId} — ${serviceRecord.name}`,
+      html: newBookingNotificationEmail(bookingData),
+    }).catch(() => {});
 
     return NextResponse.json(
       {

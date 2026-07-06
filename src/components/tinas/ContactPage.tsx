@@ -25,7 +25,8 @@ const contactInfo = [
   { icon: MapPin, label: 'Address', value: '183 Ibex Hill, Lusaka, Zambia', link: null },
   { icon: Phone, label: 'Phone', value: '+260 572 782 539', link: 'tel:+260572782539' },
   { icon: MessageCircle, label: 'WhatsApp', value: '+260 761 404 555', link: 'https://wa.me/260761404555' },
-  { icon: Mail, label: 'Email', value: 'info@serenitytouch.co.zm', link: 'mailto:info@serenitytouch.co.zm' },
+  { icon: Mail, label: 'Bookings', value: 'bookings@serenitytouch.co.za', link: 'mailto:bookings@serenitytouch.co.za' },
+  { icon: Mail, label: 'General Enquiries', value: 'info@serenitytouch.co.za', link: 'mailto:info@serenitytouch.co.za' },
   { icon: Clock, label: 'Hours', value: 'Mon-Fri: 9AM-6PM\nSat: 10AM-5PM\nSun: Closed', link: null },
 ];
 
@@ -45,7 +46,7 @@ const serviceOptions = [
 
 const therapistOptions = [
   { value: 'any', label: 'No Preference (First Available)' },
-  { value: 'tina', label: 'Tina Mulenga — Founder & Lead Therapist' },
+  { value: 'tina', label: 'Taonga Phiri — Founder & Lead Therapist' },
   { value: 'grace', label: 'Grace Banda — Senior Massage Therapist' },
   { value: 'patricia', label: 'Patricia Nkomo — Aromatherapy Specialist' },
   { value: 'chipo', label: 'Chipo Mwale — Therapeutic Massage Specialist' },

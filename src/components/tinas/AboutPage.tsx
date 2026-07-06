@@ -73,7 +73,7 @@ export default function AboutPage() {
               <blockquote className="text-white text-xl md:text-2xl heading-display leading-relaxed max-w-2xl">
                 &ldquo;Wellness isn&apos;t a luxury — it&apos;s a way of being. I created this space so every guest could experience that truth.&rdquo;
               </blockquote>
-              <p className="text-gradient-gold mt-4 font-semibold text-sm">— Tina Mulenga, Founder</p>
+              <p className="text-gradient-gold mt-4 font-semibold text-sm">— Taonga Phiri, Founder</p>
             </div>
           </motion.div>
         </div>

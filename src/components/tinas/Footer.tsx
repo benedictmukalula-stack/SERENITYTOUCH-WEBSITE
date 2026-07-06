@@ -57,8 +57,9 @@ export default function Footer() {
               <li>183 Ibex Hill, Lusaka, Zambia</li>
               <li><a href="tel:+260572782539" className="hover:text-gold transition-colors">+260 572 782 539</a></li>
               <li><a href="https://wa.me/260761404555" className="hover:text-gold transition-colors">WhatsApp: +260 761 404 555</a></li>
-              <li><a href="mailto:info@serenitytouch.co.zm" className="hover:text-gold transition-colors">info@serenitytouch.co.zm</a></li>
-              <li><a href="https://serenitytouch.co.zm" className="hover:text-gold transition-colors">www.serenitytouch.co.zm</a></li>
+              <li><a href="mailto:bookings@serenitytouch.co.za" className="hover:text-gold transition-colors">bookings@serenitytouch.co.za</a></li>
+              <li><a href="mailto:info@serenitytouch.co.za" className="hover:text-gold transition-colors">info@serenitytouch.co.za</a></li>
+              <li><a href="https://serenitytouch.co.za" className="hover:text-gold transition-colors">www.serenitytouch.co.za</a></li>
             </ul>
           </div>
           <div>
@@ -74,7 +75,7 @@ export default function Footer() {
         </div>
         <div className="border-t border-gold/8 pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-gold/30 gap-4">
           <p>&copy; 2026 Serenity Touch Spa. All rights reserved.</p>
-          <p>www.serenitytouch.co.zm</p>
+          <p>www.serenitytouch.co.za | taonga@serenitytouch.co.za</p>
         </div>
       </div>
     </footer>

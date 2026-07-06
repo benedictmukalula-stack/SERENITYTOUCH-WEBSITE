@@ -50,13 +50,13 @@ const recentActivity = [
 ];
 
 const recentBookings = [
-  { id: 'ST-A1B2C', guest: 'Chipo Mwale', treatment: 'Swedish Massage', date: 'Jul 15, 2026', time: '10:00 AM', status: 'Confirmed' as const, therapist: 'Tina Mulenga' },
+  { id: 'ST-A1B2C', guest: 'Chipo Mwale', treatment: 'Swedish Massage', date: 'Jul 15, 2026', time: '10:00 AM', status: 'Confirmed' as const, therapist: 'Taonga Phiri' },
   { id: 'ST-D3E4F', guest: 'Bwalya Nkomo', treatment: 'Deep Tissue Massage', date: 'Jul 15, 2026', time: '2:00 PM', status: 'Confirmed' as const, therapist: 'Grace Banda' },
   { id: 'ST-G5H6I', guest: 'Thandiwe Phiri', treatment: 'Hot Stone Therapy', date: 'Jul 16, 2026', time: '11:00 AM', status: 'Pending' as const, therapist: 'Patricia Nkomo' },
-  { id: 'ST-J7K8L', guest: 'Mwamba Chilufya', treatment: 'Aromatherapy', date: 'Jul 14, 2026', time: '3:00 PM', status: 'Completed' as const, therapist: 'Tina Mulenga' },
+  { id: 'ST-J7K8L', guest: 'Mwamba Chilufya', treatment: 'Aromatherapy', date: 'Jul 14, 2026', time: '3:00 PM', status: 'Completed' as const, therapist: 'Taonga Phiri' },
   { id: 'ST-M9N0P', guest: 'Linda Tembo', treatment: 'Thai Massage', date: 'Jul 13, 2026', time: '9:00 AM', status: 'Completed' as const, therapist: 'Grace Banda' },
   { id: 'ST-Q1R2S', guest: 'Joseph Mwanza', treatment: 'Swedish Massage', date: 'Jul 14, 2026', time: '4:00 PM', status: 'Cancelled' as const, therapist: 'Patricia Nkomo' },
-  { id: 'ST-T3U4V', guest: 'Natasha Banda', treatment: 'Prenatal Massage', date: 'Jul 17, 2026', time: '10:00 AM', status: 'Pending' as const, therapist: 'Tina Mulenga' },
+  { id: 'ST-T3U4V', guest: 'Natasha Banda', treatment: 'Prenatal Massage', date: 'Jul 17, 2026', time: '10:00 AM', status: 'Pending' as const, therapist: 'Taonga Phiri' },
   { id: 'ST-W5X6Y', guest: 'Peter Sakala', treatment: 'Deep Tissue Massage', date: 'Jul 12, 2026', time: '1:00 PM', status: 'Completed' as const, therapist: 'Grace Banda' },
 ];
 
