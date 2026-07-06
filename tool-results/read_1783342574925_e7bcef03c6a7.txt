@@ -1,0 +1,1283 @@
+     1→'use client';
+     2→
+     3→import { useState, useEffect, useCallback } from 'react';
+     4→import { motion } from 'framer-motion';
+     5→import {
+     6→  BarChart3, TrendingUp, Users, Calendar, DollarSign, Star,
+     7→  ArrowUpRight, ArrowDownRight, Activity, Clock, Eye,
+     8→  ChevronLeft, ChevronRight,
+     9→} from 'lucide-react';
+    10→import { useAppStore } from '@/lib/store';
+    11→
+    12→const ADMIN_KEY = 'st-admin-2026-secure-key';
+    13→
+    14→/* ───────────────────────── helpers ───────────────────────── */
+    15→
+    16→const formatCurrency = (amount: number) => `K${amount.toLocaleString()}`;
+    17→
+    18→const capitalize = (str: string) =>
+    19→  str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    20→
+    21→const formatDate = (dateStr: string) => {
+    22→  try {
+    23→    const d = new Date(dateStr);
+    24→    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    25→  } catch {
+    26→    return dateStr;
+    27→  }
+    28→};
+    29→
+    30→const timeAgo = (dateStr: string) => {
+    31→  try {
+    32→    const now = Date.now();
+    33→    const then = new Date(dateStr).getTime();
+    34→    const diff = Math.floor((now - then) / 1000);
+    35→    if (diff < 60) return `${diff}s ago`;
+    36→    if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+    37→    if (diff < 86400) return `${Math.floor(diff / 3600)} hour ago`;
+    38→    return `${Math.floor(diff / 86400)} days ago`;
+    39→  } catch {
+    40→    return '';
+    41→  }
+    42→};
+    43→
+    44→/* ───────────────────────── types ───────────────────────── */
+    45→
+    46→interface Kpis {
+    47→  totalRevenue: number;
+    48→  totalBookings: number;
+    49→  activeMembers: number;
+    50→  avgRating: number;
+    51→  totalReviews: number;
+    52→  todayBookings: number;
+    53→  pendingPayments: number;
+    54→  revenueChange: number;
+    55→  memberGrowth: number;
+    56→}
+    57→
+    58→interface StatusBreakdown {
+    59→  confirmed: number;
+    60→  pending: number;
+    61→  cancelled: number;
+    62→  completed: number;
+    63→}
+    64→
+    65→interface PaymentBreakdownItem {
+    66→  method: string;
+    67→  count: number;
+    68→  total: number;
+    69→}
+    70→
+    71→interface PopularService {
+    72→  name: string;
+    73→  bookings: number;
+    74→  revenue: number;
+    75→}
+    76→
+    77→interface DailyTrendItem {
+    78→  date: string;
+    79→  bookings: number;
+    80→  revenue: number;
+    81→}
+    82→
+    83→interface RecentBooking {
+    84→  bookingId: string;
+    85→  name: string;
+    86→  email: string;
+    87→  phone: string;
+    88→  serviceName: string;
+    89→  date: string;
+    90→  time: string;
+    91→  status: string;
+    92→  paymentStatus: string;
+    93→  totalAmount: number;
+    94→  bookingType: string;
+    95→  createdAt: string;
+    96→}
+    97→
+    98→interface BookingItem {
+    99→  bookingId: string;
+   100→  name: string;
+   101→  email: string;
+   102→  phone: string;
+   103→  serviceName: string;
+   104→  date: string;
+   105→  time: string;
+   106→  status: string;
+   107→  bookingType: string;
+   108→  calloutZone: string;
+   109→  totalAmount: number;
+   110→  paymentMethod: string;
+   111→  paymentStatus: string;
+   112→  therapistName: string;
+   113→  notes: string;
+   114→  confirmedAt: string | null;
+   115→  cancelledAt: string | null;
+   116→  createdAt: string;
+   117→}
+   118→
+   119→interface ClientItem {
+   120→  name: string;
+   121→  email: string;
+   122→  phone: string;
+   123→  totalBookings: number;
+   124→  totalSpent: number;
+   125→  completedBookings: number;
+   126→  cancelledBookings: number;
+   127→  lastVisit: string;
+   128→  firstVisit: string;
+   129→  lastService: string;
+   130→  memberId: string;
+   131→  isMember: boolean;
+   132→  memberTier: string;
+   133→  memberPoints: number;
+   134→  memberSince: string;
+   135→}
+   136→
+   137→interface StatsData {
+   138→  kpis: Kpis;
+   139→  statusBreakdown: StatusBreakdown;
+   140→  paymentBreakdown: PaymentBreakdownItem[];
+   141→  popularServices: PopularService[];
+   142→  dailyTrend: DailyTrendItem[];
+   143→  recentBookings: RecentBooking[];
+   144→}
+   145→
+   146→interface Pagination {
+   147→  page: number;
+   148→  limit: number;
+   149→  total: number;
+   150→  pages: number;
+   151→}
+   152→
+   153→/* ───────────────────────── animation ───────────────────────── */
+   154→
+   155→const fadeUp = {
+   156→  hidden: { opacity: 0, y: 20 },
+   157→  visible: (i: number) => ({
+   158→    opacity: 1,
+   159→    y: 0,
+   160→    transition: { delay: i * 0.06, duration: 0.5, ease: 'easeOut' as const },
+   161→  }),
+   162→};
+   163→
+   164→/* ───────────────────────── constants ───────────────────────── */
+   165→
+   166→type TabId = 'overview' | 'bookings' | 'revenue' | 'clients';
+   167→
+   168→const tabs: { id: TabId; label: string; icon: typeof BarChart3 }[] = [
+   169→  { id: 'overview', label: 'Overview', icon: Activity },
+   170→  { id: 'bookings', label: 'Bookings', icon: Calendar },
+   171→  { id: 'revenue', label: 'Revenue', icon: DollarSign },
+   172→  { id: 'clients', label: 'Clients', icon: Users },
+   173→];
+   174→
+   175→const statusStyles: Record<string, string> = {
+   176→  Confirmed: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+   177→  Pending: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+   178→  Completed: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+   179→  Cancelled: 'bg-red-500/10 text-red-400 border-red-500/20',
+   180→};
+   181→
+   182→const tierBadge: Record<string, string> = {
+   183→  Platinum: 'bg-pink-brand/15 text-pink-brand border-pink-brand/25',
+   184→  Gold: 'bg-gold/15 text-gold border-gold/25',
+   185→  Silver: 'bg-gray-400/15 text-gray-300 border-gray-400/25',
+   186→  Bronze: 'bg-amber-700/15 text-amber-500 border-amber-700/25',
+   187→  None: 'bg-gray-500/10 text-gray-500 border-gray-500/15',
+   188→};
+   189→
+   190→const activityIconColors: Record<string, string> = {
+   191→  booking: 'bg-pink-brand/10 text-pink-brand border-pink-brand/20',
+   192→  member: 'bg-gold/10 text-gold border-gold/20',
+   193→  payment: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+   194→  review: 'bg-amber-400/10 text-amber-400 border-amber-400/20',
+   195→};
+   196→
+   197→const treatmentColors = [
+   198→  'from-pink-brand to-pink-hot',
+   199→  'from-gold to-amber-600',
+   200→  'from-emerald-500 to-emerald-600',
+   201→  'from-purple-500 to-purple-700',
+   202→  'from-amber-400 to-orange-500',
+   203→  'from-gray-500 to-gray-600',
+   204→  'from-rose-500 to-rose-700',
+   205→  'from-cyan-500 to-cyan-700',
+   206→  'from-lime-500 to-lime-700',
+   207→  'from-fuchsia-500 to-fuchsia-700',
+   208→];
+   209→
+   210→const paymentMethodColors: Record<string, string> = {
+   211→  cash: 'from-emerald-500 to-emerald-700',
+   212→  card: 'from-gold to-amber-600',
+   213→  mobile: 'from-purple-500 to-purple-700',
+   214→  transfer: 'from-cyan-500 to-cyan-700',
+   215→  online: 'from-pink-brand to-pink-hot',
+   216→};
+   217→
+   218→const statusFilterOptions = ['All', 'Confirmed', 'Pending', 'Completed', 'Cancelled'];
+   219→
+   220→/* ───────────────────────── skeleton ───────────────────────── */
+   221→
+   222→function Skeleton({ className }: { className?: string }) {
+   223→  return <div className={`animate-pulse rounded-lg bg-gold/[0.06] ${className ?? ''}`} />;
+   224→}
+   225→
+   226→/* ───────────────────────── component ───────────────────────── */
+   227→
+   228→export default function AnalyticsDashboard() {
+   229→  const { isMemberLoggedIn, member, navigate } = useAppStore();
+   230→  const [activeTab, setActiveTab] = useState<TabId>('overview');
+   231→
+   232→  /* ─── loading states ─── */
+   233→  const [statsLoading, setStatsLoading] = useState(true);
+   234→  const [bookingsLoading, setBookingsLoading] = useState(true);
+   235→  const [clientsLoading, setClientsLoading] = useState(true);
+   236→
+   237→  /* ─── data states ─── */
+   238→  const [statsData, setStatsData] = useState<StatsData | null>(null);
+   239→  const [bookings, setBookings] = useState<BookingItem[]>([]);
+   240→  const [bookingsPagination, setBookingsPagination] = useState<Pagination>({ page: 1, limit: 20, total: 0, pages: 0 });
+   241→  const [bookingsFilter, setBookingsFilter] = useState('All');
+   242→  const [clients, setClients] = useState<ClientItem[]>([]);
+   243→  const [clientsPagination, setClientsPagination] = useState<Pagination>({ page: 1, limit: 20, total: 0, pages: 0 });
+   244→  const [lastUpdated, setLastUpdated] = useState<string>('');
+   245→
+   246→  /* ─── fetch: stats (overview + revenue) ─── */
+   247→  const fetchStats = useCallback(async (signal: AbortSignal) => {
+   248→    setStatsLoading(true);
+   249→    try {
+   250→      const res = await fetch('/api/admin/stats', {
+   251→        headers: { Authorization: `Bearer ${ADMIN_KEY}` },
+   252→        signal,
+   253→      });
+   254→      if (!res.ok) throw new Error('Failed to fetch stats');
+   255→      const json = await res.json();
+   256→      if (json.success) {
+   257→        setStatsData(json.data);
+   258→        setLastUpdated(new Date().toLocaleTimeString());
+   259→      }
+   260→    } catch (err) {
+   261→      if ((err as Error).name !== 'AbortError') {
+   262→        console.error('Failed to fetch stats:', err);
+   263→      }
+   264→    } finally {
+   265→      setStatsLoading(false);
+   266→    }
+   267→  }, []);
+   268→
+   269→  /* ─── fetch: bookings ─── */
+   270→  const fetchBookings = useCallback(async (page: number, status: string, signal: AbortSignal) => {
+   271→    setBookingsLoading(true);
+   272→    try {
+   273→      const params = new URLSearchParams({ page: String(page), limit: '20', sort: '-createdAt' });
+   274→      if (status && status !== 'All') params.set('status', status.toLowerCase());
+   275→      const res = await fetch(`/api/admin/bookings?${params.toString()}`, {
+   276→        headers: { Authorization: `Bearer ${ADMIN_KEY}` },
+   277→        signal,
+   278→      });
+   279→      if (!res.ok) throw new Error('Failed to fetch bookings');
+   280→      const json = await res.json();
+   281→      if (json.success) {
+   282→        setBookings(json.data.bookings);
+   283→        setBookingsPagination(json.data.pagination);
+   284→      }
+   285→    } catch (err) {
+   286→      if ((err as Error).name !== 'AbortError') {
+   287→        console.error('Failed to fetch bookings:', err);
+   288→      }
+   289→    } finally {
+   290→      setBookingsLoading(false);
+   291→    }
+   292→  }, []);
+   293→
+   294→  /* ─── fetch: clients ─── */
+   295→  const fetchClients = useCallback(async (page: number, signal: AbortSignal) => {
+   296→    setClientsLoading(true);
+   297→    try {
+   298→      const params = new URLSearchParams({ page: String(page), limit: '20' });
+   299→      const res = await fetch(`/api/admin/clients?${params.toString()}`, {
+   300→        headers: { Authorization: `Bearer ${ADMIN_KEY}` },
+   301→        signal,
+   302→      });
+   303→      if (!res.ok) throw new Error('Failed to fetch clients');
+   304→      const json = await res.json();
+   305→      if (json.success) {
+   306→        setClients(json.data.clients);
+   307→        setClientsPagination(json.data.pagination);
+   308→      }
+   309→    } catch (err) {
+   310→      if ((err as Error).name !== 'AbortError') {
+   311→        console.error('Failed to fetch clients:', err);
+   312→      }
+   313→    } finally {
+   314→      setClientsLoading(false);
+   315→    }
+   316→  }, []);
+   317→
+   318→  /* ─── effects ─── */
+   319→  useEffect(() => {
+   320→    const controller = new AbortController();
+   321→    fetchStats(controller.signal);
+   322→    return () => controller.abort();
+   323→  }, [fetchStats]);
+   324→
+   325→  useEffect(() => {
+   326→    const controller = new AbortController();
+   327→    fetchBookings(1, bookingsFilter, controller.signal);
+   328→    return () => controller.abort();
+   329→  }, [fetchBookings, bookingsFilter]);
+   330→
+   331→  useEffect(() => {
+   332→    const controller = new AbortController();
+   333→    fetchClients(1, controller.signal);
+   334→    return () => controller.abort();
+   335→  }, [fetchClients]);
+   336→
+   337→  /* ─── derived data: stat cards ─── */
+   338→  const statCards = statsData
+   339→    ? [
+   340→        {
+   341→          label: 'Total Revenue',
+   342→          value: formatCurrency(statsData.kpis.totalRevenue),
+   343→          change: `${statsData.kpis.revenueChange >= 0 ? '+' : ''}${statsData.kpis.revenueChange}%`,
+   344→          positive: statsData.kpis.revenueChange >= 0,
+   345→          icon: DollarSign,
+   346→          color: 'from-gold to-amber-600',
+   347→        },
+   348→        {
+   349→          label: 'Total Bookings',
+   350→          value: statsData.kpis.totalBookings.toLocaleString(),
+   351→          change: `+${statsData.kpis.todayBookings} today`,
+   352→          positive: true,
+   353→          icon: Calendar,
+   354→          color: 'from-pink-brand to-pink-deep',
+   355→        },
+   356→        {
+   357→          label: 'Active Members',
+   358→          value: statsData.kpis.activeMembers.toLocaleString(),
+   359→          change: `${statsData.kpis.memberGrowth >= 0 ? '+' : ''}${statsData.kpis.memberGrowth}%`,
+   360→          positive: statsData.kpis.memberGrowth >= 0,
+   361→          icon: Users,
+   362→          color: 'from-emerald-500 to-emerald-700',
+   363→        },
+   364→        {
+   365→          label: 'Avg Rating',
+   366→          value: statsData.kpis.avgRating.toFixed(1),
+   367→          change: `${statsData.kpis.totalReviews} reviews`,
+   368→          positive: true,
+   369→          icon: Star,
+   370→          color: 'from-amber-400 to-orange-500',
+   371→        },
+   372→      ]
+   373→    : [];
+   374→
+   375→  /* ─── derived data: popular treatments ─── */
+   376→  const popularTreatments = statsData
+   377→    ? (() => {
+   378→        const totalBookings = statsData.popularServices.reduce((s, p) => s + p.bookings, 0);
+   379→        return statsData.popularServices.map((s, idx) => ({
+   380→          name: s.name,
+   381→          percentage: totalBookings > 0 ? Math.round((s.bookings / totalBookings) * 100) : 0,
+   382→          color: treatmentColors[idx % treatmentColors.length],
+   383→        }));
+   384→      })()
+   385→    : [];
+   386→
+   387→  /* ─── derived data: recent activity ─── */
+   388→  const recentActivity = statsData
+   389→    ? statsData.recentBookings.slice(0, 6).map((b) => ({
+   390→        text: `New booking by ${b.name}`,
+   391→        sub: `${b.serviceName} — ${formatDate(b.date)} ${b.time}`,
+   392→        time: timeAgo(b.createdAt),
+   393→        type: 'booking' as const,
+   394→      }))
+   395→    : [];
+   396→
+   397→  /* ─── derived data: monthly revenue (aggregated from dailyTrend) ─── */
+   398→  const monthlyRevenue = statsData
+   399→    ? (() => {
+   400→        const monthMap = new Map<string, { month: string; value: number; revenue: number }>();
+   401→        statsData.dailyTrend.forEach((d) => {
+   402→          const dt = new Date(d.date);
+   403→          const key = `${dt.getFullYear()}-${dt.getMonth()}`;
+   404→          const label = dt.toLocaleDateString('en-US', { month: 'short' });
+   405→          const existing = monthMap.get(key);
+   406→          if (existing) {
+   407→            existing.value += d.bookings;
+   408→            existing.revenue += d.revenue;
+   409→          } else {
+   410→            monthMap.set(key, { month: label, value: d.bookings, revenue: d.revenue });
+   411→          }
+   412→        });
+   413→        const entries = Array.from(monthMap.values());
+   414→        return entries.slice(-6).map((e) => ({
+   415→          month: e.month,
+   416→          value: e.value,
+   417→          revenue: formatCurrency(e.revenue),
+   418→        }));
+   419→      })()
+   420→    : [];
+   421→
+   422→  /* ─── derived data: revenue by service ─── */
+   423→  const revenueByService = statsData
+   424→    ? (() => {
+   425→        const totalRevenue = statsData.popularServices.reduce((s, p) => s + p.revenue, 0);
+   426→        return statsData.popularServices.map((s, idx) => ({
+   427→          service: s.name,
+   428→          amount: formatCurrency(s.revenue),
+   429→          percentage: totalRevenue > 0 ? Math.round((s.revenue / totalRevenue) * 100) : 0,
+   430→          color: treatmentColors[idx % treatmentColors.length],
+   431→        }));
+   432→      })()
+   433→    : [];
+   434→
+   435→  /* ─── derived data: revenue summary cards ─── */
+   436→  const revenueSummaryCards = statsData
+   437→    ? (() => {
+   438→        const thisMonthRevenue = statsData.dailyTrend
+   439→          .filter((d) => {
+   440→            const dt = new Date(d.date);
+   441→            const now = new Date();
+   442→            return dt.getMonth() === now.getMonth() && dt.getFullYear() === now.getFullYear();
+   443→          })
+   444→          .reduce((s, d) => s + d.revenue, 0);
+   445→        const lastMonthDate = new Date();
+   446→        lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
+   447→        const lastMonthRevenue = statsData.dailyTrend
+   448→          .filter((d) => {
+   449→            const dt = new Date(d.date);
+   450→            return dt.getMonth() === lastMonthDate.getMonth() && dt.getFullYear() === lastMonthDate.getFullYear();
+   451→          })
+   452→          .reduce((s, d) => s + d.revenue, 0);
+   453→        const avgPerBooking = statsData.kpis.totalBookings > 0
+   454→          ? Math.round(statsData.kpis.totalRevenue / statsData.kpis.totalBookings)
+   455→          : 0;
+   456→        return [
+   457→          { label: 'This Month', value: formatCurrency(thisMonthRevenue), sub: `vs ${formatCurrency(lastMonthRevenue)} last month`, positive: thisMonthRevenue >= lastMonthRevenue },
+   458→          { label: 'Avg per Booking', value: formatCurrency(avgPerBooking), sub: 'Per booking average', positive: true },
+   459→          { label: 'Pending Payments', value: formatCurrency(statsData.kpis.pendingPayments), sub: `${statsData.kpis.pendingPayments > 0 ? 'Awaiting payment' : 'All settled'}`, positive: statsData.kpis.pendingPayments === 0 },
+   460→          { label: 'Outstanding', value: formatCurrency(statsData.kpis.pendingPayments), sub: `${statsData.kpis.pendingPayments > 0 ? 'Payment pending' : 'No outstanding balance'}`, positive: statsData.kpis.pendingPayments === 0 },
+   461→        ];
+   462→      })()
+   463→    : [];
+   464→
+   465→  /* ─── derived data: top clients ─── */
+   466→  const topClients = clients.length > 0
+   467→    ? [...clients]
+   468→        .sort((a, b) => b.totalSpent - a.totalSpent)
+   469→        .slice(0, 10)
+   470→        .map((c) => ({
+   471→          name: c.name,
+   472→          tier: c.memberTier || 'None',
+   473→          totalSpend: formatCurrency(c.totalSpent),
+   474→          visits: c.totalBookings,
+   475→          avatar: c.name.split(' ').map((w) => w.charAt(0)).join('').slice(0, 2).toUpperCase(),
+   476→        }))
+   477→    : [];
+   478→
+   479→  /* ─── derived data: client breakdown ─── */
+   480→  const clientBreakdown = (() => {
+   481→    const newClients = clients.filter((c) => c.totalBookings <= 1).length;
+   482→    const returningClients = clients.filter((c) => c.totalBookings > 1).length;
+   483→    const total = newClients + returningClients;
+   484→    return { newClients, returningClients, total: Math.max(total, 1) };
+   485→  })();
+   486→
+   487→  /* ─── auth guard ─── */
+   488→  if (!isMemberLoggedIn || !member) {
+   489→    navigate('login');
+   490→    return null;
+   491→  }
+   492→
+   493→  const { newClients, returningClients, total: totalClientsForRatio } = clientBreakdown;
+   494→
+   495→  return (
+   496→    <div>
+   497→      {/* Header */}
+   498→      <section className="pt-28 pb-8 relative overflow-hidden" style={{ background: '#030102' }}>
+   499→        <div className="absolute inset-0 bg-gradient-to-br from-gold to-pink-brand opacity-[0.03]" />
+   500→        <div className="container-tinas relative z-10">
+   501→          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+   502→            <div className="flex items-center gap-4">
+   503→              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold to-pink-brand flex items-center justify-center shadow-lg">
+   504→                <BarChart3 className="w-6 h-6 text-white" />
+   505→              </div>
+   506→              <div>
+   507→                <h1 className="text-2xl md:text-3xl font-bold heading-display">Analytics Dashboard</h1>
+   508→                <p className="text-xs text-gold/40 mt-0.5">Business performance overview · Last updated {lastUpdated || 'just now'}</p>
+   509→              </div>
+   510→            </div>
+   511→            <div className="flex items-center gap-2">
+   512→              <span className="badge-new flex items-center gap-1.5">
+   513→                <Eye className="w-3 h-3" />
+   514→                Admin View
+   515→              </span>
+   516→              <span className="px-3 py-1 rounded-full text-[11px] font-semibold border bg-gold/5 text-gold border-gold/20">
+   517→                {member.tier} Member
+   518→              </span>
+   519→            </div>
+   520→          </div>
+   521→        </div>
+   522→      </section>
+   523→
+   524→      {/* Tab Navigation */}
+   525→      <div className="border-b border-gold/10 surface-base sticky top-0 z-30" style={{ background: 'rgba(10,5,8,0.95)', backdropFilter: 'blur(20px)' }}>
+   526→        <div className="container-tinas">
+   527→          <div className="flex gap-1 overflow-x-auto scrollbar-hide -mb-px">
+   528→            {tabs.map((tab) => {
+   529→              const Icon = tab.icon;
+   530→              return (
+   531→                <button
+   532→                  key={tab.id}
+   533→                  onClick={() => setActiveTab(tab.id)}
+   534→                  className={`flex items-center gap-2 px-5 py-3.5 text-sm font-medium heading-display whitespace-nowrap transition cursor-pointer relative border-b-2 ${
+   535→                    activeTab === tab.id
+   536→                      ? 'text-gold border-gold'
+   537→                      : 'text-gray-500 border-transparent hover:text-gray-300 hover:border-gold/20'
+   538→                  }`}
+   539→                >
+   540→                  <Icon className="w-4 h-4" />
+   541→                  {tab.label}
+   542→                </button>
+   543→              );
+   544→            })}
+   545→          </div>
+   546→        </div>
+   547→      </div>
+   548→
+   549→      {/* Tab Content */}
+   550→      <section className="section-padding surface-base">
+   551→        <div className="container-tinas">
+   552→          {/* ===================== OVERVIEW TAB ===================== */}
+   553→          {activeTab === 'overview' && (
+   554→            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
+   555→              {/* Stat Cards */}
+   556→              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+   557→                {statsLoading
+   558→                  ? Array.from({ length: 4 }).map((_, idx) => (
+   559→                      <div key={idx} className="surface-raised rounded-2xl p-5 space-y-3">
+   560→                        <div className="flex items-start justify-between">
+   561→                          <Skeleton className="w-10 h-10 rounded-xl" />
+   562→                          <Skeleton className="w-14 h-4 rounded-full" />
+   563→                        </div>
+   564→                        <Skeleton className="h-7 w-24" />
+   565→                        <Skeleton className="h-3 w-20" />
+   566→                      </div>
+   567→                    ))
+   568→                  : statCards.map((stat, idx) => {
+   569→                      const Icon = stat.icon;
+   570→                      return (
+   571→                        <motion.div
+   572→                          key={stat.label}
+   573→                          variants={fadeUp}
+   574→                          initial="hidden"
+   575→                          animate="visible"
+   576→                          custom={idx}
+   577→                          className="surface-raised rounded-2xl p-5 hover-lift"
+   578→                        >
+   579→                          <div className="flex items-start justify-between mb-3">
+   580→                            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+   581→                              <Icon className="w-5 h-5 text-white" />
+   582→                            </div>
+   583→                            <span className={`flex items-center gap-0.5 text-xs font-semibold ${stat.positive ? 'text-emerald-400' : 'text-red-400'}`}>
+   584→                              {stat.positive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+   585→                              {stat.change}
+   586→                            </span>
+   587→                          </div>
+   588→                          <p className="text-2xl font-bold heading-display text-white">{stat.value}</p>
+   589→                          <p className="text-[11px] text-gray-500 mt-0.5">{stat.label}</p>
+   590→                        </motion.div>
+   591→                      );
+   592→                    })}
+   593→              </div>
+   594→
+   595→              <div className="grid lg:grid-cols-5 gap-6">
+   596→                {/* Popular Treatments Chart */}
+   597→                <motion.div
+   598→                  initial={{ opacity: 0, y: 20 }}
+   599→                  animate={{ opacity: 1, y: 0 }}
+   600→                  transition={{ delay: 0.3 }}
+   601→                  className="lg:col-span-3 surface-raised rounded-2xl p-6"
+   602→                >
+   603→                  <div className="flex items-center justify-between mb-6">
+   604→                    <div>
+   605→                      <h2 className="text-base font-semibold heading-display text-white">Popular Treatments</h2>
+   606→                      <p className="text-[11px] text-gray-500 mt-0.5">Booking distribution this month</p>
+   607→                    </div>
+   608→                    <BarChart3 className="w-5 h-5 text-gold/30" />
+   609→                  </div>
+   610→
+   611→                  {statsLoading ? (
+   612→                    <div className="space-y-4">
+   613→                      {Array.from({ length: 5 }).map((_, idx) => (
+   614→                        <div key={idx} className="space-y-1.5">
+   615→                          <div className="flex justify-between">
+   616→                            <Skeleton className="h-4 w-32" />
+   617→                            <Skeleton className="h-4 w-8" />
+   618→                          </div>
+   619→                          <Skeleton className="h-7 w-full rounded-lg" />
+   620→                        </div>
+   621→                      ))}
+   622→                    </div>
+   623→                  ) : (
+   624→                    <div className="space-y-4">
+   625→                      {popularTreatments.map((treatment, idx) => (
+   626→                        <div key={treatment.name}>
+   627→                          <div className="flex items-center justify-between mb-1.5">
+   628→                            <span className="text-sm text-gray-300">{treatment.name}</span>
+   629→                            <span className="text-xs font-semibold text-white">{treatment.percentage}%</span>
+   630→                          </div>
+   631→                          <div className="h-7 rounded-lg overflow-hidden bg-gold/[0.06] relative">
+   632→                            <motion.div
+   633→                              initial={{ width: 0 }}
+   634→                              animate={{ width: `${treatment.percentage}%` }}
+   635→                              transition={{ duration: 0.8, delay: 0.1 * idx, ease: 'easeOut' }}
+   636→                              className={`h-full rounded-lg bg-gradient-to-r ${treatment.color} relative`}
+   637→                            >
+   638→                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+   639→                            </motion.div>
+   640→                          </div>
+   641→                        </div>
+   642→                      ))}
+   643→                    </div>
+   644→                  )}
+   645→                </motion.div>
+   646→
+   647→                {/* Recent Activity */}
+   648→                <motion.div
+   649→                  initial={{ opacity: 0, y: 20 }}
+   650→                  animate={{ opacity: 1, y: 0 }}
+   651→                  transition={{ delay: 0.45 }}
+   652→                  className="lg:col-span-2 surface-raised rounded-2xl p-6"
+   653→                >
+   654→                  <div className="flex items-center justify-between mb-5">
+   655→                    <h2 className="text-base font-semibold heading-display text-white">Recent Activity</h2>
+   656→                    <Activity className="w-5 h-5 text-pink-brand/40" />
+   657→                  </div>
+   658→
+   659→                  {statsLoading ? (
+   660→                    <div className="space-y-2">
+   661→                      {Array.from({ length: 5 }).map((_, idx) => (
+   662→                        <div key={idx} className="flex gap-3 p-3">
+   663→                          <Skeleton className="w-9 h-9 rounded-lg flex-shrink-0" />
+   664→                          <div className="flex-1 space-y-1.5">
+   665→                            <Skeleton className="h-4 w-full" />
+   666→                            <Skeleton className="h-3 w-3/4" />
+   667→                          </div>
+   668→                        </div>
+   669→                      ))}
+   670→                    </div>
+   671→                  ) : (
+   672→                    <div className="space-y-1 max-h-96 overflow-y-auto pr-1">
+   673→                      {recentActivity.map((item, idx) => {
+   674→                        const iconMap = {
+   675→                          booking: Calendar,
+   676→                          member: Users,
+   677→                          payment: DollarSign,
+   678→                          review: Star,
+   679→                        };
+   680→                        const ItemIcon = iconMap[item.type];
+   681→                        return (
+   682→                          <motion.div
+   683→                            key={idx}
+   684→                            variants={fadeUp}
+   685→                            initial="hidden"
+   686→                            animate="visible"
+   687→                            custom={idx + 2}
+   688→                            className="flex gap-3 p-3 rounded-xl hover:bg-gold/[0.03] transition group"
+   689→                          >
+   690→                            <div className={`w-9 h-9 rounded-lg border flex items-center justify-center flex-shrink-0 ${activityIconColors[item.type]}`}>
+   691→                              <ItemIcon className="w-4 h-4" />
+   692→                            </div>
+   693→                            <div className="min-w-0 flex-1">
+   694→                              <p className="text-sm text-white truncate group-hover:text-gold transition">{item.text}</p>
+   695→                              <p className="text-[11px] text-gray-500 truncate">{item.sub}</p>
+   696→                            </div>
+   697→                            <span className="text-[10px] text-gray-600 flex-shrink-0 pt-0.5">{item.time}</span>
+   698→                          </motion.div>
+   699→                        );
+   700→                      })}
+   701→                    </div>
+   702→                  )}
+   703→                </motion.div>
+   704→              </div>
+   705→            </motion.div>
+   706→          )}
+   707→
+   708→          {/* ===================== BOOKINGS TAB ===================== */}
+   709→          {activeTab === 'bookings' && (
+   710→            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+   711→              <motion.div
+   712→                initial={{ opacity: 0, y: 20 }}
+   713→                animate={{ opacity: 1, y: 0 }}
+   714→                className="surface-raised rounded-2xl overflow-hidden"
+   715→              >
+   716→                <div className="p-5 border-b border-gold/8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+   717→                  <div>
+   718→                    <h2 className="text-base font-semibold heading-display text-white">Recent Bookings</h2>
+   719→                    <p className="text-[11px] text-gray-500 mt-0.5">{bookingsPagination.total} bookings</p>
+   720→                  </div>
+   721→                  <div className="flex items-center gap-2 flex-wrap">
+   722→                    {statusFilterOptions.map((filter) => (
+   723→                      <button
+   724→                        key={filter}
+   725→                        onClick={() => setBookingsFilter(filter)}
+   726→                        className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition cursor-pointer border ${
+   727→                          bookingsFilter === filter
+   728→                            ? 'bg-gold/20 text-gold border-gold/30'
+   729→                            : 'bg-gold/[0.06] text-gold/70 hover:bg-gold/[0.1] border-gold/10'
+   730→                        }`}
+   731→                      >
+   732→                        {filter}
+   733→                      </button>
+   734→                    ))}
+   735→                  </div>
+   736→                </div>
+   737→
+   738→                {/* Table Header */}
+   739→                <div className="hidden md:grid grid-cols-12 gap-4 px-5 py-3 text-[10px] tracking-wider text-gray-500 font-semibold uppercase border-b border-gold/5">
+   740→                  <div className="col-span-1">ID</div>
+   741→                  <div className="col-span-2">Guest</div>
+   742→                  <div className="col-span-2">Treatment</div>
+   743→                  <div className="col-span-2">Date</div>
+   744→                  <div className="col-span-1">Time</div>
+   745→                  <div className="col-span-2">Therapist</div>
+   746→                  <div className="col-span-2 text-right">Status</div>
+   747→                </div>
+   748→
+   749→                {/* Table Rows */}
+   750→                <div className="max-h-[480px] overflow-y-auto">
+   751→                  {bookingsLoading ? (
+   752→                    Array.from({ length: 6 }).map((_, idx) => (
+   753→                      <div key={idx} className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-5 py-4 border-b border-gold/[0.04] items-center">
+   754→                        <div className="col-span-1"><Skeleton className="h-4 w-16" /></div>
+   755→                        <div className="col-span-2"><Skeleton className="h-4 w-28" /></div>
+   756→                        <div className="col-span-2"><Skeleton className="h-4 w-32" /></div>
+   757→                        <div className="col-span-2"><Skeleton className="h-4 w-24" /></div>
+   758→                        <div className="col-span-1"><Skeleton className="h-4 w-16" /></div>
+   759→                        <div className="col-span-2"><Skeleton className="h-4 w-28" /></div>
+   760→                        <div className="col-span-2 flex justify-end"><Skeleton className="h-6 w-20 rounded-full" /></div>
+   761→                      </div>
+   762→                    ))
+   763→                  ) : bookings.length === 0 ? (
+   764→                    <div className="px-5 py-12 text-center text-gray-500 text-sm">No bookings found</div>
+   765→                  ) : (
+   766→                    bookings.map((booking, idx) => {
+   767→                      const statusLabel = capitalize(booking.status);
+   768→                      return (
+   769→                        <motion.div
+   770→                          key={booking.bookingId}
+   771→                          variants={fadeUp}
+   772→                          initial="hidden"
+   773→                          animate="visible"
+   774→                          custom={idx}
+   775→                          className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-5 py-4 border-b border-gold/[0.04] hover:bg-gold/[0.02] transition items-center"
+   776→                        >
+   777→                          <div className="col-span-1 text-xs text-gray-500 font-mono">{booking.bookingId.slice(0, 7)}</div>
+   778→                          <div className="col-span-2 text-sm text-white font-medium">{booking.name}</div>
+   779→                          <div className="col-span-2 text-sm text-gray-300">{booking.serviceName}</div>
+   780→                          <div className="col-span-2 text-sm text-gray-400 flex items-center gap-1.5">
+   781→                            <Clock className="w-3 h-3 text-gray-600" />
+   782→                            {formatDate(booking.date)}
+   783→                          </div>
+   784→                          <div className="col-span-1 text-sm text-gray-400">{booking.time}</div>
+   785→                          <div className="col-span-2 text-sm text-gray-300">{booking.therapistName || '—'}</div>
+   786→                          <div className="col-span-2 flex justify-end">
+   787→                            <span className={`px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider border ${statusStyles[statusLabel] ?? 'bg-gray-500/10 text-gray-400 border-gray-500/20'}`}>
+   788→                              {statusLabel}
+   789→                            </span>
+   790→                          </div>
+   791→                        </motion.div>
+   792→                      );
+   793→                    })
+   794→                  )}
+   795→                </div>
+   796→
+   797→                {/* Pagination */}
+   798→                {bookingsPagination.pages > 1 && (
+   799→                  <div className="p-4 border-t border-gold/8 flex items-center justify-between">
+   800→                    <p className="text-[11px] text-gray-500">
+   801→                      Page {bookingsPagination.page} of {bookingsPagination.pages}
+   802→                    </p>
+   803→                    <div className="flex items-center gap-2">
+   804→                      <button
+   805→                        onClick={() => {
+   806→                          const controller = new AbortController();
+   807→                          fetchBookings(bookingsPagination.page - 1, bookingsFilter, controller.signal);
+   808→                        }}
+   809→                        disabled={bookingsPagination.page <= 1 || bookingsLoading}
+   810→                        className="p-1.5 rounded-lg border border-gold/10 bg-gold/[0.04] text-gold/60 hover:bg-gold/[0.08] hover:text-gold transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+   811→                      >
+   812→                        <ChevronLeft className="w-4 h-4" />
+   813→                      </button>
+   814→                      <button
+   815→                        onClick={() => {
+   816→                          const controller = new AbortController();
+   817→                          fetchBookings(bookingsPagination.page + 1, bookingsFilter, controller.signal);
+   818→                        }}
+   819→                        disabled={bookingsPagination.page >= bookingsPagination.pages || bookingsLoading}
+   820→                        className="p-1.5 rounded-lg border border-gold/10 bg-gold/[0.04] text-gold/60 hover:bg-gold/[0.08] hover:text-gold transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+   821→                      >
+   822→                        <ChevronRight className="w-4 h-4" />
+   823→                      </button>
+   824→                    </div>
+   825→                  </div>
+   826→                )}
+   827→              </motion.div>
+   828→            </motion.div>
+   829→          )}
+   830→
+   831→          {/* ===================== REVENUE TAB ===================== */}
+   832→          {activeTab === 'revenue' && (
+   833→            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+   834→              <div className="grid lg:grid-cols-2 gap-6">
+   835→                {/* Monthly Revenue Chart */}
+   836→                <motion.div
+   837→                  initial={{ opacity: 0, y: 20 }}
+   838→                  animate={{ opacity: 1, y: 0 }}
+   839→                  className="surface-raised rounded-2xl p-6"
+   840→                >
+   841→                  <div className="flex items-center justify-between mb-6">
+   842→                    <div>
+   843→                      <h2 className="text-base font-semibold heading-display text-white">Monthly Revenue</h2>
+   844→                      <p className="text-[11px] text-gray-500 mt-0.5">Last 6 months performance</p>
+   845→                    </div>
+   846→                    <div className="flex items-center gap-1.5 text-emerald-400">
+   847→                      <TrendingUp className="w-4 h-4" />
+   848→                      <span className="text-xs font-semibold">
+   849→                        {statsData ? `${statsData.kpis.revenueChange >= 0 ? '+' : ''}${statsData.kpis.revenueChange}%` : '+0%'}
+   850→                      </span>
+   851→                    </div>
+   852→                  </div>
+   853→
+   854→                  {statsLoading ? (
+   855→                    <div className="flex items-end gap-3 h-48 px-2">
+   856→                      {Array.from({ length: 6 }).map((_, idx) => (
+   857→                        <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+   858→                          <Skeleton className="w-full rounded-t-lg" style={{ height: `${30 + idx * 10}%` }} />
+   859→                          <Skeleton className="h-3 w-6" />
+   860→                        </div>
+   861→                      ))}
+   862→                    </div>
+   863→                  ) : monthlyRevenue.length > 0 ? (
+   864→                    /* CSS Bar Chart */
+   865→                    <div className="flex items-end gap-3 h-48 px-2">
+   866→                      {monthlyRevenue.map((m, idx) => {
+   867→                        const maxVal = Math.max(...monthlyRevenue.map((x) => x.value), 1);
+   868→                        return (
+   869→                          <div key={m.month} className="flex-1 flex flex-col items-center gap-2">
+   870→                            <motion.div
+   871→                              initial={{ height: 0 }}
+   872→                              animate={{ height: `${(m.value / maxVal) * 100}%` }}
+   873→                              transition={{ duration: 0.8, delay: idx * 0.1, ease: 'easeOut' }}
+   874→                              className="w-full rounded-t-lg bg-gradient-to-t from-gold/80 to-pink-brand relative group cursor-pointer min-h-[8px]"
+   875→                            >
+   876→                              {/* Tooltip */}
+   877→                              <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 border border-gold/20 rounded-lg px-3 py-1.5 opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap z-10">
+   878→                                <p className="text-xs font-semibold text-white">{m.revenue}</p>
+   879→                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-transparent border-t-gray-900" />
+   880→                              </div>
+   881→                              <div className="absolute inset-0 rounded-t-lg bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+   882→                            </motion.div>
+   883→                            <span className="text-[10px] text-gray-500 font-medium">{m.month}</span>
+   884→                          </div>
+   885→                        );
+   886→                      })}
+   887→                    </div>
+   888→                  ) : (
+   889→                    <div className="h-48 flex items-center justify-center text-gray-500 text-sm">No revenue data available</div>
+   890→                  )}
+   891→                </motion.div>
+   892→
+   893→                {/* Revenue by Service */}
+   894→                <motion.div
+   895→                  initial={{ opacity: 0, y: 20 }}
+   896→                  animate={{ opacity: 1, y: 0 }}
+   897→                  transition={{ delay: 0.15 }}
+   898→                  className="surface-raised rounded-2xl p-6"
+   899→                >
+   900→                  <div className="flex items-center justify-between mb-6">
+   901→                    <div>
+   902→                      <h2 className="text-base font-semibold heading-display text-white">Revenue by Service</h2>
+   903→                      <p className="text-[11px] text-gray-500 mt-0.5">Year-to-date breakdown</p>
+   904→                    </div>
+   905→                    <DollarSign className="w-5 h-5 text-gold/30" />
+   906→                  </div>
+   907→
+   908→                  {statsLoading ? (
+   909→                    <div className="space-y-4">
+   910→                      {Array.from({ length: 5 }).map((_, idx) => (
+   911→                        <div key={idx} className="space-y-1.5">
+   912→                          <div className="flex justify-between">
+   913→                            <Skeleton className="h-4 w-36" />
+   914→                            <div className="flex gap-3">
+   915→                              <Skeleton className="h-4 w-16" />
+   916→                              <Skeleton className="h-4 w-8" />
+   917→                            </div>
+   918→                          </div>
+   919→                          <Skeleton className="h-5 w-full rounded-md" />
+   920→                        </div>
+   921→                      ))}
+   922→                    </div>
+   923→                  ) : (
+   924→                    <div className="space-y-4 max-h-80 overflow-y-auto pr-1">
+   925→                      {revenueByService.map((item, idx) => (
+   926→                        <div key={item.service}>
+   927→                          <div className="flex items-center justify-between mb-1.5">
+   928→                            <span className="text-sm text-gray-300">{item.service}</span>
+   929→                            <div className="flex items-center gap-3">
+   930→                              <span className="text-xs font-semibold text-white">{item.amount}</span>
+   931→                              <span className="text-[10px] text-gray-500 w-8 text-right">{item.percentage}%</span>
+   932→                            </div>
+   933→                          </div>
+   934→                          <div className="h-5 rounded-md overflow-hidden bg-gold/[0.06]">
+   935→                            <motion.div
+   936→                              initial={{ width: 0 }}
+   937→                              animate={{ width: `${(item.percentage / 30) * 100}%` }}
+   938→                              transition={{ duration: 0.7, delay: idx * 0.08, ease: 'easeOut' }}
+   939→                              className={`h-full rounded-md progress-bar-fill relative`}
+   940→                              style={{ background: `linear-gradient(to right, var(--gold, #D4AF37), var(--pink-brand, #E91E63))` }}
+   941→                            >
+   942→                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+   943→                            </motion.div>
+   944→                          </div>
+   945→                        </div>
+   946→                      ))}
+   947→                    </div>
+   948→                  )}
+   949→                </motion.div>
+   950→              </div>
+   951→
+   952→              {/* Revenue Summary Cards */}
+   953→              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+   954→                {statsLoading
+   955→                  ? Array.from({ length: 4 }).map((_, idx) => (
+   956→                      <div key={idx} className="surface-raised rounded-2xl p-5 space-y-2">
+   957→                        <Skeleton className="h-3 w-20" />
+   958→                        <Skeleton className="h-6 w-24" />
+   959→                        <Skeleton className="h-3 w-32" />
+   960→                      </div>
+   961→                    ))
+   962→                  : revenueSummaryCards.map((card, idx) => (
+   963→                      <motion.div
+   964→                        key={card.label}
+   965→                        variants={fadeUp}
+   966→                        initial="hidden"
+   967→                        animate="visible"
+   968→                        custom={idx + 4}
+   969→                        className="surface-raised rounded-2xl p-5"
+   970→                      >
+   971→                        <p className="text-[11px] text-gray-500 mb-1">{card.label}</p>
+   972→                        <p className="text-xl font-bold heading-display text-white">{card.value}</p>
+   973→                        <p className={`text-[11px] mt-1 flex items-center gap-1 ${card.positive ? 'text-emerald-400' : 'text-amber-400'}`}>
+   974→                          {card.positive ? <ArrowUpRight className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+   975→                          {card.sub}
+   976→                        </p>
+   977→                      </motion.div>
+   978→                    ))}
+   979→              </div>
+   980→
+   981→              {/* Payment Method Breakdown */}
+   982→              {!statsLoading && statsData && statsData.paymentBreakdown.length > 0 && (
+   983→                <motion.div
+   984→                  initial={{ opacity: 0, y: 20 }}
+   985→                  animate={{ opacity: 1, y: 0 }}
+   986→                  transition={{ delay: 0.3 }}
+   987→                  className="surface-raised rounded-2xl p-6"
+   988→                >
+   989→                  <div className="flex items-center justify-between mb-6">
+   990→                    <div>
+   991→                      <h2 className="text-base font-semibold heading-display text-white">Payment Methods</h2>
+   992→                      <p className="text-[11px] text-gray-500 mt-0.5">Breakdown by payment type</p>
+   993→                    </div>
+   994→                    <DollarSign className="w-5 h-5 text-gold/30" />
+   995→                  </div>
+   996→                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+   997→                    {statsData.paymentBreakdown.map((pm, idx) => {
+   998→                      const colorKey = Object.keys(paymentMethodColors).find((k) => pm.method.toLowerCase().includes(k));
+   999→                      const color = colorKey ? paymentMethodColors[colorKey] : treatmentColors[idx % treatmentColors.length];
+  1000→                      return (
+  1001→                        <motion.div
+  1002→                          key={pm.method}
+  1003→                          variants={fadeUp}
+  1004→                          initial="hidden"
+  1005→                          animate="visible"
+  1006→                          custom={idx}
+  1007→                          className="p-4 rounded-xl border border-gold/[0.06] hover:bg-gold/[0.02] transition"
+  1008→                        >
+  1009→                          <div className="flex items-center gap-3 mb-3">
+  1010→                            <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${color} flex items-center justify-center`}>
+  1011→                              <DollarSign className="w-4 h-4 text-white" />
+  1012→                            </div>
+  1013→                            <div>
+  1014→                              <p className="text-sm font-medium text-white">{capitalize(pm.method)}</p>
+  1015→                              <p className="text-[11px] text-gray-500">{pm.count} transactions</p>
+  1016→                            </div>
+  1017→                          </div>
+  1018→                          <p className="text-lg font-bold heading-display text-white">{formatCurrency(pm.total)}</p>
+  1019→                        </motion.div>
+  1020→                      );
+  1021→                    })}
+  1022→                  </div>
+  1023→                </motion.div>
+  1024→              )}
+  1025→            </motion.div>
+  1026→          )}
+  1027→
+  1028→          {/* ===================== CLIENTS TAB ===================== */}
+  1029→          {activeTab === 'clients' && (
+  1030→            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+  1031→              <div className="grid lg:grid-cols-3 gap-6">
+  1032→                {/* New vs Returning */}
+  1033→                <motion.div
+  1034→                  initial={{ opacity: 0, y: 20 }}
+  1035→                  animate={{ opacity: 1, y: 0 }}
+  1036→                  className="surface-raised rounded-2xl p-6"
+  1037→                >
+  1038→                  <h2 className="text-base font-semibold heading-display text-white mb-1">Client Breakdown</h2>
+  1039→                  <p className="text-[11px] text-gray-500 mb-6">New vs returning this month</p>
+  1040→
+  1041→                  {clientsLoading ? (
+  1042→                    <div className="flex items-center gap-4 mb-6">
+  1043→                      <Skeleton className="w-32 h-32 rounded-full flex-shrink-0" />
+  1044→                      <div className="space-y-3 flex-1">
+  1045→                        <Skeleton className="h-4 w-20" />
+  1046→                        <Skeleton className="h-7 w-12" />
+  1047→                        <Skeleton className="h-3 w-8" />
+  1048→                        <Skeleton className="h-4 w-16 mt-2" />
+  1049→                        <Skeleton className="h-7 w-12" />
+  1050→                        <Skeleton className="h-3 w-8" />
+  1051→                      </div>
+  1052→                    </div>
+  1053→                  ) : (
+  1054→                    <>
+  1055→                      {/* Visual Ratio */}
+  1056→                      <div className="flex items-center gap-4 mb-6">
+  1057→                        <div className="relative w-32 h-32 flex-shrink-0">
+  1058→                          {/* CSS donut chart */}
+  1059→                          <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+  1060→                            <circle
+  1061→                              cx="18" cy="18" r="14"
+  1062→                              fill="none"
+  1063→                              stroke="rgba(212,175,55,0.1)"
+  1064→                              strokeWidth="4"
+  1065→                            />
+  1066→                            <circle
+  1067→                              cx="18" cy="18" r="14"
+  1068→                              fill="none"
+  1069→                              stroke="url(#returningGrad)"
+  1070→                              strokeWidth="4"
+  1071→                              strokeDasharray={`${(returningClients / totalClientsForRatio) * 88} 88`}
+  1072→                              strokeLinecap="round"
+  1073→                              className="transition-all duration-1000"
+  1074→                            />
+  1075→                            <defs>
+  1076→                              <linearGradient id="returningGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+  1077→                                <stop offset="0%" stopColor="#D4AF37" />
+  1078→                                <stop offset="100%" stopColor="#E91E63" />
+  1079→                              </linearGradient>
+  1080→                            </defs>
+  1081→                          </svg>
+  1082→                          <div className="absolute inset-0 flex flex-col items-center justify-center">
+  1083→                            <span className="text-lg font-bold heading-display text-white">{totalClientsForRatio}</span>
+  1084→                            <span className="text-[10px] text-gray-500">Total</span>
+  1085→                          </div>
+  1086→                        </div>
+  1087→                        <div className="space-y-3">
+  1088→                          <div>
+  1089→                            <div className="flex items-center gap-2 mb-0.5">
+  1090→                              <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-gold to-pink-brand" />
+  1091→                              <span className="text-sm text-gray-300">Returning</span>
+  1092→                            </div>
+  1093→                            <p className="text-xl font-bold heading-display text-white">{returningClients}</p>
+  1094→                            <p className="text-[11px] text-emerald-400">{((returningClients / totalClientsForRatio) * 100).toFixed(0)}%</p>
+  1095→                          </div>
+  1096→                          <div>
+  1097→                            <div className="flex items-center gap-2 mb-0.5">
+  1098→                              <div className="w-2.5 h-2.5 rounded-full bg-gray-600" />
+  1099→                              <span className="text-sm text-gray-300">New</span>
+  1100→                            </div>
+  1101→                            <p className="text-xl font-bold heading-display text-white">{newClients}</p>
+  1102→                            <p className="text-[11px] text-gray-400">{((newClients / totalClientsForRatio) * 100).toFixed(0)}%</p>
+  1103→                          </div>
+  1104→                        </div>
+  1105→                      </div>
+  1106→
+  1107→                      <div className="pt-4 border-t border-gold/8">
+  1108→                        <div className="flex items-center justify-between">
+  1109→                          <span className="text-[11px] text-gray-500">Retention Rate</span>
+  1110→                          <span className="text-sm font-semibold text-emerald-400">{totalClientsForRatio > 0 ? ((returningClients / totalClientsForRatio) * 100).toFixed(0) : 0}%</span>
+  1111→                        </div>
+  1112→                        <div className="progress-bar mt-2">
+  1113→                          <motion.div
+  1114→                            className="progress-bar-fill"
+  1115→                            initial={{ width: 0 }}
+  1116→                            animate={{ width: `${totalClientsForRatio > 0 ? (returningClients / totalClientsForRatio) * 100 : 0}%` }}
+  1117→                            transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
+  1118→                          />
+  1119→                        </div>
+  1120→                      </div>
+  1121→                    </>
+  1122→                  )}
+  1123→                </motion.div>
+  1124→
+  1125→                {/* Top Clients */}
+  1126→                <motion.div
+  1127→                  initial={{ opacity: 0, y: 20 }}
+  1128→                  animate={{ opacity: 1, y: 0 }}
+  1129→                  transition={{ delay: 0.15 }}
+  1130→                  className="lg:col-span-2 surface-raised rounded-2xl p-6"
+  1131→                >
+  1132→                  <div className="flex items-center justify-between mb-5">
+  1133→                    <div>
+  1134→                      <h2 className="text-base font-semibold heading-display text-white">Top Clients</h2>
+  1135→                      <p className="text-[11px] text-gray-500 mt-0.5">By total spend</p>
+  1136→                    </div>
+  1137→                    <Users className="w-5 h-5 text-gold/30" />
+  1138→                  </div>
+  1139→
+  1140→                  {clientsLoading ? (
+  1141→                    <div className="space-y-2">
+  1142→                      {Array.from({ length: 5 }).map((_, idx) => (
+  1143→                        <div key={idx} className="flex items-center gap-4 p-3">
+  1144→                          <Skeleton className="w-5 h-4" />
+  1145→                          <Skeleton className="w-10 h-10 rounded-xl flex-shrink-0" />
+  1146→                          <div className="flex-1 space-y-1.5">
+  1147→                            <Skeleton className="h-4 w-32" />
+  1148→                            <Skeleton className="h-3 w-16" />
+  1149→                          </div>
+  1150→                          <Skeleton className="h-4 w-20" />
+  1151→                        </div>
+  1152→                      ))}
+  1153→                    </div>
+  1154→                  ) : topClients.length === 0 ? (
+  1155→                    <div className="py-12 text-center text-gray-500 text-sm">No client data available</div>
+  1156→                  ) : (
+  1157→                    <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+  1158→                      {topClients.map((client, idx) => (
+  1159→                        <motion.div
+  1160→                          key={client.name}
+  1161→                          variants={fadeUp}
+  1162→                          initial="hidden"
+  1163→                          animate="visible"
+  1164→                          custom={idx + 1}
+  1165→                          className="flex items-center gap-4 p-3 rounded-xl hover:bg-gold/[0.03] transition group"
+  1166→                        >
+  1167→                          {/* Rank */}
+  1168→                          <span className="text-xs font-bold text-gray-600 w-5 text-center flex-shrink-0">
+  1169→                            {idx + 1}
+  1170→                          </span>
+  1171→
+  1172→                          {/* Avatar */}
+  1173→                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+  1174→                            client.tier === 'Platinum'
+  1175→                              ? 'bg-pink-brand/15 text-pink-brand border border-pink-brand/20'
+  1176→                              : client.tier === 'Gold'
+  1177→                                ? 'bg-gold/15 text-gold border border-gold/20'
+  1178→                                : client.tier === 'Silver'
+  1179→                                  ? 'bg-gray-500/15 text-gray-300 border border-gray-500/20'
+  1180→                                  : 'bg-gray-600/15 text-gray-400 border border-gray-600/20'
+  1181→                          }`}>
+  1182→                            {client.avatar}
+  1183→                          </div>
+  1184→
+  1185→                          {/* Info */}
+  1186→                          <div className="flex-1 min-w-0">
+  1187→                            <div className="flex items-center gap-2">
+  1188→                              <p className="text-sm font-medium text-white truncate group-hover:text-gold transition">{client.name}</p>
+  1189→                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold tracking-wider border ${tierBadge[client.tier] ?? tierBadge.None}`}>
+  1190→                                {client.tier}
+  1191→                              </span>
+  1192→                            </div>
+  1193→                            <p className="text-[11px] text-gray-500">{client.visits} visits</p>
+  1194→                          </div>
+  1195→
+  1196→                          {/* Spend */}
+  1197→                          <div className="text-right flex-shrink-0">
+  1198→                            <p className="text-sm font-bold heading-display text-white">{client.totalSpend}</p>
+  1199→                            <p className="text-[10px] text-gray-500">lifetime</p>
+  1200→                          </div>
+  1201→                        </motion.div>
+  1202→                      ))}
+  1203→                    </div>
+  1204→                  )}
+  1205→                </motion.div>
+  1206→              </div>
+  1207→
+  1208→              {/* Client Growth Cards */}
+  1209→              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+  1210→                {clientsLoading
+  1211→                  ? Array.from({ length: 4 }).map((_, idx) => (
+  1212→                      <div key={idx} className="surface-raised rounded-2xl p-5 space-y-2">
+  1213→                        <Skeleton className="w-5 h-5" />
+  1214→                        <Skeleton className="h-6 w-20" />
+  1215→                        <Skeleton className="h-3 w-28" />
+  1216→                        <Skeleton className="h-3 w-24" />
+  1217→                      </div>
+  1218→                    ))
+  1219→                  : [
+  1220→                      { label: 'New This Month', value: newClients.toString(), change: `${clientsPagination.total} total clients`, positive: true, icon: Users },
+  1221→                      { label: 'Avg Lifetime Value', value: clients.length > 0 ? formatCurrency(Math.round(clients.reduce((s, c) => s + c.totalSpent, 0) / clients.length)) : 'K0', change: 'Per client average', positive: true, icon: DollarSign },
+  1222→                      { label: 'Active Members', value: clients.filter((c) => c.isMember).length.toString(), change: `of ${clients.length} total`, positive: true, icon: TrendingUp },
+  1223→                      { label: 'Completion Rate', value: clients.length > 0 ? `${Math.round((clients.reduce((s, c) => s + c.completedBookings, 0) / Math.max(clients.reduce((s, c) => s + c.totalBookings, 0), 1)) * 100)}%` : '0%', change: 'Bookings completed', positive: true, icon: Activity },
+  1224→                    ].map((card, idx) => {
+  1225→                      const Icon = card.icon;
+  1226→                      return (
+  1227→                        <motion.div
+  1228→                          key={card.label}
+  1229→                          variants={fadeUp}
+  1230→                          initial="hidden"
+  1231→                          animate="visible"
+  1232→                          custom={idx + 4}
+  1233→                          className="surface-raised rounded-2xl p-5 hover-lift"
+  1234→                        >
+  1235→                          <Icon className="w-5 h-5 text-gold/30 mb-3" />
+  1236→                          <p className="text-xl font-bold heading-display text-white">{card.value}</p>
+  1237→                          <p className="text-[11px] text-gray-500 mt-0.5">{card.label}</p>
+  1238→                          <p className={`text-[10px] mt-1.5 flex items-center gap-1 ${card.positive ? 'text-emerald-400' : 'text-red-400'}`}>
+  1239→                            {card.positive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+  1240→                            {card.change}
+  1241→                          </p>
+  1242→                        </motion.div>
+  1243→                      );
+  1244→                    })}
+  1245→              </div>
+  1246→
+  1247→              {/* Client Pagination */}
+  1248→              {clientsPagination.pages > 1 && (
+  1249→                <div className="surface-raised rounded-2xl p-4 flex items-center justify-between">
+  1250→                  <p className="text-[11px] text-gray-500">
+  1251→                    Showing {clients.length} of {clientsPagination.total} clients · Page {clientsPagination.page} of {clientsPagination.pages}
+  1252→                  </p>
+  1253→                  <div className="flex items-center gap-2">
+  1254→                    <button
+  1255→                      onClick={() => {
+  1256→                        const controller = new AbortController();
+  1257→                        fetchClients(clientsPagination.page - 1, controller.signal);
+  1258→                      }}
+  1259→                      disabled={clientsPagination.page <= 1 || clientsLoading}
+  1260→                      className="p-1.5 rounded-lg border border-gold/10 bg-gold/[0.04] text-gold/60 hover:bg-gold/[0.08] hover:text-gold transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+  1261→                    >
+  1262→                      <ChevronLeft className="w-4 h-4" />
+  1263→                    </button>
+  1264→                    <button
+  1265→                      onClick={() => {
+  1266→                        const controller = new AbortController();
+  1267→                        fetchClients(clientsPagination.page + 1, controller.signal);
+  1268→                      }}
+  1269→                      disabled={clientsPagination.page >= clientsPagination.pages || clientsLoading}
+  1270→                      className="p-1.5 rounded-lg border border-gold/10 bg-gold/[0.04] text-gold/60 hover:bg-gold/[0.08] hover:text-gold transition disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+  1271→                    >
+  1272→                      <ChevronRight className="w-4 h-4" />
+  1273→                    </button>
+  1274→                  </div>
+  1275→                </div>
+  1276→              )}
+  1277→            </motion.div>
+  1278→          )}
+  1279→        </div>
+  1280→      </section>
+  1281→    </div>
+  1282→  );
+  1283→}

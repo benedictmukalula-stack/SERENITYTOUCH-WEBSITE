@@ -90,7 +90,7 @@ export async function PATCH(
       }).catch(() => {});
     }
 
-    // Payment status changed to paid
+    // Payment status changed to paid — also award loyalty points
     if (paymentStatus === 'paid' && booking.paymentStatus !== 'paid') {
       // WhatsApp receipt to client
       if (booking.phone) {
@@ -120,6 +120,22 @@ export async function PATCH(
           paymentMethod: booking.paymentMethod,
         }),
         from: 'payments',
+      }).catch(() => {});
+
+      // Award loyalty points (fire and forget)
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/loyalty/earn`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: booking.email, bookingId: booking.bookingId, amount: booking.totalAmount }),
+      }).catch(() => {});
+    }
+
+    // Status changed to completed — also award loyalty points if not already paid
+    if (status === 'completed' && booking.paymentStatus === 'paid' && booking.status !== 'completed') {
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/loyalty/earn`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: booking.email, bookingId: booking.bookingId, amount: booking.totalAmount }),
       }).catch(() => {});
     }
 

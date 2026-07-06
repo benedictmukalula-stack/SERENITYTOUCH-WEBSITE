@@ -20,6 +20,7 @@ import MemberRegistration from '@/components/tinas/MemberRegistration';
 import MemberDashboard from '@/components/tinas/MemberDashboard';
 import AnalyticsDashboard from '@/components/tinas/AnalyticsDashboard';
 import PaymentsPage from '@/components/tinas/PaymentsPage';
+import AdminLoginPage from '@/components/tinas/AdminLoginPage';
 import AgeGate from '@/components/tinas/AgeGate';
 import WhatsAppButton from '@/components/tinas/WhatsAppButton';
 import AIAssistant from '@/components/tinas/AIAssistant';
@@ -47,6 +48,7 @@ const pageComponents: Record<string, React.ComponentType> = {
   dashboard: MemberDashboard,
   analytics: AnalyticsDashboard,
   payments: PaymentsPage,
+  'admin-login': AdminLoginPage,
 };
 
 export default function AppPage() {

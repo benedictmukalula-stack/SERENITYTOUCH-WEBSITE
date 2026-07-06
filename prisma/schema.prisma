@@ -45,7 +45,8 @@ model Therapist {
   image     String   @default("")
   active    Boolean  @default(true)
   sortOrder Int      @default(0)
-  bookings  Booking[]
+  bookings     Booking[]
+  availability  StaffAvailability[]
   createdAt DateTime @default(now())
 }
 
@@ -58,8 +59,9 @@ model Member {
   tier      String    @default("Silver")
   points    Int       @default(0)
   active    Boolean   @default(true)
-  bookings  Booking[]
-  referrals Referral[]
+  bookings    Booking[]
+  referrals   Referral[]
+  loyaltyLogs LoyaltyLog[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
@@ -123,16 +125,17 @@ model BlogPost {
 }
 
 model VoucherPurchase {
-  id        String   @id @default(cuid())
-  code      String   @unique
-  amount    Int
-  senderName  String
-  senderEmail String
-  recipientName String
+  id             String   @id @default(cuid())
+  code           String   @unique
+  amount         Int
+  senderName     String
+  senderEmail    String
+  recipientName  String
   recipientEmail String
-  message   String   @default("")
-  status    String   @default("active")
-  createdAt DateTime @default(now())
+  message        String   @default("")
+  status         String   @default("active")
+  createdAt      DateTime @default(now())
+  redemptions    VoucherRedemption[]
 }
 
 model Referral {
@@ -147,6 +150,30 @@ model Referral {
   createdAt DateTime @default(now())
 }
 
+model AdminUser {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("admin") // admin, receptionist, therapist, manager
+  active    Boolean  @default(true)
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PromoLog {
+  id          String   @id @default(cuid())
+  message     String
+  filter      String   @default("all")
+  sentCount   Int      @default(0)
+  failCount   Int      @default(0)
+  sentBy     String   @default("")
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
 model ChatMessage {
   id        String   @id @default(cuid())
   sessionId String
@@ -159,4 +186,67 @@ model SiteConfig {
   id    String @id @default(cuid())
   key   String @unique
   value String
+}
+
+model StaffAvailability {
+  id         String   @id @default(cuid())
+  therapistId String
+  therapist  Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+  dayOfWeek  Int      // 0=Sun, 1=Mon...6=Sat
+  startTime  String   // "09:00" (24h)
+  endTime    String   // "17:00" (24h)
+  available  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@unique([therapistId, dayOfWeek])
+}
+
+model LoyaltyLog {
+  id          String   @id @default(cuid())
+  memberId    String
+  member      Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  bookingId   String?
+  points      Int      // positive=earn, negative=redeem
+  reason      String   // "booking_completed", "referral_bonus", "redeemed", "manual_adjust"
+  description String   @default("")
+  createdById String?
+  createdAt   DateTime @default(now())
+}
+
+model VoucherRedemption {
+  id            String          @id @default(cuid())
+  voucherId     String
+  voucher       VoucherPurchase @relation(fields: [voucherId], references: [id])
+  bookingId     String?
+  redeemedByName  String
+  redeemedByPhone String @default("")
+  discountAmount  Int
+  createdBy      String   @default("")
+  createdAt      DateTime @default(now())
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  name        String
+  message     String
+  filter      String   @default("all")
+  audience    String   @default("all")
+  status      String   @default("draft") // draft, scheduled, sent, failed
+  sentCount   Int      @default(0)
+  failCount   Int      @default(0)
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  createdBy   String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  logs        PromoLog[]
+}
+
+model PointsConfig {
+  id             String @id @default(cuid())
+  key            String @unique
+  value          Int    @default(0)
+  description    String @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
