@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { sendEmail, bookingConfirmationEmail, newBookingNotificationEmail } from '@/lib/email';
+import { sendEmail, bookingConfirmationEmail, newBookingNotificationEmail, paymentReceiptEmail, paymentNotificationEmail } from '@/lib/email';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -153,19 +153,36 @@ export async function POST(request: NextRequest) {
       paymentMethod: paymentMethod || 'cash', notes: notes || '',
     };
 
-    // Email to customer
+    // 1. Booking confirmation TO customer (from bookings@)
     sendEmail({
       to: email,
       subject: `Booking Confirmed — ${booking.bookingId} | Serenity Touch Spa`,
       html: bookingConfirmationEmail(bookingData),
+      from: 'bookings',
     }).catch(() => {});
 
-    // Email to bookings team
+    // 2. New booking notification TO bookings@ team (from bookings@)
     sendEmail({
       to: 'bookings@serenitytouch.co.za',
       subject: `New Booking: ${booking.bookingId} — ${serviceRecord.name}`,
       html: newBookingNotificationEmail(bookingData),
+      from: 'bookings',
     }).catch(() => {});
+
+    // 3. If payment method is mobile_money or bank_transfer, notify payments@ (from payments@)
+    if (paymentMethod === 'mobile_money' || paymentMethod === 'bank_transfer') {
+      sendEmail({
+        to: 'payments@serenitytouch.co.za',
+        cc: 'taonga@serenitytouch.co.za',
+        subject: `Payment Pending: ${booking.bookingId} — K${totalAmount.toLocaleString()}`,
+        html: paymentNotificationEmail({
+          name, email, bookingId: booking.bookingId,
+          serviceName: serviceRecord.name, totalAmount,
+          paymentMethod: paymentMethod || 'cash',
+        }),
+        from: 'payments',
+      }).catch(() => {});
+    }
 
     return NextResponse.json(
       {

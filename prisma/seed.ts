@@ -11,6 +11,9 @@ async function seed() {
     { key: 'spa_address', value: '183 Ibex Hill, Lusaka, Zambia' },
     { key: 'spa_phone', value: '+260 572 782 539' },
     { key: 'spa_whatsapp', value: '+260 761 404 555' },
+    { key: 'spa_email_bookings', value: 'bookings@serenitytouch.co.za' },
+    { key: 'spa_email_payments', value: 'payments@serenitytouch.co.za' },
+    { key: 'spa_email_taonga', value: 'taonga@serenitytouch.co.za' },
     { key: 'spa_email', value: 'info@serenitytouch.co.za' },
     { key: 'spa_hours_weekday', value: '9:00 AM - 6:00 PM' },
     { key: 'spa_hours_saturday', value: '10:00 AM - 5:00 PM' },
@@ -65,7 +68,7 @@ async function seed() {
 
   // Therapists
   const therapists = [
-    { name: 'Tina Mwanza', specialty: 'Swedish, Deep Tissue, Aromatherapy', bio: 'Lead therapist and founder with 12 years of wellness expertise. Certified in multiple massage modalities.', image: 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&q=80', sortOrder: 1 },
+    { name: 'Taonga Phiri', specialty: 'Swedish, Deep Tissue, Aromatherapy', bio: 'Lead therapist and founder with 12 years of wellness expertise. Certified in multiple massage modalities.', image: 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&q=80', sortOrder: 1 },
     { name: 'Grace Phiri', specialty: 'Aromatherapy, Pregnancy, Reflexology', bio: 'Specialist in prenatal and holistic treatments. Known for her gentle, nurturing approach.', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80', sortOrder: 2 },
     { name: 'Patricia Banda', specialty: 'Thai, Reflexology, Sports Massage', bio: 'Trained in traditional Thai massage in Bangkok. Brings authentic Eastern techniques to Lusaka.', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80', sortOrder: 3 },
     { name: 'Chipo Mulenga', specialty: 'Couples, Full Body, Hot Stone', bio: 'Expert in premium spa experiences. Specializes in creating memorable couples treatments.', image: 'https://images.unsplash.com/photo-1586195500755-4aae5e8e56e5?w=400&q=80', sortOrder: 4 },
@@ -76,7 +79,7 @@ async function seed() {
 
   // Testimonials
   const testimonials = [
-    { name: 'Sarah Mwenda', rating: 5, content: 'Absolutely incredible experience. The deep tissue massage was exactly what I needed after weeks of back pain. Tina is truly gifted!', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&q=80', service: 'Deep Tissue Massage', featured: true, sortOrder: 1 },
+    { name: 'Sarah Mwenda', rating: 5, content: 'Absolutely incredible experience. The deep tissue massage was exactly what I needed after weeks of back pain. Taonga is truly gifted!', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&q=80', service: 'Deep Tissue Massage', featured: true, sortOrder: 1 },
     { name: 'James Chanda', rating: 5, content: 'Best spa in Lusaka, hands down. The couples massage was a perfect anniversary treat. We will definitely be back.', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80', service: 'Couples Massage', featured: true, sortOrder: 2 },
     { name: 'Mwansa Kapila', rating: 5, content: 'The aromatherapy session was heavenly. Grace made me feel so relaxed, I almost fell asleep. The oils smelled amazing.', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&q=80', service: 'Aromatherapy Massage', featured: true, sortOrder: 3 },
     { name: 'David Mulenga', rating: 4, content: 'Great Thai massage experience. Patricia really knows her stuff. The stretching techniques were exactly what my body needed.', image: 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=200&q=80', service: 'Thai Massage', featured: false, sortOrder: 4 },
@@ -100,7 +103,7 @@ async function seed() {
   // Blog Posts
   const posts = [
     { title: 'The Benefits of Regular Massage Therapy', slug: 'benefits-regular-massage', excerpt: 'Discover how consistent massage treatments can transform your physical and mental wellbeing.', content: 'Regular massage therapy offers numerous benefits beyond simple relaxation. Studies show that consistent treatments can reduce cortisol levels by up to 30%, improve sleep quality, boost immune function, and reduce chronic pain. At Serenity Touch Spa, we recommend monthly sessions for optimal wellness benefits.', category: 'Wellness', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80', author: 'Serenity Touch Team' },
-    { title: 'Self-Care Sunday: Your Home Spa Routine', slug: 'self-care-sunday-home-spa', excerpt: 'Create a spa-like experience at home with our expert tips and techniques.', content: 'Transform your Sunday into a spa day with these simple steps: Start with dry brushing to stimulate circulation, follow with a warm bath using Epsom salts and essential oils, apply a nourishing body oil, and finish with a calming face mask. Light candles and play soft music for the full Serenity Touch experience at home.', category: 'Tips', image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80', author: 'Tina Mwanza' },
+    { title: 'Self-Care Sunday: Your Home Spa Routine', slug: 'self-care-sunday-home-spa', excerpt: 'Create a spa-like experience at home with our expert tips and techniques.', content: 'Transform your Sunday into a spa day with these simple steps: Start with dry brushing to stimulate circulation, follow with a warm bath using Epsom salts and essential oils, apply a nourishing body oil, and finish with a calming face mask. Light candles and play soft music for the full Serenity Touch experience at home.', category: 'Tips', image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80', author: 'Taonga Phiri' },
     { title: 'Understanding Deep Tissue Massage', slug: 'understanding-deep-tissue', excerpt: 'What to expect from your first deep tissue session and why it might change your life.', content: 'Deep tissue massage targets the inner layers of your muscles and connective tissue. Unlike Swedish massage which uses lighter pressure, deep tissue uses firm pressure and slow strokes to reach deeper muscle layers. It is especially helpful for chronic aches, stiff neck, upper back pain, and muscle tightness.', category: 'Education', image: 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=600&q=80', author: 'Patricia Banda' },
   ];
   for (const p of posts) {

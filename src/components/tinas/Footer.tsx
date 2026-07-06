@@ -59,6 +59,8 @@ export default function Footer() {
               <li><a href="https://wa.me/260761404555" className="hover:text-gold transition-colors">WhatsApp: +260 761 404 555</a></li>
               <li><a href="mailto:bookings@serenitytouch.co.za" className="hover:text-gold transition-colors">bookings@serenitytouch.co.za</a></li>
               <li><a href="mailto:info@serenitytouch.co.za" className="hover:text-gold transition-colors">info@serenitytouch.co.za</a></li>
+              <li><a href="mailto:payments@serenitytouch.co.za" className="hover:text-gold transition-colors">payments@serenitytouch.co.za</a></li>
+              <li><a href="mailto:taonga@serenitytouch.co.za" className="hover:text-gold transition-colors">taonga@serenitytouch.co.za</a></li>
               <li><a href="https://serenitytouch.co.za" className="hover:text-gold transition-colors">www.serenitytouch.co.za</a></li>
             </ul>
           </div>

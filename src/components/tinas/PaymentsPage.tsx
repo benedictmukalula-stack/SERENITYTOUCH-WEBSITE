@@ -299,7 +299,13 @@ export default function PaymentsPage() {
                   className="flex items-center justify-center gap-2 border border-gold/20 text-gold hover:bg-gold/10 px-6 py-3 rounded-full text-sm font-semibold transition cursor-pointer"
                 >
                   <Phone className="w-4 h-4" />
-                  Call +260 572 782 539
+                  Call Us
+                </a>
+                <a
+                  href="mailto:payments@serenitytouch.co.za"
+                  className="flex items-center justify-center gap-2 border border-pink-brand/30 text-pink-brand hover:bg-pink-brand/10 px-6 py-3 rounded-full text-sm font-semibold transition cursor-pointer"
+                >
+                  payments@serenitytouch.co.za
                 </a>
               </div>
             </div>

@@ -50,9 +50,10 @@ HOURS: Mon-Fri ${gc('spa_hours_weekday') || '9AM-6PM'}, Sat ${gc('spa_hours_satu
 LOCATION: ${gc('spa_address') || '183 Ibex Hill, Lusaka, Zambia'}
 PHONE: ${gc('spa_phone') || '+260 572 782 539'}
 WHATSAPP: ${gc('spa_whatsapp') || '+260 761 404 555'}
-EMAIL: ${gc('spa_email') || 'info@serenitytouch.co.za'}
-MOBILE MONEY: Airtel Money ${gc('mobile_money_airtel') || '+260 761 404 555'}, MTN Mobile Money ${gc('mobile_money_mtn') || '+260 977 555 123'}
-PAYMENT: Cash, Airtel Money, MTN Mobile Money, Bank Transfer (ZANACO 1234567890 Ibex Hill Branch), Card at spa
+EMAILS: bookings@serenitytouch.co.za (reservations), info@serenitytouch.co.za (general), payments@serenitytouch.co.za (payment queries), taonga@serenitytouch.co.za (founder)
+MOBILE MONEY: MTN Mobile Money +260 761 404 555 (Taonga Phiri), Airtel Money +260 572 782 539 (Taonga Phiri)
+BANK: Benedict Bwalya Mukalula, Acc# 7291199200262, Current Account, Branch 040, Sort 010040
+PAYMENT: Cash at spa, MTN Mobile Money, Airtel Money, Bank Transfer, Card at spa
 MEMBERSHIP: Silver K800/mo, Gold K1,600/mo, Platinum K3,200/mo
 VOUCHERS: K500-K5,000, valid 12 months
 CALLOUT: Zone 1 K200, Zone 2 K350, Zone 3 K500

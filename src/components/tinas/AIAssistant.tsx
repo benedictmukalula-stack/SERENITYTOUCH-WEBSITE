@@ -118,7 +118,7 @@ export default function AIAssistant() {
             <div className="flex items-center justify-between px-4 py-3 shrink-0" style={{ background: 'linear-gradient(135deg, rgba(233,30,99,0.12), rgba(212,175,55,0.08))', borderBottom: '1px solid rgba(212,175,55,0.1)' }}>
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-gold/30 shadow-lg shrink-0">
-                  <img src={THERAPIST_TINA} alt="Tina" className="w-full h-full object-cover" />
+                  <img src={THERAPIST_TINA} alt="Taonga" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <p className="heading-display text-[13px] text-white leading-tight">Serenity</p>
@@ -138,7 +138,7 @@ export default function AIAssistant() {
               {messages.length === 0 && !isTyping && !isStreaming && (
                 <div className="flex flex-col items-center justify-center h-full text-center px-4">
                   <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gold/20 mb-3">
-                    <img src={THERAPIST_TINA} alt="Tina" className="w-full h-full object-cover" />
+                    <img src={THERAPIST_TINA} alt="Taonga" className="w-full h-full object-cover" />
                   </div>
                   <p className="heading-display text-[14px] text-white mb-1">Hi, I&apos;m Serenity</p>
                   <p className="body-serif text-[12px] text-pink-glow/40 leading-relaxed mb-4">Ask me about treatments, pricing, or book an appointment right here.</p>

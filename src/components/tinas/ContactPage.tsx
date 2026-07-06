@@ -27,6 +27,8 @@ const contactInfo = [
   { icon: MessageCircle, label: 'WhatsApp', value: '+260 761 404 555', link: 'https://wa.me/260761404555' },
   { icon: Mail, label: 'Bookings', value: 'bookings@serenitytouch.co.za', link: 'mailto:bookings@serenitytouch.co.za' },
   { icon: Mail, label: 'General Enquiries', value: 'info@serenitytouch.co.za', link: 'mailto:info@serenitytouch.co.za' },
+  { icon: Mail, label: 'Payments', value: 'payments@serenitytouch.co.za', link: 'mailto:payments@serenitytouch.co.za' },
+  { icon: Mail, label: 'Founder', value: 'taonga@serenitytouch.co.za', link: 'mailto:taonga@serenitytouch.co.za' },
   { icon: Clock, label: 'Hours', value: 'Mon-Fri: 9AM-6PM\nSat: 10AM-5PM\nSun: Closed', link: null },
 ];
 
