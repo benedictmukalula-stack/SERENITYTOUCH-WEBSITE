@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Page = 'home' | 'services' | 'packages' | 'therapists' | 'about' | 'blog' | 'contact' | 'membership' | 'corporate' | 'vouchers' | 'gallery' | 'testimonials' | 'login' | 'register' | 'dashboard' | 'analytics';
+export type Page = 'home' | 'services' | 'packages' | 'therapists' | 'about' | 'blog' | 'contact' | 'membership' | 'corporate' | 'vouchers' | 'gallery' | 'testimonials' | 'login' | 'register' | 'dashboard' | 'analytics' | 'payments';
 
 export interface Member {
   id: string;

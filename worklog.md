@@ -163,3 +163,29 @@ Stage Summary:
 - AI assistant responds with live spa data and can create bookings in chat
 - Payment info in DB: Airtel Money +260 761 404 555, MTN Mobile Money +260 977 555 123, ZANACO bank transfer
 - All API routes tested and working
+---
+Task ID: 2-a through 2-e, 8b
+Agent: main-agent
+Task: Launch readiness - fix image loading, real payments, member logins, real bookings, WhatsApp fix, AI avatar
+
+Work Log:
+- Updated ContactPage payment panels with real MTN Mobile Money (+260 761 404 555, Taonga Phiri), Airtel Money (+260 572 782 539, Taonga Phiri), and Bank Transfer (Benedict Bwalya Mukalula, Acc: 7291199200262, Branch: 040, Sort: 010040) details
+- Removed Zamtel payment option and non-functional SMS/WhatsApp Business API cards from ContactPage
+- Updated MemberDashboard to fetch real bookings from /api/booking endpoint instead of using mock data
+- Added password hashing (SHA-256) to auth system with legacy plaintext fallback
+- Improved ImageWithSkeleton with gradient placeholder fallbacks
+- Added phone call button to WhatsApp popup
+- Updated Footer with 5-column layout including dedicated Payments section with real numbers
+- Created dedicated PaymentsPage component with all payment methods, copy-to-clipboard, and step-by-step payment guide
+- Added 'payments' to Page type in store and page router
+- Updated next.config.ts with Unsplash remote image patterns
+- Verified build succeeds and all APIs respond correctly
+
+Stage Summary:
+- Payment system fully integrated with real account details on ContactPage, PaymentsPage, and Footer
+- Member login uses hashed passwords with backward compatibility
+- MemberDashboard shows real booking data from database
+- WhatsApp button includes both chat and call options
+- AI assistant avatar confirmed using Tina's therapist image (7 references)
+- All mock booking data removed from MemberDashboard
+- Build successful, server running on port 3000

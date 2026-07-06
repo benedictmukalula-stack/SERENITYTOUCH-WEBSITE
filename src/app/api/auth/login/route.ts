@@ -7,6 +7,15 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
+// Simple hash function for password security (not cryptographic-grade, but better than plaintext)
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password + 'serenity-touch-salt-2024');
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 // Membership tier configurations
 const TIER_CONFIG: Record<string, { monthlyPrice: number; monthlyBookings: number }> = {
   Silver: { monthlyPrice: 800, monthlyBookings: 1 },
@@ -93,12 +102,13 @@ export async function POST(request: NextRequest) {
       }
 
       const memberTier = tier && TIER_CONFIG[tier] ? tier : 'Silver';
+      const hashedPassword = await hashPassword(password);
       const member = await db.member.create({
         data: {
           name,
           email: email.toLowerCase(),
           phone: phone || '',
-          password,
+          password: hashedPassword,
           tier: memberTier,
         },
       });
@@ -120,7 +130,17 @@ export async function POST(request: NextRequest) {
       where: { email: email.toLowerCase() },
     });
 
-    if (!member || member.password !== password) {
+    if (!member) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid email or password. Please check your credentials or contact support via WhatsApp.' },
+        { status: 401, headers: CORS_HEADERS }
+      );
+    }
+
+    // Support both plain text (legacy) and hashed passwords
+    const inputHash = await hashPassword(password);
+    const passwordValid = member.password === inputHash || member.password === password;
+    if (!passwordValid) {
       return NextResponse.json(
         { success: false, error: 'Invalid email or password. Please check your credentials or contact support via WhatsApp.' },
         { status: 401, headers: CORS_HEADERS }

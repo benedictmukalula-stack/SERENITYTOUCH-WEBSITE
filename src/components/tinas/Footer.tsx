@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer style={{ background: '#000000' }} className="border-t border-gold/8 pt-16 pb-8">
       <div className="container-tinas">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-12">
           <div className="col-span-2 md:col-span-1">
             <button onClick={() => navigate('home')} className="flex items-center gap-2.5 mb-4 cursor-pointer">
               <img src="/logo.jpg" alt="Serenity Touch Spa" className="h-9 w-auto rounded object-contain" />
@@ -41,6 +41,7 @@ export default function Footer() {
               {[
                 { label: 'Corporate Wellness', page: 'corporate' },
                 { label: 'Gift Vouchers', page: 'vouchers' },
+                { label: 'Payment Methods', page: 'payments' },
                 { label: 'Testimonials', page: 'testimonials' },
                 { label: 'Blog', page: 'blog' },
                 { label: 'About Us', page: 'about' },
@@ -58,6 +59,16 @@ export default function Footer() {
               <li><a href="https://wa.me/260761404555" className="hover:text-gold transition-colors">WhatsApp: +260 761 404 555</a></li>
               <li><a href="mailto:info@serenitytouch.co.zm" className="hover:text-gold transition-colors">info@serenitytouch.co.zm</a></li>
               <li><a href="https://serenitytouch.co.zm" className="hover:text-gold transition-colors">www.serenitytouch.co.zm</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-gold font-semibold text-sm tracking-wider uppercase mb-4">Payments</h4>
+            <ul className="space-y-2.5 text-xs text-gold/35">
+              <li className="text-gold/50 font-semibold">MTN Mobile Money</li>
+              <li className="font-mono">+260 761 404 555</li>
+              <li className="text-gold/50 font-semibold mt-2">Airtel Money</li>
+              <li className="font-mono">+260 572 782 539</li>
+              <li className="mt-2"><button onClick={() => navigate('payments')} className="hover:text-gold transition-colors cursor-pointer">View all payment methods &rarr;</button></li>
             </ul>
           </div>
         </div>

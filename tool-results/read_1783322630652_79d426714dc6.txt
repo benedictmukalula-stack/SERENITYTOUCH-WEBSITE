@@ -1,0 +1,406 @@
+     1→   600→   600→                      </div>
+     2→   601→   601→
+     3→   602→   602→                      {/* ═══════ FEATURE 3: Treatment Add-Ons ═══════ */}
+     4→   603→   603→                      <div className="mb-6">
+     5→   604→   604→                        <div className="flex items-center justify-between mb-3">
+     6→   605→   605→                          <label className="text-xs font-semibold text-gold/50 tracking-wider uppercase">Enhance Your Experience</label>
+     7→   606→   606→                          {addonTotal > 0 && (
+     8→   607→   607→                            <span className="badge-new">
+     9→   608→   608→                              <Sparkles className="w-3 h-3" />
+    10→   609→   609→                              +K{addonTotal.toLocaleString()} total
+    11→   610→   610→                            </span>
+    12→   611→   611→                          )}
+    13→   612→   612→                        </div>
+    14→   613→   613→                        <div className="space-y-2.5">
+    15→   614→   614→                          {addonOptions.map((addon) => {
+    16→   615→   615→                            const isSelected = selectedAddons.has(addon.id);
+    17→   616→   616→                            return (
+    18→   617→   617→                              <button type="button" key={addon.id}
+    19→   618→   618→                                onClick={() => {
+    20→   619→   619→                                  setSelectedAddons(prev => {
+    21→   620→   620→                                    const next = new Set(prev);
+    22→   621→   621→                                    if (next.has(addon.id)) next.delete(addon.id);
+    23→   622→   622→                                    else next.add(addon.id);
+    24→   623→   623→                                    return next;
+    25→   624→   624→                                  });
+    26→   625→   625→                                }}
+    27→   626→   626→                                className={`w-full p-4 rounded-xl border text-left transition-all cursor-pointer group flex items-start gap-4 ${
+    28→   627→   627→                                  isSelected
+    29→   628→   628→                                    ? 'border-pink-brand bg-pink-brand/[0.08]'
+    30→   629→   629→                                    : 'border-gold/12 bg-gold/[0.02] hover:border-gold/25'
+    31→   630→   630→                                }`}
+    32→   631→   631→                              >
+    33→   632→   632→                                {/* Checkbox indicator */}
+    34→   633→   633→                                <div className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+    35→   634→   634→                                  isSelected
+    36→   635→   635→                                    ? 'border-pink-brand bg-pink-brand'
+    37→   636→   636→                                    : 'border-gold/25 group-hover:border-gold/40'
+    38→   637→   637→                                }`}>
+    39→   638→   638→                                  {isSelected && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+    40→   639→   639→                                </div>
+    41→   640→   640→                                <div className="flex-1 min-w-0">
+    42→   641→   641→                                  <div className="flex items-center justify-between mb-1">
+    43→   642→   642→                                    <span className={`text-sm font-semibold group-hover:text-gold transition-colors ${isSelected ? 'text-pink-brand' : 'text-white'}`}>
+    44→   643→   643→                                      {addon.name}
+    45→   644→   644→                                    </span>
+    46→   645→   645→                                    <span className="text-sm font-bold text-gold shrink-0 ml-3">+K{addon.price}</span>
+    47→   646→   646→                                  </div>
+    48→   647→   647→                                  <p className="text-[11px] text-pink-glow/35 leading-relaxed">{addon.desc}</p>
+    49→   648→   648→                                </div>
+    50→   649→   649→                              </button>
+    51→   650→   650→                            );
+    52→   651→   651→                          })}
+    53→   652→   652→                        </div>
+    54→   653→   653→                        {addonTotal > 0 && (
+    55→   654→   654→                          <motion.div
+    56→   655→   655→                            initial={{ opacity: 0, y: -5 }}
+    57→   656→   656→                            animate={{ opacity: 1, y: 0 }}
+    58→   657→   657→                            className="mt-3 surface-raised rounded-xl p-4 flex items-center justify-between"
+    59→   658→   658→                          >
+    60→   659→   659→                            <span className="text-xs text-pink-glow/45">Add-Ons Total</span>
+    61→   660→   660→                            <span className="text-gradient-gold font-bold text-lg heading-display">K{addonTotal.toLocaleString()}</span>
+    62→   661→   661→                          </motion.div>
+    63→   662→   662→                        )}
+    64→   663→   663→                      </div>
+    65→   664→   664→
+    66→   665→   665→                      {/* ── Call-Out Zone Selection ── */}
+    67→   666→   666→                      <AnimatePresence>
+    68→   667→   667→                        {formData.bookingType === 'callout' && (
+    69→   668→   668→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+    70→   669→   669→                            <div className="space-y-4">
+    71→   670→   670→                              <div>
+    72→   671→   671→                                <label className="block text-sm font-semibold text-white mb-3">Call-Out Zone</label>
+    73→   672→   672→                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    74→   673→   673→                                  {calloutZones.map((zone) => (
+    75→   674→   674→                                    <button key={zone.id} type="button"
+    76→   675→   675→                                      onClick={() => setFormData(prev => ({ ...prev, calloutZone: zone.id }))}
+    77→   676→   676→                                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+    78→   677→   677→                                        formData.calloutZone === zone.id
+    79→   678→   678→                                          ? 'border-pink-brand bg-pink-brand/10'
+    80→   679→   679→                                          : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+    81→   680→   680→                                      }`}
+    82→   681→   681→                                    >
+    83→   682→   682→                                      <div className="flex items-center justify-between mb-1">
+    84→   683→   683→                                        <p className={`text-sm font-semibold ${formData.calloutZone === zone.id ? 'text-pink-brand' : 'text-pink-glow/45'}`}>{zone.label}</p>
+    85→   684→   684→                                        <span className={`text-sm font-bold ${formData.calloutZone === zone.id ? 'text-gold' : 'text-gold/50'}`}>{zone.fee > 0 ? `K${zone.fee}` : 'Quote'}</span>
+    86→   685→   685→                                      </div>
+    87→   686→   686→                                      <p className="text-[11px] text-gold/40 leading-tight">{zone.desc} &middot; {zone.areas}</p>
+    88→   687→   687→                                    </button>
+    89→   688→   688→                                  ))}
+    90→   689→   689→                                </div>
+    91→   690→   690→                              </div>
+    92→   691→   691→                              <div>
+    93→   692→   692→                                <label className="block text-sm font-semibold text-white mb-2">Your Address *</label>
+    94→   693→   693→                                <div className="relative">
+    95→   694→   694→                                  <Navigation className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40" />
+    96→   695→   695→                                  <input type="text" name="calloutAddress" value={formData.calloutAddress} onChange={handleChange} className="w-full pl-10 input-dark" placeholder="Enter your full address for the call-out" />
+    97→   696→   696→                                </div>
+    98→   697→   697→                              </div>
+    99→   698→   698→
+   100→   699→   699→                              {/* Call-Out Fee Summary */}
+   101→   700→   700→                              <div className="surface-raised rounded-xl p-4 border-pink-brand/20">
+   102→   701→   701→                                <div className="flex items-center gap-2 mb-3">
+   103→   702→   702→                                  <Car className="w-4 h-4 text-pink-brand" />
+   104→   703→   703→                                  <p className="text-xs font-semibold text-pink-brand tracking-wider">CALL-OUT FEE SUMMARY</p>
+   105→   704→   704→                                </div>
+   106→   705→   705→                                <div className="space-y-2 text-sm">
+   107→   706→   706→                                  <div className="flex justify-between">
+   108→   707→   707→                                    <span className="text-pink-glow/45">Service</span>
+   109→   708→   708→                                    <span className="text-white font-medium">{serviceOptions.find(s => s.value === formData.service)?.label.split('—')[0]?.trim() || 'Select a service'}</span>
+   110→   709→   709→                                  </div>
+   111→   710→   710→                                  <div className="flex justify-between">
+   112→   711→   711→                                    <span className="text-pink-glow/45">Service Price</span>
+   113→   712→   712→                                    <span className="text-white font-medium">K{servicePrices[formData.service] || 0}</span>
+   114→   713→   713→                                  </div>
+   115→   714→   714→                                  {addonTotal > 0 && (
+   116→   715→   715→                                    <div className="flex justify-between">
+   117→   716→   716→                                      <span className="text-pink-glow/45">Add-Ons</span>
+   118→   717→   717→                                      <span className="text-white font-medium">K{addonTotal.toLocaleString()}</span>
+   119→   718→   718→                                    </div>
+   120→   719→   719→                                  )}
+   121→   720→   720→                                  <div className="h-px bg-gold/10 my-1"></div>
+   122→   721→   721→                                  <div className="flex justify-between">
+   123→   722→   722→                                    <span className="text-pink-glow/45">Call-Out Fee</span>
+   124→   723→   723→                                    <span className="text-gold font-bold">{(() => { const z = calloutZones.find(z => z.id === formData.calloutZone); return z?.fee ? `K${z.fee}` : 'TBD'; })()}</span>
+   125→   724→   724→                                  </div>
+   126→   725→   725→                                  <div className="h-px bg-gold/10 my-1"></div>
+   127→   726→   726→                                  <div className="flex justify-between">
+   128→   727→   727→                                    <span className="text-white font-semibold">Estimated Total</span>
+   129→   728→   728→                                    <span className="text-gradient-gold font-bold">{(() => { const p = (servicePrices[formData.service] || 0) + addonTotal; const z = calloutZones.find(z => z.id === formData.calloutZone); const f = z?.fee || 0; return f > 0 ? `K${(p + f).toLocaleString()}` : `K${p.toLocaleString()} + call-out fee`; })()}</span>
+   130→   729→   729→                                  </div>
+   131→   730→   730→                                </div>
+   132→   731→   731→                              </div>
+   133→   732→   732→                            </div>
+   134→   733→   733→                          </motion.div>
+   135→   734→   734→                        )}
+   136→   735→   735→                      </AnimatePresence>
+   137→   736→   736→
+   138→   737→   737→                      {/* ── Payment Method ── */}
+   139→   738→   738→                      <div>
+   140→   739→   739→                        <label className="block text-sm font-semibold text-white mb-3">Payment Method</label>
+   141→   740→   740→                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+   142→   741→   741→                          {paymentMethods.map((pm) => (
+   143→   742→   742→                            <button key={pm.id} type="button"
+   144→   743→   743→                              onClick={() => { setFormData(prev => ({ ...prev, paymentMethod: pm.id })); setShowPayment(pm.id !== 'cash'); }}
+   145→   744→   744→                              className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+   146→   745→   745→                                formData.paymentMethod === pm.id
+   147→   746→   746→                                  ? 'border-pink-brand bg-pink-brand/10'
+   148→   747→   747→                                  : 'border-gold/12 bg-gold/[0.04] hover:border-pink-brand/30'
+   149→   748→   748→                              }`}
+   150→   749→   749→                            >
+   151→   750→   750→                              <pm.icon className={`w-4 h-4 mb-1.5 ${formData.paymentMethod === pm.id ? 'text-pink-brand' : 'text-pink-brand/40'}`} />
+   152→   751→   751→                              <p className={`text-xs font-semibold ${formData.paymentMethod === pm.id ? 'text-pink-brand' : 'text-pink-glow/45'}`}>{pm.label}</p>
+   153→   752→   752→                              <p className="text-[10px] text-gold/40 mt-0.5 leading-tight">{pm.desc}</p>
+   154→   753→   753→                            </button>
+   155→   754→   754→                          ))}
+   156→   755→   755→                        </div>
+   157→   756→   756→                      </div>
+   158→   757→   757→
+   159→   758→   758→                      {/* ── Payment Panels ── */}
+   160→   759→   759→                      <AnimatePresence>
+   161→   760→   760→                        {showPayment && formData.paymentMethod === 'mobile_money' && (
+   162→   761→   761→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+   163→   762→   762→                            <div className="surface-raised rounded-xl p-5 space-y-4">
+   164→   763→   763→                              <p className="text-xs font-semibold text-pink-brand tracking-wider">MOBILE MONEY PAYMENT</p>
+   165→   764→   764→                              <div className="grid grid-cols-3 gap-3">
+   166→   765→   765→                                {[
+   167→   766→   766→                                  { name: 'MTN', number: '0777 123 456', color: 'border-yellow-500/30 bg-yellow-500/5' },
+   168→   767→   767→                                  { name: 'Airtel', number: '0977 123 456', color: 'border-red-500/30 bg-red-500/5' },
+   169→   768→   768→                                  { name: 'Zamtel', number: '0955 123 456', color: 'border-blue-500/30 bg-blue-500/5' },
+   170→   769→   769→                                ].map((network) => (
+   171→   770→   770→                                  <div key={network.name} className={`border rounded-lg p-3 text-center ${network.color}`}>
+   172→   771→   771→                                    <p className="text-xs font-bold text-white">{network.name}</p>
+   173→   772→   772→                                    <p className="text-[11px] text-pink-glow/35 mt-1">{network.number}</p>
+   174→   773→   773→                                  </div>
+   175→   774→   774→                                ))}
+   176→   775→   775→                              </div>
+   177→   776→   776→                              <p className="text-[11px] text-gold/50 body-serif font-light">Send payment using the reference code you receive after booking confirmation. Screenshot your payment receipt and send via WhatsApp.</p>
+   178→   777→   777→                            </div>
+   179→   778→   778→                          </motion.div>
+   180→   779→   779→                        )}
+   181→   780→   780→                        {showPayment && formData.paymentMethod === 'bank_transfer' && (
+   182→   781→   781→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+   183→   782→   782→                            <div className="surface-raised rounded-xl p-5 space-y-3">
+   184→   783→   783→                              <p className="text-xs font-semibold text-pink-brand tracking-wider">BANK TRANSFER DETAILS</p>
+   185→   784→   784→                              <div className="grid sm:grid-cols-2 gap-3 text-sm">
+   186→   785→   785→                                <div><span className="text-gold/50 text-xs">Bank:</span><p className="text-white font-medium">Stanbic Bank Zambia</p></div>
+   187→   786→   786→                                <div><span className="text-gold/50 text-xs">Account Name:</span><p className="text-white font-medium">Serenity Touch Spa Ltd</p></div>
+   188→   787→   787→                                <div><span className="text-gold/50 text-xs">Account Number:</span><p className="text-white font-medium font-mono">9030-XXXX-XXXX</p></div>
+   189→   788→   788→                                <div><span className="text-gold/50 text-xs">Branch:</span><p className="text-white font-medium">Ibex Hill, Lusaka</p></div>
+   190→   789→   789→                              </div>
+   191→   790→   790→                              <p className="text-[11px] text-gold/50 body-serif font-light">Use your booking ID as the payment reference. Send proof of payment via WhatsApp for confirmation.</p>
+   192→   791→   791→                            </div>
+   193→   792→   792→                          </motion.div>
+   194→   793→   793→                        )}
+   195→   794→   794→                        {showPayment && formData.paymentMethod === 'card' && (
+   196→   795→   795→                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+   197→   796→   796→                            <div className="surface-raised rounded-xl p-5 space-y-3">
+   198→   797→   797→                              <p className="text-xs font-semibold text-pink-brand tracking-wider">ONLINE CARD PAYMENT</p>
+   199→   798→   798→                              <p className="text-sm text-pink-glow/35 body-serif font-light">After submitting your booking, you will receive a secure payment link via email and WhatsApp. We accept Visa and Mastercard.</p>
+   200→   799→   799→                              <div className="flex gap-2 items-center">
+   201→   800→   800→                                <div className="bg-gold/8 border border-gold/8 rounded-lg px-3 py-2 text-xs text-pink-glow/45">VISA</div>
+   202→   801→   801→                                <div className="bg-gold/8 border border-gold/8 rounded-lg px-3 py-2 text-xs text-pink-glow/45">MASTERCARD</div>
+   203→   802→   802→                                <div className="ml-auto flex items-center gap-1 text-[10px] text-gold/40">
+   204→   803→   803→                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+   205→   804→   804→                                  Secured by SSL
+   206→   805→   805→                                </div>
+   207→   806→   806→                              </div>
+   208→   807→   807→                            </div>
+   209→   808→   808→                          </motion.div>
+   210→   809→   809→                        )}
+   211→   810→   810→                      </AnimatePresence>
+   212→   811→   811→
+   213→   812→   812→                      {/* ── Additional Notes ── */}
+   214→   813→   813→                      <div>
+   215→   814→   814→                        <label className="block text-sm font-semibold text-white mb-2">Additional Notes</label>
+   216→   815→   815→                        <textarea name="message" value={formData.message} onChange={handleChange} rows={4} className="w-full input-dark resize-none" placeholder="Any special requests or preferences?" />
+   217→   816→   816→                      </div>
+   218→   817→   817→
+   219→   818→   818→                      {/* ── Error ── */}
+   220→   819→   819→                      {status === 'error' && (
+   221→   820→   820→                        <div className="flex items-center gap-2 text-red-400 text-sm">
+   222→   821→   821→                          <AlertCircle className="w-4 h-4" />
+   223→   822→   822→                          <span>Something went wrong. Please try again.</span>
+   224→   823→   823→                        </div>
+   225→   824→   824→                      )}
+   226→   825→   825→
+   227→   826→   826→                      {/* ── Submit Buttons ── */}
+   228→   827→   827→                      <div className="flex flex-col sm:flex-row gap-3">
+   229→   828→   828→                        <button type="submit" disabled={status === 'loading'} className="flex-1 btn-pink py-3.5 text-sm cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2">
+   230→   829→   829→                          {status === 'loading' ? (<><Loader2 className="w-4 h-4 animate-spin" />Processing...</>) : 'Request Booking'}
+   231→   830→   830→                        </button>
+   232→   831→   831→                        <button type="button" onClick={handleWhatsAppBooking} className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3.5 rounded-full text-sm font-semibold transition cursor-pointer">
+   233→   832→   832→                          <MessageCircle className="w-4 h-4" /> Book via WhatsApp
+   234→   833→   833→                        </button>
+   235→   834→   834→                      </div>
+   236→   835→   835→                    </motion.form>
+   237→   836→   836→                  )}
+   238→   837→   837→                </AnimatePresence>
+   239→   838→   838→              </div>
+   240→   839→   839→
+   241→   840→   840→              {/* ═══════ FEATURE 5: SMS & WhatsApp Business Integration UI ═══════ */}
+   242→   841→   841→              <div className="mt-10 grid sm:grid-cols-2 gap-6">
+   243→   842→   842→                {/* Africa's Talking SMS Card */}
+   244→   843→   843→                <motion.div
+   245→   844→   844→                  initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
+   246→   845→   845→                  className="surface-raised rounded-2xl p-6"
+   247→   846→   846→                >
+   248→   847→   847→                  <div className="flex items-center gap-3 mb-5">
+   249→   848→   848→                    <div className="w-10 h-10 rounded-xl bg-pink-brand/10 flex items-center justify-center">
+   250→   849→   849→                      <Send className="w-5 h-5 text-pink-brand" />
+   251→   850→   850→                    </div>
+   252→   851→   851→                    <div>
+   253→   852→   852→                      <h3 className="text-sm font-bold text-white">Africa&apos;s Talking SMS</h3>
+   254→   853→   853→                      <p className="text-[11px] text-gold/40">Booking confirmations via SMS</p>
+   255→   854→   854→                    </div>
+   256→   855→   855→                  </div>
+   257→   856→   856→
+   258→   857→   857→                  <div className="space-y-4">
+   259→   858→   858→                    {/* Phone Input for SMS */}
+   260→   859→   859→                    <div>
+   261→   860→   860→                      <label className="block text-xs font-semibold text-pink-glow/45 mb-2">SMS Phone Number</label>
+   262→   861→   861→                      <input
+   263→   862→   862→                        type="tel"
+   264→   863→   863→                        value={smsPhone}
+   265→   864→   864→                        onChange={e => setSmsPhone(e.target.value)}
+   266→   865→   865→                        className="w-full input-dark"
+   267→   866→   866→                        placeholder="+260 XXX XXX XXX"
+   268→   867→   867→                      />
+   269→   868→   868→                    </div>
+   270→   869→   869→
+   271→   870→   870→                    {/* Toggle for SMS confirmation */}
+   272→   871→   871→                    <button
+   273→   872→   872→                      type="button"
+   274→   873→   873→                      onClick={() => setSmsEnabled(!smsEnabled)}
+   275→   874→   874→                      className="w-full flex items-center justify-between p-4 rounded-xl border border-gold/12 bg-gold/[0.02] hover:border-gold/25 transition cursor-pointer"
+   276→   875→   875→                    >
+   277→   876→   876→                      <div className="flex items-center gap-3">
+   278→   877→   877→                        <span className={`text-xs font-semibold ${smsEnabled ? 'text-pink-brand' : 'text-pink-glow/45'}`}>
+   279→   878→   878→                          Send booking confirmation via SMS
+   280→   879→   879→                        </span>
+   281→   880→   880→                      </div>
+   282→   881→   881→                      {smsEnabled ? (
+   283→   882→   882→                        <ToggleRight className="w-7 h-7 text-pink-brand" />
+   284→   883→   883→                      ) : (
+   285→   884→   884→                        <ToggleLeft className="w-7 h-7 text-gold/25" />
+   286→   885→   885→                      )}
+   287→   886→   886→                    </button>
+   288→   887→   887→
+   289→   888→   888→                    {/* SMS status indicator */}
+   290→   889→   889→                    <div className="flex items-center gap-2 text-[11px]">
+   291→   890→   890→                      <div className={`w-2 h-2 rounded-full ${smsEnabled ? 'bg-emerald-400' : 'bg-gold/20'}`} />
+   292→   891→   891→                      <span className={smsEnabled ? 'text-emerald-400/70' : 'text-gold/30'}>
+   293→   892→   892→                        {smsEnabled ? 'SMS confirmations enabled' : 'SMS confirmations disabled'}
+   294→   893→   893→                      </span>
+   295→   894→   894→                    </div>
+   296→   895→   895→
+   297→   896→   896→                    {smsEnabled && (
+   298→   897→   897→                      <motion.div
+   299→   898→   898→                        initial={{ opacity: 0, y: -5 }}
+   300→   899→   899→                        animate={{ opacity: 1, y: 0 }}
+   301→   900→   900→                        className="surface-raised rounded-lg p-3 text-[11px] text-pink-glow/35 body-serif font-light leading-relaxed"
+   302→   901→   901→                      >
+   303→   902→   902→                        Booking confirmations will be sent to <span className="text-white font-medium">{smsPhone || 'your phone number'}</span> via Africa&apos;s Talking API. Standard SMS rates apply.
+   304→   903→   903→                      </motion.div>
+   305→   904→   904→                    )}
+   306→   905→   905→                  </div>
+   307→   906→   906→                </motion.div>
+   308→   907→   907→
+   309→   908→   908→                {/* WhatsApp Business API Card */}
+   310→   909→   909→                <motion.div
+   311→   910→   910→                  initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1}
+   312→   911→   911→                  className="surface-raised rounded-2xl p-6"
+   313→   912→   912→                >
+   314→   913→   913→                  <div className="flex items-center gap-3 mb-5">
+   315→   914→   914→                    <div className="w-10 h-10 rounded-xl bg-green-600/10 flex items-center justify-center">
+   316→   915→   915→                      <Bot className="w-5 h-5 text-green-400" />
+   317→   916→   916→                    </div>
+   318→   917→   917→                    <div>
+   319→   918→   918→                      <h3 className="text-sm font-bold text-white">WhatsApp Business API</h3>
+   320→   919→   919→                      <p className="text-[11px] text-gold/40">Automated customer engagement</p>
+   321→   920→   920→                    </div>
+   322→   921→   921→                  </div>
+   323→   922→   922→
+   324→   923→   923→                  <div className="space-y-4">
+   325→   924→   924→                    {/* Auto-reply Status */}
+   326→   925→   925→                    <div className="flex items-center justify-between p-4 rounded-xl border border-green-500/15 bg-green-500/[0.03]">
+   327→   926→   926→                      <div className="flex items-center gap-3">
+   328→   927→   927→                        <div className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse" />
+   329→   928→   928→                        <div>
+   330→   929→   929→                          <p className="text-xs font-semibold text-green-400">Auto-reply enabled</p>
+   331→   930→   930→                          <p className="text-[10px] text-gold/35 mt-0.5">Instant responses to customer queries</p>
+   332→   931→   931→                        </div>
+   333→   932→   932→                      </div>
+   334→   933→   933→                      <span className="badge-sexy text-[10px] px-2 py-1">Active</span>
+   335→   934→   934→                    </div>
+   336→   935→   935→
+   337→   936→   936→                    {/* Quick Reply Templates */}
+   338→   937→   937→                    <div>
+   339→   938→   938→                      <label className="block text-xs font-semibold text-pink-glow/45 mb-3">Quick Reply Templates</label>
+   340→   939→   939→                      <div className="space-y-2 max-h-48 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
+   341→   940→   940→                        {whatsappTemplates.map((tpl) => (
+   342→   941→   941→                          <div key={tpl.trigger} className="rounded-lg border border-gold/8 bg-gold/[0.02] p-3">
+   343→   942→   942→                            <div className="flex items-center gap-2 mb-1">
+   344→   943→   943→                              <span className="text-[10px] font-mono text-pink-brand bg-pink-brand/10 px-1.5 py-0.5 rounded">
+   345→   944→   944→                                /{tpl.trigger}
+   346→   945→   945→                              </span>
+   347→   946→   946→                            </div>
+   348→   947→   947→                            <p className="text-[11px] text-pink-glow/35 leading-relaxed">{tpl.reply}</p>
+   349→   948→   948→                          </div>
+   350→   949→   949→                        ))}
+   351→   950→   950→                      </div>
+   352→   951→   951→                    </div>
+   353→   952→   952→
+   354→   953→   953→                    {/* Test Bot Button */}
+   355→   954→   954→                    <button
+   356→   955→   955→                      type="button"
+   357→   956→   956→                      onClick={() => window.open('https://wa.me/260761404555?text=Hi%2C%20I%27d%20like%20to%20test%20the%20WhatsApp%20bot.', '_blank')}
+   358→   957→   957→                      className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-xs font-semibold transition cursor-pointer"
+   359→   958→   958→                    >
+   360→   959→   959→                      <MessageCircle className="w-4 h-4" />
+   361→   960→   960→                      Test WhatsApp Bot
+   362→   961→   961→                    </button>
+   363→   962→   962→                  </div>
+   364→   963→   963→                </motion.div>
+   365→   964→   964→              </div>
+   366→   965→   965→            </motion.div>
+   367→   966→   966→          </div>
+   368→   967→   967→        </div>
+   369→   968→   968→      </section>
+   370→   969→   969→
+   371→   970→   970→      {/* ───────── FAQ Section ───────── */}
+   372→   971→   971→      <section className="section-padding section-dark">
+   373→   972→   972→        <div className="container-tinas max-w-3xl">
+   374→   973→   973→          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold text-center mb-12 heading-display">
+   375→   974→   974→            Frequently Asked <span className="text-pink-brand">Questions</span>
+   376→   975→   975→          </motion.h2>
+   377→   976→   976→          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="space-y-3">
+   378→   977→   977→            {faqs.map((item, idx) => (
+   379→   978→   978→              <div key={idx} className="surface-raised rounded-xl overflow-hidden">
+   380→   979→   979→                <button onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)} className="w-full p-5 text-left flex items-center justify-between hover:bg-gold/[0.03] transition cursor-pointer">
+   381→   980→   980→                  <h3 className="font-bold text-[15px] heading-display pr-4 text-white">{item.q}</h3>
+   382→   981→   981→                  <svg className={`w-4 h-4 shrink-0 text-gold/40 transition-transform duration-300 ${expandedFaq === idx ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+   383→   982→   982→                </button>
+   384→   983→   983→                {expandedFaq === idx && (
+   385→   984→   984→                  <div className="px-5 pb-5 text-pink-glow/35 text-sm body-serif leading-relaxed border-t border-gold/8 pt-4 font-light">{item.a}</div>
+   386→   985→   985→                )}
+   387→   986→   986→              </div>
+   388→   987→   987→            ))}
+   389→   988→   988→          </motion.div>
+   390→   989→   989→        </div>
+   391→   990→   990→      </section>
+   392→   991→   991→
+   393→   992→   992→      {/* ───────── Closing CTA ───────── */}
+   394→   993→   993→      <section className="section-padding gradient-sexy">
+   395→   994→   994→        <div className="container-tinas text-center">
+   396→   995→   995→          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="text-4xl md:text-5xl font-bold mb-6 heading-display">
+   397→   996→   996→            We look forward to <span className="text-gradient-sexy">welcoming</span> you
+   398→   997→   997→          </motion.h2>
+   399→   998→   998→          <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1} className="text-lg mb-8 max-w-2xl mx-auto body-serif text-pink-glow/35 leading-relaxed font-light">
+   400→   999→   999→            Experience the transformation that awaits you at Serenity Touch Spa.
+   401→  1000→  1000→          </motion.p>
+   402→  1001→  1001→        </div>
+   403→  1002→  1002→      </section>
+   404→  1003→  1003→    </div>
+   405→  1004→  1004→  );
+   406→  1005→  1005→}

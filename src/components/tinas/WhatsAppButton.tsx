@@ -27,7 +27,7 @@ export default function WhatsAppButton() {
               </div>
             </div>
             <p className="text-sm text-pink-glow/35 body-serif mb-4">
-              Hi! Welcome to Serenity Touch Spa. How can we help you with your wellness journey today?
+              Chat with us on WhatsApp or call directly to book your treatment.
             </p>
             <a
               href="https://wa.me/260761404555?text=Hello%20Serenity%20Touch%20Spa!%20I'd%20like%20to%20learn%20more%20about%20your%20services."
@@ -36,6 +36,12 @@ export default function WhatsAppButton() {
               className="block w-full bg-green-500 hover:bg-green-600 text-white text-center py-2.5 rounded-xl text-sm font-semibold transition"
             >
               Open WhatsApp
+            </a>
+            <a
+              href="tel:+260572782539"
+              className="block w-full border border-gold/15 text-gold text-center py-2.5 rounded-xl text-sm font-semibold hover:bg-gold/10 transition mt-2"
+            >
+              Call +260 572 782 539
             </a>
           </motion.div>
         )}

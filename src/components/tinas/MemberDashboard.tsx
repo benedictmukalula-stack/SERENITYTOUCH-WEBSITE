@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Crown, Sparkles, Calendar, Clock, CreditCard, MessageCircle, LogOut,
@@ -24,13 +24,6 @@ const tierConfig = {
   Platinum: { color: 'from-pink-brand to-pink-hot', badge: 'bg-pink-brand/15 text-pink-brand border-pink-brand/25', icon: Crown, perks: ['Unlimited massages', '30% off services', '24/7 concierge', 'Personal wellness plan', 'Private therapy room', 'Monthly spa day', 'Home visits', 'Airport pickup', 'Annual retreat'] },
 };
 
-const mockBookings = [
-  { id: 'ST-K4M9Q', service: 'Swedish Massage', therapist: 'Tina Mulenga', date: '2026-07-10', time: '10:00 AM', status: 'confirmed', price: 'K800' },
-  { id: 'ST-J3L8P', service: 'Hot Stone Therapy', therapist: 'Grace Banda', date: '2026-07-18', time: '2:00 PM', status: 'pending', price: 'K1,000' },
-  { id: 'ST-H2K7N', service: 'Deep Tissue Massage', therapist: 'Chipo Mwale', date: '2026-06-28', time: '11:00 AM', status: 'completed', price: 'K1,200' },
-  { id: 'ST-G1J6M', service: 'Aromatherapy Treatment', therapist: 'Patricia Nkomo', date: '2026-06-15', time: '3:00 PM', status: 'completed', price: 'K900' },
-];
-
 const statusColors: Record<string, string> = {
   confirmed: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   pending: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
@@ -41,6 +34,35 @@ const statusColors: Record<string, string> = {
 export default function MemberDashboard() {
   const { member, logoutMember, navigate, isMemberLoggedIn } = useAppStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'bookings' | 'services' | 'rewards' | 'settings'>('overview');
+
+  const [realBookings, setRealBookings] = useState<Array<{
+    bookingId: string;
+    serviceName: string;
+    date: string;
+    time: string;
+    status: string;
+    totalAmount: number;
+    therapistName: string;
+    bookingType: string;
+    paymentMethod: string;
+    paymentStatus: string;
+  }>>([]);
+
+  const [bookingsLoading, setBookingsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!member?.email) return;
+    setBookingsLoading(true);
+    fetch(`/api/booking?email=${encodeURIComponent(member.email)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.bookings)) {
+          setRealBookings(data.bookings);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setBookingsLoading(false));
+  }, [member?.email]);
 
   if (!isMemberLoggedIn || !member) {
     navigate('login');
@@ -132,8 +154,8 @@ export default function MemberDashboard() {
 
       <section className="section-padding surface-base min-h-[60vh]">
         <div className="container-tinas">
-          {activeTab === 'overview' && <OverviewTab member={member} config={config} />}
-          {activeTab === 'bookings' && <BookingsTab member={member} />}
+          {activeTab === 'overview' && <OverviewTab member={member} config={config} bookings={realBookings} />}
+          {activeTab === 'bookings' && <BookingsTab member={member} bookings={realBookings} loading={bookingsLoading} />}
           {activeTab === 'services' && <ServicesTab member={member} />}
           {activeTab === 'rewards' && <RewardsTab member={member} />}
           {activeTab === 'settings' && <SettingsTab member={member} />}
@@ -143,12 +165,12 @@ export default function MemberDashboard() {
   );
 }
 
-function OverviewTab({ member, config }: { member: Member; config: typeof tierConfig.Silver }) {
+function OverviewTab({ member, config, bookings }: { member: Member; config: typeof tierConfig.Silver; bookings: typeof realBookings }) {
   const stats = [
     { label: 'Sessions Used', value: member.bookingsUsed.toString(), icon: Heart },
     { label: 'Remaining', value: member.bookingsRemaining === -1 ? 'Unlimited' : member.bookingsRemaining.toString(), icon: Calendar },
     { label: 'Next Billing', value: new Date(member.nextBilling).toLocaleDateString('en-ZM', { day: 'numeric', month: 'short' }), icon: CreditCard },
-    { label: 'Member ID', value: member.id, icon: Shield },
+    { label: 'Member Since', value: new Date(member.memberSince).toLocaleDateString('en-ZM', { month: 'short', year: 'numeric' }), icon: Shield },
   ];
 
   return (
@@ -188,19 +210,19 @@ function OverviewTab({ member, config }: { member: Member; config: typeof tierCo
               Upcoming Sessions
             </h3>
             <div className="space-y-3">
-              {mockBookings.filter(b => b.status !== 'completed').slice(0, 3).map((booking) => (
-                <div key={booking.id} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-gold/10">
+              {bookings.filter(b => b.status !== 'completed' && b.status !== 'cancelled').slice(0, 3).map((booking) => (
+                <div key={booking.bookingId} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-gold/10">
                   <div>
-                    <p className="text-sm font-semibold text-white">{booking.service}</p>
-                    <p className="text-xs text-gray-500">{booking.date} &middot; {booking.time}</p>
+                    <p className="text-sm font-semibold text-white">{booking.serviceName}</p>
+                    <p className="text-xs text-gray-500">{booking.date} &middot; {booking.time || 'TBD'} &middot; {booking.therapistName}</p>
                   </div>
-                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusColors[booking.status]}`}>
+                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusColors[booking.status] || statusColors.pending}`}>
                     {booking.status.toUpperCase()}
                   </span>
                 </div>
               ))}
-              {mockBookings.filter(b => b.status !== 'completed').length === 0 && (
-                <p className="text-sm text-gray-500">No upcoming sessions. Book one now!</p>
+              {bookings.filter(b => b.status !== 'completed' && b.status !== 'cancelled').length === 0 && (
+                <p className="text-sm text-gray-500 body-serif font-light">No upcoming bookings. <button onClick={() => useAppStore.getState().navigate('contact')} className="text-pink-brand hover:underline cursor-pointer">Book a session</button></p>
               )}
             </div>
           </div>
@@ -422,10 +444,10 @@ function RewardsTab({ member }: { member: Member }) {
   );
 }
 
-function BookingsTab({ member }: { member: Member }) {
+function BookingsTab({ member, bookings, loading }: { member: Member; bookings: typeof realBookings; loading: boolean }) {
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all');
-  const filtered = mockBookings.filter(b => {
-    if (filter === 'upcoming') return b.status !== 'completed';
+  const filtered = bookings.filter(b => {
+    if (filter === 'upcoming') return b.status !== 'completed' && b.status !== 'cancelled';
     if (filter === 'past') return b.status === 'completed';
     return true;
   });
@@ -449,27 +471,39 @@ function BookingsTab({ member }: { member: Member }) {
         </div>
       </motion.div>
 
+      {loading && (
+        <motion.div variants={fadeUp} custom={1} className="text-center py-12">
+          <div className="w-8 h-8 border-2 border-gold/20 border-t-gold rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-gray-500">Loading bookings...</p>
+        </motion.div>
+      )}
+      {!loading && filtered.length === 0 && (
+        <motion.div variants={fadeUp} custom={1} className="text-center py-12">
+          <Calendar className="w-10 h-10 text-gray-700 mx-auto mb-3" />
+          <p className="text-sm text-gray-500">No bookings found.</p>
+        </motion.div>
+      )}
       <motion.div variants={fadeUp} custom={1} className="space-y-3">
         {filtered.map((booking) => (
-          <div key={booking.id} className="surface-raised rounded-xl p-5 hover:border-gold/30 transition-all">
+          <div key={booking.bookingId} className="surface-raised rounded-xl p-5 hover:border-gold/30 transition-all">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
                   <Calendar className="w-4 h-4 text-gold" />
                 </div>
                 <div>
-                  <p className="font-semibold text-white text-sm">{booking.service}</p>
+                  <p className="font-semibold text-white text-sm">{booking.serviceName}</p>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    {booking.therapist} &middot; {booking.date} at {booking.time}
+                    {booking.therapistName} &middot; {booking.date} at {booking.time || 'TBD'}
                   </p>
-                  <p className="text-[10px] text-gray-600 mt-0.5">Booking ID: {booking.id}</p>
+                  <p className="text-[10px] text-gray-600 mt-0.5">Booking ID: {booking.bookingId}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 sm:flex-col sm:items-end">
-                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusColors[booking.status]}`}>
+                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusColors[booking.status] || statusColors.pending}`}>
                   {booking.status.toUpperCase()}
                 </span>
-                <span className="text-lg font-bold text-white">{booking.price}</span>
+                <span className="text-lg font-bold text-white">K{booking.totalAmount?.toLocaleString()}</span>
               </div>
             </div>
           </div>

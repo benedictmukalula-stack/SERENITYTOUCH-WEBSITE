@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   MapPin, Phone, Mail, Clock, Loader2, CheckCircle, AlertCircle, MessageCircle,
   CreditCard, Building2, Smartphone, Home, Car, Navigation,
-  ChevronLeft, ChevronRight, Calendar, ToggleLeft, ToggleRight,
-  Send, Bot, ExternalLink, Sparkles, Clock4, Zap, Footprints, Timer,
+  ChevronLeft, ChevronRight, Calendar,
+  ExternalLink, Sparkles, Clock4, Zap, Footprints, Timer,
 } from 'lucide-react';
 
 /* ──────────────────────── animation variant ──────────────────────── */
@@ -61,7 +61,7 @@ const calloutZones = [
 const servicePrices: Record<string, number> = { headscalp: 400, foot: 500, backneck: 600, swedish: 800, deeptissue: 1200, thai: 1100, aromatherapy: 900, reflexology: 850, pregnancy: 900, fullbody: 1000, couples: 2000 };
 
 const paymentMethods = [
-  { id: 'mobile_money', label: 'Mobile Money', icon: Smartphone, desc: 'MTN Mobile Money, Airtel Money, Zamtel' },
+  { id: 'mobile_money', label: 'Mobile Money', icon: Smartphone, desc: 'MTN Mobile Money & Airtel Money' },
   { id: 'bank_transfer', label: 'Bank EFT', icon: Building2, desc: 'Direct bank transfer' },
   { id: 'card', label: 'Card Payment', icon: CreditCard, desc: 'Visa, Mastercard (online)' },
   { id: 'cash', label: 'Pay at Spa', icon: MapPin, desc: 'Cash on arrival' },
@@ -73,7 +73,7 @@ const faqs = [
   { q: 'Do you offer membership plans?', a: 'Yes! We offer three membership tiers: Silver (K800/mo), Gold (K1,600/mo), and Platinum (K3,200/mo). Each includes different benefits and service inclusions.' },
   { q: 'Are your therapists certified?', a: "Yes, every therapist at Serenity Touch Spa is internationally certified and continually trained in the latest therapeutic techniques." },
   { q: 'What should I bring to my appointment?', a: 'Just bring yourself! We provide all linens, oils, and amenities. Arrive 10 minutes early to complete a brief wellness consultation.' },
-  { q: 'What payment methods do you accept?', a: 'We accept MTN Mobile Money, Airtel Money, Zamtel, bank EFT, Visa/Mastercard, and cash payments at the spa.' },
+  { q: 'What payment methods do you accept?', a: 'We accept MTN Mobile Money (+260 761 404 555), Airtel Money (+260 572 782 539), bank EFT, and cash payments at the spa. Payment details are shown when you select your preferred method during booking.' },
 ];
 
 /* ──────────────────────── treatment add-ons ──────────────────────── */
@@ -188,16 +188,6 @@ const defaultFormData = {
   bookingType: 'in_spa' as 'in_spa' | 'callout', calloutZone: '', calloutAddress: '',
 };
 
-/* ──────────────────────── WhatsApp quick reply templates ──────────────────────── */
-
-const whatsappTemplates = [
-  { trigger: 'hours', reply: 'Our hours: Mon-Fri 9AM-6PM, Sat 10AM-5PM, Sun Closed.' },
-  { trigger: 'services', reply: 'We offer Swedish, Deep Tissue, Thai, Aromatherapy, Pregnancy, Couples & more.' },
-  { trigger: 'prices', reply: 'Prices start from K400. Visit our website for the full price list.' },
-  { trigger: 'location', reply: 'We are at 183 Ibex Hill, Lusaka, Zambia.' },
-  { trigger: 'book', reply: 'To book, please fill out our online form or call +260 572 782 539.' },
-];
-
 /* ════════════════════════════════════════════════════════════════════
    COMPONENT
    ════════════════════════════════════════════════════════════════════ */
@@ -215,10 +205,6 @@ export default function ContactPage() {
   }, []);
   const [calendarYear, setCalendarYear] = useState(today.getFullYear());
   const [calendarMonth, setCalendarMonth] = useState(today.getMonth());
-
-  /* ── integration UI state ── */
-  const [smsEnabled, setSmsEnabled] = useState(false);
-  const [smsPhone, setSmsPhone] = useState('');
 
   /* ── add-on total ── */
   const addonTotal = useMemo(() => {
@@ -761,15 +747,15 @@ export default function ContactPage() {
                           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
                             <div className="surface-raised rounded-xl p-5 space-y-4">
                               <p className="text-xs font-semibold text-pink-brand tracking-wider">MOBILE MONEY PAYMENT</p>
-                              <div className="grid grid-cols-3 gap-3">
+                              <div className="grid sm:grid-cols-2 gap-3">
                                 {[
-                                  { name: 'MTN', number: '0777 123 456', color: 'border-yellow-500/30 bg-yellow-500/5' },
-                                  { name: 'Airtel', number: '0977 123 456', color: 'border-red-500/30 bg-red-500/5' },
-                                  { name: 'Zamtel', number: '0955 123 456', color: 'border-blue-500/30 bg-blue-500/5' },
+                                  { name: 'MTN Mobile Money', number: '+260 761 404 555', recipient: 'Taonga Phiri', color: 'border-yellow-500/30 bg-yellow-500/5' },
+                                  { name: 'Airtel Money', number: '+260 572 782 539', recipient: 'Taonga Phiri', color: 'border-red-500/30 bg-red-500/5' },
                                 ].map((network) => (
                                   <div key={network.name} className={`border rounded-lg p-3 text-center ${network.color}`}>
                                     <p className="text-xs font-bold text-white">{network.name}</p>
-                                    <p className="text-[11px] text-pink-glow/35 mt-1">{network.number}</p>
+                                    <p className="text-[11px] text-pink-glow/35 mt-1 font-mono">{network.number}</p>
+                                    <p className="text-[10px] text-gold/40 mt-0.5">{network.recipient}</p>
                                   </div>
                                 ))}
                               </div>
@@ -782,10 +768,12 @@ export default function ContactPage() {
                             <div className="surface-raised rounded-xl p-5 space-y-3">
                               <p className="text-xs font-semibold text-pink-brand tracking-wider">BANK TRANSFER DETAILS</p>
                               <div className="grid sm:grid-cols-2 gap-3 text-sm">
-                                <div><span className="text-gold/50 text-xs">Bank:</span><p className="text-white font-medium">Stanbic Bank Zambia</p></div>
-                                <div><span className="text-gold/50 text-xs">Account Name:</span><p className="text-white font-medium">Serenity Touch Spa Ltd</p></div>
-                                <div><span className="text-gold/50 text-xs">Account Number:</span><p className="text-white font-medium font-mono">9030-XXXX-XXXX</p></div>
-                                <div><span className="text-gold/50 text-xs">Branch:</span><p className="text-white font-medium">Ibex Hill, Lusaka</p></div>
+                                <div><span className="text-gold/50 text-xs">Account Name:</span><p className="text-white font-medium">Benedict Bwalya Mukalula</p></div>
+                                <div><span className="text-gold/50 text-xs">Account Number:</span><p className="text-white font-medium font-mono">7291199200262</p></div>
+                                <div><span className="text-gold/50 text-xs">Account Type:</span><p className="text-white font-medium">Current Account</p></div>
+                                <div><span className="text-gold/50 text-xs">Branch Code:</span><p className="text-white font-medium font-mono">040</p></div>
+                                <div><span className="text-gold/50 text-xs">Sort Code:</span><p className="text-white font-medium font-mono">010040</p></div>
+                                <div><span className="text-gold/50 text-xs">Status:</span><p className="text-emerald-400 font-medium">Active</p></div>
                               </div>
                               <p className="text-[11px] text-gold/50 body-serif font-light">Use your booking ID as the payment reference. Send proof of payment via WhatsApp for confirmation.</p>
                             </div>
@@ -795,7 +783,7 @@ export default function ContactPage() {
                           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
                             <div className="surface-raised rounded-xl p-5 space-y-3">
                               <p className="text-xs font-semibold text-pink-brand tracking-wider">ONLINE CARD PAYMENT</p>
-                              <p className="text-sm text-pink-glow/35 body-serif font-light">After submitting your booking, you will receive a secure payment link via email and WhatsApp. We accept Visa and Mastercard.</p>
+                              <p className="text-sm text-pink-glow/35 body-serif font-light">For card payments, please visit us at the spa or contact us on WhatsApp. We accept Visa and Mastercard. You can also pay via mobile money or bank transfer using the details provided above.</p>
                               <div className="flex gap-2 items-center">
                                 <div className="bg-gold/8 border border-gold/8 rounded-lg px-3 py-2 text-xs text-pink-glow/45">VISA</div>
                                 <div className="bg-gold/8 border border-gold/8 rounded-lg px-3 py-2 text-xs text-pink-glow/45">MASTERCARD</div>
@@ -837,132 +825,7 @@ export default function ContactPage() {
                 </AnimatePresence>
               </div>
 
-              {/* ═══════ FEATURE 5: SMS & WhatsApp Business Integration UI ═══════ */}
-              <div className="mt-10 grid sm:grid-cols-2 gap-6">
-                {/* Africa's Talking SMS Card */}
-                <motion.div
-                  initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
-                  className="surface-raised rounded-2xl p-6"
-                >
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 rounded-xl bg-pink-brand/10 flex items-center justify-center">
-                      <Send className="w-5 h-5 text-pink-brand" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-white">Africa&apos;s Talking SMS</h3>
-                      <p className="text-[11px] text-gold/40">Booking confirmations via SMS</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    {/* Phone Input for SMS */}
-                    <div>
-                      <label className="block text-xs font-semibold text-pink-glow/45 mb-2">SMS Phone Number</label>
-                      <input
-                        type="tel"
-                        value={smsPhone}
-                        onChange={e => setSmsPhone(e.target.value)}
-                        className="w-full input-dark"
-                        placeholder="+260 XXX XXX XXX"
-                      />
-                    </div>
-
-                    {/* Toggle for SMS confirmation */}
-                    <button
-                      type="button"
-                      onClick={() => setSmsEnabled(!smsEnabled)}
-                      className="w-full flex items-center justify-between p-4 rounded-xl border border-gold/12 bg-gold/[0.02] hover:border-gold/25 transition cursor-pointer"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className={`text-xs font-semibold ${smsEnabled ? 'text-pink-brand' : 'text-pink-glow/45'}`}>
-                          Send booking confirmation via SMS
-                        </span>
-                      </div>
-                      {smsEnabled ? (
-                        <ToggleRight className="w-7 h-7 text-pink-brand" />
-                      ) : (
-                        <ToggleLeft className="w-7 h-7 text-gold/25" />
-                      )}
-                    </button>
-
-                    {/* SMS status indicator */}
-                    <div className="flex items-center gap-2 text-[11px]">
-                      <div className={`w-2 h-2 rounded-full ${smsEnabled ? 'bg-emerald-400' : 'bg-gold/20'}`} />
-                      <span className={smsEnabled ? 'text-emerald-400/70' : 'text-gold/30'}>
-                        {smsEnabled ? 'SMS confirmations enabled' : 'SMS confirmations disabled'}
-                      </span>
-                    </div>
-
-                    {smsEnabled && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="surface-raised rounded-lg p-3 text-[11px] text-pink-glow/35 body-serif font-light leading-relaxed"
-                      >
-                        Booking confirmations will be sent to <span className="text-white font-medium">{smsPhone || 'your phone number'}</span> via Africa&apos;s Talking API. Standard SMS rates apply.
-                      </motion.div>
-                    )}
-                  </div>
-                </motion.div>
-
-                {/* WhatsApp Business API Card */}
-                <motion.div
-                  initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1}
-                  className="surface-raised rounded-2xl p-6"
-                >
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 rounded-xl bg-green-600/10 flex items-center justify-center">
-                      <Bot className="w-5 h-5 text-green-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-white">WhatsApp Business API</h3>
-                      <p className="text-[11px] text-gold/40">Automated customer engagement</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    {/* Auto-reply Status */}
-                    <div className="flex items-center justify-between p-4 rounded-xl border border-green-500/15 bg-green-500/[0.03]">
-                      <div className="flex items-center gap-3">
-                        <div className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse" />
-                        <div>
-                          <p className="text-xs font-semibold text-green-400">Auto-reply enabled</p>
-                          <p className="text-[10px] text-gold/35 mt-0.5">Instant responses to customer queries</p>
-                        </div>
-                      </div>
-                      <span className="badge-sexy text-[10px] px-2 py-1">Active</span>
-                    </div>
-
-                    {/* Quick Reply Templates */}
-                    <div>
-                      <label className="block text-xs font-semibold text-pink-glow/45 mb-3">Quick Reply Templates</label>
-                      <div className="space-y-2 max-h-48 overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
-                        {whatsappTemplates.map((tpl) => (
-                          <div key={tpl.trigger} className="rounded-lg border border-gold/8 bg-gold/[0.02] p-3">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-[10px] font-mono text-pink-brand bg-pink-brand/10 px-1.5 py-0.5 rounded">
-                                /{tpl.trigger}
-                              </span>
-                            </div>
-                            <p className="text-[11px] text-pink-glow/35 leading-relaxed">{tpl.reply}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Test Bot Button */}
-                    <button
-                      type="button"
-                      onClick={() => window.open('https://wa.me/260761404555?text=Hi%2C%20I%27d%20like%20to%20test%20the%20WhatsApp%20bot.', '_blank')}
-                      className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-xs font-semibold transition cursor-pointer"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                      Test WhatsApp Bot
-                    </button>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
+              </motion.div>
           </div>
         </div>
       </section>
