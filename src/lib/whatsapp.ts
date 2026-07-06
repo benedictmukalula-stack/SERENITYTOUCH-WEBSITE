@@ -29,10 +29,15 @@ export async function sendWhatsApp(to: string, body: string): Promise<{ success:
 
   try {
     const url = `${WA_API_URL.replace(/\/+$/, '')}/messages/chat`;
+    const formBody = new URLSearchParams();
+    formBody.append('token', WA_API_TOKEN);
+    formBody.append('to', phone);
+    formBody.append('body', body);
+
     const res = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: WA_API_TOKEN, to: phone, body }),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formBody.toString(),
     });
 
     if (!res.ok) {
