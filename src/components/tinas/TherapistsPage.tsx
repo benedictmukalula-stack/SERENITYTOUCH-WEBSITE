@@ -39,7 +39,7 @@ export default function TherapistsPage() {
                 <div className="group surface-raised rounded-2xl overflow-hidden glow-gold hover:border-gold/30 transition-all duration-300">
                   <div className="md:flex">
                     <div className="md:w-2/5 h-56 md:h-auto relative overflow-hidden">
-                      <img src={t.image} alt={t.name} className="w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-500" />
+                      <img src={t.image} alt={t.name} className="w-full h-full object-cover opacity-75 group-hover:scale-105 transition-transform duration-500" />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508]/80 to-transparent" />
                     </div>
                     <div className="p-6 md:p-8 md:w-3/5">

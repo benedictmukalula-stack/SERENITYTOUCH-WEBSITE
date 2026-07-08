@@ -67,7 +67,7 @@ export default function AboutPage() {
       <section className="section-padding section-dark">
         <div className="container-tinas max-w-4xl">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="relative rounded-2xl overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=1200&q=80" alt="Serenity Touch Spa interior" className="w-full h-[400px] md:h-[500px] object-cover" />
+            <img src="https://images.unsplash.com/photo-1622297845775-5ff3fef71d13?w=1200&q=80" alt="Serenity Touch Spa interior" className="w-full h-[400px] md:h-[500px] object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508]/90 via-black/30 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
               <blockquote className="text-white text-xl md:text-2xl heading-display leading-relaxed max-w-2xl">

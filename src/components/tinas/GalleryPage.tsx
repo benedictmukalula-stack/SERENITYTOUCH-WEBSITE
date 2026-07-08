@@ -19,10 +19,10 @@ const categories = ['All', 'Spa Interiors', 'Treatment Rooms', 'Products', 'Our 
 const images = [
   { src: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80', category: 'Spa Interiors', alt: 'Spa treatment room with warm ambient lighting' },
   { src: 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=600&q=80', category: 'Treatment Rooms', alt: 'Massage table with soft linens and candles' },
-  { src: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=600&q=80', category: 'Treatment Rooms', alt: 'Hot stone therapy setup with heated stones' },
-  { src: 'https://images.unsplash.com/photo-1611073615830-4ebed33c0e5b?w=600&q=80', category: 'Products', alt: 'Essential oils and aromatherapy products' },
+  { src: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=600&q=80', category: 'Treatment Rooms', alt: 'Hot stone therapy setup with heated stones' },
+  { src: 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=600&q=80', category: 'Products', alt: 'Essential oils and aromatherapy products' },
   { src: 'https://images.unsplash.com/photo-1596178060671-7a80dc8059ea?w=600&q=80', category: 'Our Space', alt: 'Couples massage suite with ambient lighting' },
-  { src: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=600&q=80', category: 'Spa Interiors', alt: 'Spa reception and relaxation area' },
+  { src: 'https://images.unsplash.com/photo-1622297845775-5ff3fef71d13?w=600&q=80', category: 'Spa Interiors', alt: 'Spa reception and relaxation area' },
   { src: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80', category: 'Spa Interiors', alt: 'Treatment room with calming decor' },
   { src: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&q=80', category: 'Products', alt: 'Natural spa products and botanical ingredients' },
   { src: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?w=600&q=80', category: 'Our Space', alt: 'Outdoor relaxation garden area' },

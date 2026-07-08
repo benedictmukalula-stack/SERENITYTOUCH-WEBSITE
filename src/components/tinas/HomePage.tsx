@@ -185,7 +185,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
             {[
               { duration: '60 min', name: 'Swedish Massage', desc: 'Long, flowing strokes that melt away the world. Full-body relaxation that leaves you floating.', price: 'K800', img: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80' },
-              { duration: '90 min', name: 'Deep Tissue Massage', desc: 'Intense, deliberate pressure that targets your deepest tension. For those who seek release.', price: 'K1,200', img: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=600&q=80' },
+              { duration: '90 min', name: 'Deep Tissue Massage', desc: 'Intense, deliberate pressure that targets your deepest tension. For those who seek release.', price: 'K1,200', img: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=600&q=80' },
               { duration: '75 min', name: 'Hot Stone Therapy', desc: 'Heated stones glide across your body, melting resistance and inducing deep, euphoric relaxation.', price: 'K1,000', img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80' },
             ].map((service, idx) => (
               <motion.div
@@ -198,7 +198,7 @@ export default function HomePage() {
               >
                 <div className="group surface-raised rounded-2xl overflow-hidden hover:border-pink-brand/25 transition-all duration-500 h-full">
                   <div className="h-48 relative overflow-hidden">
-                    <img src={service.img} alt={service.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-50 group-hover:opacity-60" />
+                    <img src={service.img} alt={service.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-75 group-hover:opacity-90" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508] via-[#0a0508]/40 to-transparent" />
                   </div>
                   <div className="p-7">
@@ -283,14 +283,14 @@ export default function HomePage() {
           </motion.div>
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
             {[
-              { guest: 'Chipo Mwale', treatment: 'Deep Tissue — 4 Sessions', before: 'Chronic lower back pain for 2 years. Could barely sit at my desk for more than 30 minutes without severe discomfort.', after: 'After 4 sessions, the pain is virtually gone. I can work a full day without any discomfort. Life-changing.', image: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=400&q=80' },
-              { guest: 'Grace Banda', treatment: 'Aromatherapy — 6 Sessions', before: 'Severe insomnia and anxiety. Averaging 3-4 hours of sleep per night and feeling constantly on edge.', after: 'Now sleeping 7-8 hours consistently. My anxiety levels have dropped dramatically. The essential oil blends are magical.', image: 'https://images.unsplash.com/photo-1611073615830-4ebed33c0e5b?w=400&q=80' },
+              { guest: 'Chipo Mwale', treatment: 'Deep Tissue — 4 Sessions', before: 'Chronic lower back pain for 2 years. Could barely sit at my desk for more than 30 minutes without severe discomfort.', after: 'After 4 sessions, the pain is virtually gone. I can work a full day without any discomfort. Life-changing.', image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=400&q=80' },
+              { guest: 'Grace Banda', treatment: 'Aromatherapy — 6 Sessions', before: 'Severe insomnia and anxiety. Averaging 3-4 hours of sleep per night and feeling constantly on edge.', after: 'Now sleeping 7-8 hours consistently. My anxiety levels have dropped dramatically. The essential oil blends are magical.', image: 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=400&q=80' },
               { guest: 'Bwalya Nkomo', treatment: 'Thai Massage — 3 Sessions', before: 'Office stress causing migraines and neck stiffness. Taking painkillers almost daily.', after: 'Migraines reduced from weekly to almost never. Neck mobility is fully restored. I wish I had found Serenity Touch sooner.', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&q=80' },
             ].map((story, idx) => (
               <motion.div key={story.guest} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-30px' }} variants={fadeUp} custom={idx}>
                 <div className="surface-raised rounded-2xl overflow-hidden h-full hover:border-gold/20 transition-all duration-300">
                   <div className="h-40 relative overflow-hidden">
-                    <img src={story.image} alt={story.guest} className="w-full h-full object-cover opacity-40" />
+                    <img src={story.image} alt={story.guest} className="w-full h-full object-cover opacity-70" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508] via-[#0a0508]/60 to-transparent" />
                     <div className="absolute bottom-3 left-4">
                       <p className="font-bold text-sm text-white heading-display">{story.guest}</p>

@@ -33,7 +33,7 @@ const videoTestimonials = [
     name: 'Bwalya Nkomo',
     treatment: 'Thai Massage',
     quote: 'Best massage in Zambia',
-    image: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=600&q=80',
     duration: '3:12',
   },
 ];

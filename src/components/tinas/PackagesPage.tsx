@@ -15,10 +15,10 @@ const fadeUp = {
 const packages = [
   { name: 'Serenity Signature', duration: '90 min', price: 'K1,500', desc: 'Our signature full-body experience combining Swedish massage with aromatherapy. Includes a warm oil scalp treatment and complimentary herbal tea.', img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80', popular: false },
   { name: 'Serenity Escape', duration: '2 hours', price: 'K2,200', desc: 'A two-hour journey of pure relaxation. Deep tissue massage followed by a hot stone session and finishing with a rejuvenating facial treatment.', img: 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=600&q=80', popular: true },
-  { name: 'Thai Wellness Journey', duration: '2 hours', price: 'K2,500', desc: 'Traditional Thai massage combined with reflexology and stretching. An authentic wellness journey that restores balance and energy.', img: 'https://images.unsplash.com/photo-1517602436811-4ed606917e01?w=600&q=80', popular: false },
-  { name: 'Ultimate Relaxation', duration: '3 hours', price: 'K3,500', desc: 'The ultimate half-day retreat. Full body massage, hot stone therapy, aromatherapy, facial treatment, and a complimentary lunch with herbal refreshments.', img: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=600&q=80', popular: false },
+  { name: 'Thai Wellness Journey', duration: '2 hours', price: 'K2,500', desc: 'Traditional Thai massage combined with reflexology and stretching. An authentic wellness journey that restores balance and energy.', img: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=600&q=80', popular: false },
+  { name: 'Ultimate Relaxation', duration: '3 hours', price: 'K3,500', desc: 'The ultimate half-day retreat. Full body massage, hot stone therapy, aromatherapy, facial treatment, and a complimentary lunch with herbal refreshments.', img: 'https://images.unsplash.com/photo-1622297845775-5ff3fef71d13?w=600&q=80', popular: false },
   { name: 'Couples Retreat', duration: '2.5 hours', price: 'K4,000', desc: 'A shared wellness experience for two in our private couples suite. Side-by-side massages, aromatherapy, and a champagne toast to complete your escape.', img: 'https://images.unsplash.com/photo-1596178060671-7a80dc8059ea?w=600&q=80', popular: false },
-  { name: 'Serenity Royal Experience', duration: '4 hours', price: 'K6,000', desc: 'Our flagship offering. A full-day royal treatment: private suite, personal therapist, four treatment modalities, gourmet lunch, unlimited refreshments, and a takeaway wellness kit.', img: 'https://images.unsplash.com/photo-1611073615830-4ebed33c0e5b?w=600&q=80', popular: true, flagship: true },
+  { name: 'Serenity Royal Experience', duration: '4 hours', price: 'K6,000', desc: 'Our flagship offering. A full-day royal treatment: private suite, personal therapist, four treatment modalities, gourmet lunch, unlimited refreshments, and a takeaway wellness kit.', img: 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=600&q=80', popular: true, flagship: true },
 ];
 
 export default function PackagesPage() {
@@ -48,7 +48,7 @@ export default function PackagesPage() {
                     </div>
                   )}
                   <div className="h-56 relative overflow-hidden">
-                    <img src={pkg.img} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-60" />
+                    <img src={pkg.img} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-75" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0508] via-[#0a0508]/60 to-transparent"></div>
                     <div className="absolute bottom-4 left-5">
                       <div className="flex items-center gap-2 text-xs text-gold/50">
