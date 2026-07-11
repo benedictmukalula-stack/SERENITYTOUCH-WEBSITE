@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,22 +9,22 @@ datasource db {
 }
 
 model Service {
-  id          String   @id @default(cuid())
-  slug        String   @unique
+  id          String         @id @default(cuid())
+  slug        String         @unique
   name        String
   category    String
   price       Int
   duration    String
   durationMin Int
   description String
-  benefits    String   @default("")
-  image       String   @default("")
-  active      Boolean  @default(true)
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  addons      ServiceAddon[]
+  benefits    String         @default("")
+  image       String         @default("")
+  active      Boolean        @default(true)
+  sortOrder   Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
   bookings    Booking[]
+  addons      ServiceAddon[]
 }
 
 model ServiceAddon {
@@ -33,68 +34,70 @@ model ServiceAddon {
   description String  @default("")
   icon        String  @default("")
   active      Boolean @default(true)
-  service     Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   serviceId   String
+  service     Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }
 
 model Therapist {
-  id        String   @id @default(cuid())
-  name      String
-  specialty String
-  bio       String   @default("")
-  image     String   @default("")
-  active    Boolean  @default(true)
-  sortOrder Int      @default(0)
+  id           String              @id @default(cuid())
+  name         String
+  specialty    String
+  bio          String              @default("")
+  image        String              @default("")
+  active       Boolean             @default(true)
+  sortOrder    Int                 @default(0)
+  createdAt    DateTime            @default(now())
   bookings     Booking[]
-  availability  StaffAvailability[]
-  createdAt DateTime @default(now())
+  availability StaffAvailability[]
+  bookingSlots BookingSlot[]
 }
 
 model Member {
-  id        String    @id @default(cuid())
-  name      String
-  email     String    @unique
-  phone     String    @default("")
-  password  String
-  tier      String    @default("Silver")
-  points    Int       @default(0)
-  active    Boolean   @default(true)
+  id          String       @id @default(cuid())
+  name        String
+  email       String       @unique
+  phone       String       @default("")
+  password    String
+  tier        String       @default("Silver")
+  points      Int          @default(0)
+  active      Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   bookings    Booking[]
-  referrals   Referral[]
   loyaltyLogs LoyaltyLog[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  referrals   Referral[]
 }
 
 model Booking {
-  id              String   @id @default(cuid())
-  bookingId       String   @unique
-  name            String
-  email           String
-  phone           String   @default("")
-  status          String   @default("confirmed")
-  serviceName     String
-  date            String
-  time            String   @default("")
-  bookingType     String   @default("in_spa")
-  calloutZone     String   @default("")
-  calloutAddress  String   @default("")
-  addons          String   @default("[]")
-  totalAmount     Int
-  paymentMethod   String   @default("cash")
-  paymentStatus   String   @default("pending")
-  notes           String   @default("")
-  confirmedAt     DateTime?
-  cancelledAt     DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  serviceId       String
-  service         Service  @relation(fields: [serviceId], references: [id])
-  therapistId     String?
-  therapist       Therapist? @relation(fields: [therapistId], references: [id])
-  therapistName   String   @default("First Available")
-  memberId        String?
-  member          Member?  @relation(fields: [memberId], references: [id])
+  id             String     @id @default(cuid())
+  bookingId      String     @unique
+  name           String
+  email          String
+  phone          String     @default("")
+  status         String     @default("confirmed")
+  serviceName    String
+  date           String
+  time           String     @default("")
+  bookingType    String     @default("in_spa")
+  calloutZone    String     @default("")
+  calloutAddress String     @default("")
+  addons         String     @default("[]")
+  totalAmount    Int
+  paymentMethod  String     @default("cash")
+  paymentStatus  String     @default("pending")
+  notes          String     @default("")
+  confirmedAt    DateTime?
+  cancelledAt    DateTime?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  serviceId      String
+  therapistId    String?
+  therapistName  String     @default("First Available")
+  memberId       String?
+  member         Member?    @relation(fields: [memberId], references: [id])
+  therapist      Therapist? @relation(fields: [therapistId], references: [id])
+  service        Service    @relation(fields: [serviceId], references: [id])
+  bookingSlots   BookingSlot[]
 }
 
 model Testimonial {
@@ -125,53 +128,53 @@ model BlogPost {
 }
 
 model VoucherPurchase {
-  id             String   @id @default(cuid())
-  code           String   @unique
+  id             String              @id @default(cuid())
+  code           String              @unique
   amount         Int
   senderName     String
   senderEmail    String
   recipientName  String
   recipientEmail String
-  message        String   @default("")
-  status         String   @default("active")
-  createdAt      DateTime @default(now())
+  message        String              @default("")
+  status         String              @default("active")
+  createdAt      DateTime            @default(now())
   redemptions    VoucherRedemption[]
 }
 
 model Referral {
-  id        String   @id @default(cuid())
-  code      String   @unique
-  memberId  String
-  member    Member   @relation(fields: [memberId], references: [id])
+  id            String   @id @default(cuid())
+  code          String   @unique
+  memberId      String
   referredName  String   @default("")
   referredEmail String   @default("")
-  status    String   @default("active")
-  points    Int      @default(0)
-  createdAt DateTime @default(now())
+  status        String   @default("active")
+  points        Int      @default(0)
+  createdAt     DateTime @default(now())
+  member        Member   @relation(fields: [memberId], references: [id])
 }
 
 model AdminUser {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  email     String   @unique
+  email     String    @unique
   password  String
-  role      String   @default("admin") // admin, receptionist, therapist, manager
-  active    Boolean  @default(true)
+  role      String    @default("admin")
+  active    Boolean   @default(true)
   lastLogin DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model PromoLog {
-  id          String   @id @default(cuid())
-  message     String
-  filter      String   @default("all")
-  sentCount   Int      @default(0)
-  failCount   Int      @default(0)
-  sentBy     String   @default("")
-  campaignId  String?
-  campaign    Campaign? @relation(fields: [campaignId], references: [id])
-  createdAt   DateTime @default(now())
+  id         String    @id @default(cuid())
+  message    String
+  filter     String    @default("all")
+  sentCount  Int       @default(0)
+  failCount  Int       @default(0)
+  sentBy     String    @default("")
+  campaignId String?
+  createdAt  DateTime  @default(now())
+  campaign   Campaign? @relation(fields: [campaignId], references: [id])
 }
 
 model ChatMessage {
@@ -189,64 +192,83 @@ model SiteConfig {
 }
 
 model StaffAvailability {
-  id         String   @id @default(cuid())
+  id          String    @id @default(cuid())
   therapistId String
-  therapist  Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
-  dayOfWeek  Int      // 0=Sun, 1=Mon...6=Sat
-  startTime  String   // "09:00" (24h)
-  endTime    String   // "17:00" (24h)
-  available  Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  dayOfWeek   Int
+  startTime   String
+  endTime     String
+  available   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+
   @@unique([therapistId, dayOfWeek])
 }
 
 model LoyaltyLog {
   id          String   @id @default(cuid())
   memberId    String
-  member      Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
   bookingId   String?
-  points      Int      // positive=earn, negative=redeem
-  reason      String   // "booking_completed", "referral_bonus", "redeemed", "manual_adjust"
+  points      Int
+  reason      String
   description String   @default("")
   createdById String?
   createdAt   DateTime @default(now())
+  member      Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
 }
 
 model VoucherRedemption {
-  id            String          @id @default(cuid())
-  voucherId     String
-  voucher       VoucherPurchase @relation(fields: [voucherId], references: [id])
-  bookingId     String?
+  id              String          @id @default(cuid())
+  voucherId       String
+  bookingId       String?
   redeemedByName  String
-  redeemedByPhone String @default("")
+  redeemedByPhone String          @default("")
   discountAmount  Int
-  createdBy      String   @default("")
-  createdAt      DateTime @default(now())
+  createdBy       String          @default("")
+  createdAt       DateTime        @default(now())
+  voucher         VoucherPurchase @relation(fields: [voucherId], references: [id])
 }
 
 model Campaign {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   name        String
   message     String
-  filter      String   @default("all")
-  audience    String   @default("all")
-  status      String   @default("draft") // draft, scheduled, sent, failed
-  sentCount   Int      @default(0)
-  failCount   Int      @default(0)
+  filter      String     @default("all")
+  audience    String     @default("all")
+  status      String     @default("draft")
+  sentCount   Int        @default(0)
+  failCount   Int        @default(0)
   scheduledAt DateTime?
   sentAt      DateTime?
-  createdBy   String   @default("")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdBy   String     @default("")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   logs        PromoLog[]
 }
 
 model PointsConfig {
-  id             String @id @default(cuid())
-  key            String @unique
-  value          Int    @default(0)
-  description    String @default("")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Int      @default(0)
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
+
+
+model BookingSlot {
+  id          String   @id @default(cuid())
+  bookingId   String
+  therapistId String
+
+  startTime   DateTime
+  endTime     DateTime
+
+  status      String   @default("BOOKED")
+
+  booking     Booking   @relation(fields:[bookingId], references:[id], onDelete: Cascade)
+  therapist   Therapist @relation(fields:[therapistId], references:[id])
+
+  createdAt DateTime @default(now())
+}
+

@@ -261,31 +261,7 @@ export default function AnalyticsDashboard() {
   const [editingTherapist, setEditingTherapist] = useState<string | null>(null);
 
   // Services
-  interface AdminService {
-    id: string;
-    name: string;
-    slug: string;
-    category: string;
-    price: number;
-    duration: string;
-    durationMin: number;
-    description: string;
-    benefits: string;
-    image: string;
-    active: boolean;
-    sortOrder: number;
-    addonCount: number;
-    bookingCount: number;
-    addons: Array<{
-      id: string;
-      name: string;
-      price: number;
-      active: boolean;
-    }>;
-    createdAt: string;
-  }
-
-  const [services, setServices] = useState<AdminService[]>([]);
+  const [services, setServices] = useState<Array<Record<string, unknown>>>([]);
   const [serviceCategories, setServiceCategories] = useState<string[]>([]);
   const [servicesLoading, setServicesLoading] = useState(false);
 
@@ -419,55 +395,14 @@ export default function AnalyticsDashboard() {
   /* ─── fetch: services ─── */
   const fetchServices = useCallback(async (signal: AbortSignal) => {
     setServicesLoading(true);
-
     try {
-      const res = await fetch('/api/admin/services?all=true', {
-        headers: {
-          Authorization: `Bearer ${ADMIN_KEY}`,
-        },
-        signal,
-      });
-
+      const res = await fetch('/api/admin/services?all=true', { headers: { Authorization: `Bearer ${ADMIN_KEY}` }, signal });
       const json = await res.json();
-
-      console.log("SERVICES API RESPONSE:", json);
-
-      if (json.success) {
-        const formattedServices: AdminService[] = json.services.map((service: any) => ({
-          id: service.id,
-          name: service.name,
-          slug: service.slug,
-          category: service.category,
-          price: Number(service.price || 0),
-          duration: service.duration || '',
-          durationMin: Number(service.durationMin || 0),
-          description: service.description || '',
-          benefits: service.benefits || '',
-          image: service.image || '',
-          active: Boolean(service.active),
-          sortOrder: Number(service.sortOrder || 0),
-          addonCount: Number(service.addonCount || 0),
-          bookingCount: Number(service.bookingCount || 0),
-          addons: service.addons || [],
-          createdAt: service.createdAt || '',
-        }));
-
-        console.log("FORMATTED SERVICES:", formattedServices);
-
-        setServices(formattedServices);
-        setServiceCategories(json.categories || []);
-      }
-
+      if (json.success) { setServices(json.services); setServiceCategories(json.categories); }
     } catch (err) {
-      if ((err as Error).name !== 'AbortError') {
-        console.error('Failed to fetch services:', err);
-      }
-    } finally {
-      setServicesLoading(false);
-    }
-
+      if ((err as Error).name !== 'AbortError') console.error('Failed to fetch services:', err);
+    } finally { setServicesLoading(false); }
   }, []);
-
 
   /* ─── fetch: vouchers ─── */
   const fetchVouchers = useCallback(async (page: number, status: string, search: string, signal: AbortSignal) => {
@@ -1640,7 +1575,7 @@ export default function AnalyticsDashboard() {
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm font-bold text-gold">K{Number(s.price).toLocaleString()}</p>
+                            <p className="text-sm font-bold text-gold">K{s.price?.toLocaleString()}</p>
                             <div className="flex gap-1 mt-1">
                               <button onClick={async () => { await fetch('/api/admin/services', { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ADMIN_KEY}` }, body: JSON.stringify({ id: s.id, active: !s.active }) }); const c = new AbortController(); fetchServices(c.signal); }}
                                 className={`p-1 rounded border cursor-pointer transition ${s.active ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400' : 'border-red-500/20 bg-red-500/10 text-red-400'}`}>

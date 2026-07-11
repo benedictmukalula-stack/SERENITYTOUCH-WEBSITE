@@ -112,11 +112,14 @@ function getCalloutLabel(val: string) {
 }
 
 // Deterministic "booked" check for realistic slot availability
-function isSlotBooked(
-  dateStr:string,
-  time:string
-):boolean{
-  return bookedSlots.includes(time);
+function isSlotBooked(dateStr: string, time: string): boolean {
+  let hash = 0;
+  const str = dateStr + time;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash) % 5 === 0;
 }
 
 function formatDateDisplay(dateStr: string): string {
@@ -215,7 +218,7 @@ export default function ContactPage() {
       setAvailabilityLoading(true);
 
       const res = await fetch(
-        `/api/availability?date=${date}&service=${formData.service}&therapist=${formData.therapist}`
+        `/api/availability?date=${date}`
       );
 
       const data = await res.json();
@@ -275,15 +278,6 @@ export default function ContactPage() {
 
     loadAvailability(ds);
   }, [calendarYear, calendarMonth]);
-
-  useEffect(()=>{
-    if(formData.date){
-      loadAvailability(formData.date);
-    }
-  },[
-    formData.service,
-    formData.therapist
-  ]);
 
   /* ── time slots for selected date ── */
   const timeSlots = useMemo(() => {
@@ -552,7 +546,7 @@ export default function ContactPage() {
                             <label className="block text-sm font-semibold text-white mb-3">Preferred Time</label>
                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
                               {timeSlots.map(slot => {
-                                const booked = bookedSlots.includes(slot.replace(/\\s?(AM|PM)/i,''));
+                                const booked = isSlotBooked(formData.date, slot);
                                 const selected = formData.time === slot;
                                 let cls = 'time-slot';
                                 if (booked) cls += ' disabled';

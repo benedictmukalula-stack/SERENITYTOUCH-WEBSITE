@@ -112,11 +112,8 @@ function getCalloutLabel(val: string) {
 }
 
 // Deterministic "booked" check for realistic slot availability
-function isSlotBooked(
-  dateStr:string,
-  time:string
-):boolean{
-  return bookedSlots.includes(time);
+function isSlotBooked(dateStr: string, time: string): boolean {
+  return false;
 }
 
 function formatDateDisplay(dateStr: string): string {
@@ -215,7 +212,7 @@ export default function ContactPage() {
       setAvailabilityLoading(true);
 
       const res = await fetch(
-        `/api/availability?date=${date}&service=${formData.service}&therapist=${formData.therapist}`
+        `/api/availability?date=${date}`
       );
 
       const data = await res.json();
@@ -275,15 +272,6 @@ export default function ContactPage() {
 
     loadAvailability(ds);
   }, [calendarYear, calendarMonth]);
-
-  useEffect(()=>{
-    if(formData.date){
-      loadAvailability(formData.date);
-    }
-  },[
-    formData.service,
-    formData.therapist
-  ]);
 
   /* ── time slots for selected date ── */
   const timeSlots = useMemo(() => {

@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
 
 
     // Resolve therapist
-    let therapistName = '';
+    let therapistName = 'First Available';
     let therapistId: string | undefined;
 
     // Manual therapist selection
@@ -165,73 +165,29 @@ export async function POST(request: NextRequest) {
     if (!therapistId) {
 
       const therapistRules: Record<string,string[]> = {
-        "head-scalp": [
-          "Taonga Phiri",
-          "Grace Phiri"
-        ],
-
-        "foot-massage": [
-          "Grace Phiri",
-          "Patricia Banda"
-        ],
-
-        "back-neck-shoulder": [
-          "Taonga Phiri",
-          "Grace Phiri"
-        ],
-
-        "swedish": [
-          "Taonga Phiri",
-          "Grace Phiri"
-        ],
-
-        "deep-tissue": [
-          "Taonga Phiri",
-          "Patricia Banda"
-        ],
-
-        "aromatherapy": [
-          "Taonga Phiri",
-          "Grace Phiri",
-          "Patricia Banda"
-        ],
-
-        "pregnancy": [
-          "Grace Phiri"
-        ],
-
-        "reflexology": [
-          "Grace Phiri",
-          "Patricia Banda"
-        ],
-
-        "thai": [
-          "Patricia Banda"
-        ],
-
-        "full-body": [
-          "Chipo Mulenga",
-          "Taonga Phiri"
-        ],
-
-        "couples": [
-          "Chipo Mulenga"
-        ],
-
-        "four-hands-massage": [
-          "Chipo Mulenga",
-          "Grace Phiri"
-        ],
-
-        "body-scrub": [
-          "Grace Phiri"
-        ]
+        "head-scalp": ["Taonga Phiri"],
+        "foot-massage": ["Grace Phiri"],
+        "back-neck-shoulder": ["Taonga Phiri"],
+        "swedish": ["Taonga Phiri"],
+        "deep-tissue": ["Taonga Phiri"],
+        "aromatherapy": ["Taonga Phiri","Grace Phiri"],
+        "pregnancy": ["Grace Phiri"],
+        "reflexology": ["Grace Phiri","Patricia Banda"],
+        "thai": ["Patricia Banda"],
+        "full-body": ["Chipo Mulenga"],
+        "couples": ["Chipo Mulenga"],
+        "four-hands-massage": ["Chipo Mulenga"],
+        "body-scrub": ["Grace Phiri"]
       };
 
       const preferred =
         therapistRules[serviceRecord.slug] || [];
 
-      
+      console.log("[AUTO]",{
+        service:serviceRecord.slug,
+        preferred
+      });
+
       let candidates =
         await db.therapist.findMany({
           where:{
@@ -250,7 +206,7 @@ export async function POST(request: NextRequest) {
         }))
       );
 
-      console.log("===== AUTO ALLOCATION =====");
+      console.log("\n===== AUTO ALLOCATION =====");
 console.log("Preferred:", preferred);
 console.log("Candidates before fallback:", candidates.length);
 
@@ -263,10 +219,10 @@ console.log("Fallback triggered");
         });
       }
 
-console.log("CANDIDATE LIST");
-console.table(candidates.map(c=>({id:c.id,name:c.name})));// check availability
+console.log("\nCANDIDATE LIST");
+console.table(candidates.map(c=>({id:c.id,name:c.name})));\n\n// check availability
       for(const candidate of candidates){
-console.log("CHECKING:",candidate.name,candidate.id);
+console.log("\nCHECKING:",candidate.name,candidate.id);
 
 
         const existing =
@@ -289,10 +245,7 @@ console.log("CHECKING:",candidate.name,candidate.id);
           existing:!!existing
         });
 
-        console.log("Existing:", !!existing);
-
-        if (!existing) {
-          console.log("SELECTED:", candidate.name);
+        console.log("Existing:",!!existing);\n\nif(!existing){\nconsole.log("SELECTED:",candidate.name);
           therapistId=candidate.id;
           therapistName=candidate.name;
           break;
@@ -302,18 +255,7 @@ console.log("CHECKING:",candidate.name,candidate.id);
 
     }
 
-    if (!therapistId || !therapistName) {
-        console.log("[NO THERAPIST AVAILABLE]");
-        return NextResponse.json(
-          {
-            success:false,
-            error:"No therapist available for this time slot"
-          },
-          {status:409}
-        );
-      }
-
-      console.log("[SELECTED]",{
+    console.log("[SELECTED]",{
       therapistId,
       therapistName
     });

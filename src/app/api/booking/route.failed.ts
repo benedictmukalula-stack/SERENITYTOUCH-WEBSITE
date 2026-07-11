@@ -129,10 +129,8 @@ export async function POST(request: NextRequest) {
       totalAmount += fee;
     }
 
-
-
     // Resolve therapist
-    let therapistName = '';
+    let therapistName = 'First Available';
     let therapistId: string | undefined;
 
     // Manual therapist selection
@@ -147,91 +145,28 @@ export async function POST(request: NextRequest) {
       }
     }
 
-        // Convert time from 12h to 24h format if needed
-    let time24 = time || '';
-    if (time) {
-      const tm = time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-      if (tm) {
-        let h = parseInt(tm[1]);
-        const m = parseInt(tm[2]);
-        const p = tm[3].toUpperCase();
-        if (p === 'PM' && h !== 12) h += 12;
-        if (p === 'AM' && h === 12) h = 0;
-        time24 = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-      }
-    }
-
     // Automatic therapist allocation
     if (!therapistId) {
 
       const therapistRules: Record<string,string[]> = {
-        "head-scalp": [
-          "Taonga Phiri",
-          "Grace Phiri"
-        ],
-
-        "foot-massage": [
-          "Grace Phiri",
-          "Patricia Banda"
-        ],
-
-        "back-neck-shoulder": [
-          "Taonga Phiri",
-          "Grace Phiri"
-        ],
-
-        "swedish": [
-          "Taonga Phiri",
-          "Grace Phiri"
-        ],
-
-        "deep-tissue": [
-          "Taonga Phiri",
-          "Patricia Banda"
-        ],
-
-        "aromatherapy": [
-          "Taonga Phiri",
-          "Grace Phiri",
-          "Patricia Banda"
-        ],
-
-        "pregnancy": [
-          "Grace Phiri"
-        ],
-
-        "reflexology": [
-          "Grace Phiri",
-          "Patricia Banda"
-        ],
-
-        "thai": [
-          "Patricia Banda"
-        ],
-
-        "full-body": [
-          "Chipo Mulenga",
-          "Taonga Phiri"
-        ],
-
-        "couples": [
-          "Chipo Mulenga"
-        ],
-
-        "four-hands-massage": [
-          "Chipo Mulenga",
-          "Grace Phiri"
-        ],
-
-        "body-scrub": [
-          "Grace Phiri"
-        ]
+        "head-scalp": ["Taonga Phiri"],
+        "foot-massage": ["Grace Phiri"],
+        "back-neck-shoulder": ["Taonga Phiri"],
+        "swedish": ["Taonga Phiri"],
+        "deep-tissue": ["Taonga Phiri"],
+        "aromatherapy": ["Taonga Phiri","Grace Phiri"],
+        "pregnancy": ["Grace Phiri"],
+        "reflexology": ["Grace Phiri","Patricia Banda"],
+        "thai": ["Patricia Banda"],
+        "full-body": ["Chipo Mulenga"],
+        "couples": ["Chipo Mulenga"],
+        "four-hands-massage": ["Chipo Mulenga"],
+        "body-scrub": ["Grace Phiri"]
       };
 
       const preferred =
         therapistRules[serviceRecord.slug] || [];
 
-      
       let candidates =
         await db.therapist.findMany({
           where:{
@@ -243,31 +178,17 @@ export async function POST(request: NextRequest) {
         });
 
 
-      console.table(
-        candidates.map(c=>({
-          id:c.id,
-          name:c.name
-        }))
-      );
-
-      console.log("===== AUTO ALLOCATION =====");
-console.log("Preferred:", preferred);
-console.log("Candidates before fallback:", candidates.length);
-
-// fallback all therapists
+      // fallback all therapists
       if(candidates.length===0){
-console.log("Fallback triggered");
         candidates =
         await db.therapist.findMany({
           where:{active:true}
         });
       }
 
-console.log("CANDIDATE LIST");
-console.table(candidates.map(c=>({id:c.id,name:c.name})));// check availability
-      for(const candidate of candidates){
-console.log("CHECKING:",candidate.name,candidate.id);
 
+      // check availability
+      for(const candidate of candidates){
 
         const existing =
         await db.booking.findFirst({
@@ -282,17 +203,7 @@ console.log("CHECKING:",candidate.name,candidate.id);
         });
 
 
-        console.log("[CHECK]",{
-          therapist:candidate.name,
-          therapistId:candidate.id,
-          time24,
-          existing:!!existing
-        });
-
-        console.log("Existing:", !!existing);
-
-        if (!existing) {
-          console.log("SELECTED:", candidate.name);
+        if(!existing){
           therapistId=candidate.id;
           therapistName=candidate.name;
           break;
@@ -302,21 +213,19 @@ console.log("CHECKING:",candidate.name,candidate.id);
 
     }
 
-    if (!therapistId || !therapistName) {
-        console.log("[NO THERAPIST AVAILABLE]");
-        return NextResponse.json(
-          {
-            success:false,
-            error:"No therapist available for this time slot"
-          },
-          {status:409}
-        );
+    // Convert time from 12h to 24h format if needed
+    let time24 = time || '';
+    if (time) {
+      const tm = time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+      if (tm) {
+        let h = parseInt(tm[1]);
+        const m = parseInt(tm[2]);
+        const p = tm[3].toUpperCase();
+        if (p === 'PM' && h !== 12) h += 12;
+        if (p === 'AM' && h === 12) h = 0;
+        time24 = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
       }
-
-      console.log("[SELECTED]",{
-      therapistId,
-      therapistName
-    });
+    }
 
     // Generate unique booking ID
     const bookingId = `ST-${Array.from({ length: 6 }, () =>
@@ -351,29 +260,25 @@ console.log("CHECKING:",candidate.name,candidate.id);
 
     // Lock therapist appointment slot
 
-    if (booking.therapistId && time24) {
+    if (therapistId && time24) {
 
-      const start = new Date(`${date}T${time24}:00`);
-      const end = new Date(start.getTime() + 60 * 60 * 1000);
+      const start =
+      new Date(`${date}T${time24}:00`);
 
-      console.log("[SLOT CREATE]", {
-        bookingId: booking.id,
-        therapistId: booking.therapistId,
-        start,
-        end
-      });
+      const end =
+      new Date(start.getTime()+60*60*1000);
+
 
       await db.bookingSlot.create({
         data:{
           bookingId: booking.id,
-          therapistId: booking.therapistId,
+          therapistId,
           startTime:start,
           endTime:end,
           status:"BOOKED"
         }
       });
 
-      console.log("[SLOT CREATED]");
     }
 
 

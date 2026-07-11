@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
 
 
     // Resolve therapist
-    let therapistName = '';
+    let therapistName = 'First Available';
     let therapistId: string | undefined;
 
     // Manual therapist selection
@@ -165,67 +165,19 @@ export async function POST(request: NextRequest) {
     if (!therapistId) {
 
       const therapistRules: Record<string,string[]> = {
-        "head-scalp": [
-          "Taonga Phiri",
-          "Grace Phiri"
-        ],
-
-        "foot-massage": [
-          "Grace Phiri",
-          "Patricia Banda"
-        ],
-
-        "back-neck-shoulder": [
-          "Taonga Phiri",
-          "Grace Phiri"
-        ],
-
-        "swedish": [
-          "Taonga Phiri",
-          "Grace Phiri"
-        ],
-
-        "deep-tissue": [
-          "Taonga Phiri",
-          "Patricia Banda"
-        ],
-
-        "aromatherapy": [
-          "Taonga Phiri",
-          "Grace Phiri",
-          "Patricia Banda"
-        ],
-
-        "pregnancy": [
-          "Grace Phiri"
-        ],
-
-        "reflexology": [
-          "Grace Phiri",
-          "Patricia Banda"
-        ],
-
-        "thai": [
-          "Patricia Banda"
-        ],
-
-        "full-body": [
-          "Chipo Mulenga",
-          "Taonga Phiri"
-        ],
-
-        "couples": [
-          "Chipo Mulenga"
-        ],
-
-        "four-hands-massage": [
-          "Chipo Mulenga",
-          "Grace Phiri"
-        ],
-
-        "body-scrub": [
-          "Grace Phiri"
-        ]
+        "head-scalp": ["Taonga Phiri"],
+        "foot-massage": ["Grace Phiri"],
+        "back-neck-shoulder": ["Taonga Phiri"],
+        "swedish": ["Taonga Phiri"],
+        "deep-tissue": ["Taonga Phiri"],
+        "aromatherapy": ["Taonga Phiri","Grace Phiri"],
+        "pregnancy": ["Grace Phiri"],
+        "reflexology": ["Grace Phiri","Patricia Banda"],
+        "thai": ["Patricia Banda"],
+        "full-body": ["Chipo Mulenga"],
+        "couples": ["Chipo Mulenga"],
+        "four-hands-massage": ["Chipo Mulenga"],
+        "body-scrub": ["Grace Phiri"]
       };
 
       const preferred =
@@ -302,18 +254,7 @@ console.log("CHECKING:",candidate.name,candidate.id);
 
     }
 
-    if (!therapistId || !therapistName) {
-        console.log("[NO THERAPIST AVAILABLE]");
-        return NextResponse.json(
-          {
-            success:false,
-            error:"No therapist available for this time slot"
-          },
-          {status:409}
-        );
-      }
-
-      console.log("[SELECTED]",{
+    console.log("[SELECTED]",{
       therapistId,
       therapistName
     });

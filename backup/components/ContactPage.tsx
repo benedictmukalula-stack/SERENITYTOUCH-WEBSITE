@@ -112,11 +112,14 @@ function getCalloutLabel(val: string) {
 }
 
 // Deterministic "booked" check for realistic slot availability
-function isSlotBooked(
-  dateStr:string,
-  time:string
-):boolean{
-  return bookedSlots.includes(time);
+function isSlotBooked(dateStr: string, time: string): boolean {
+  let hash = 0;
+  const str = dateStr + time;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash) % 5 === 0;
 }
 
 function formatDateDisplay(dateStr: string): string {
@@ -199,39 +202,12 @@ export default function ContactPage() {
   const [showPayment, setShowPayment] = useState(false);
   const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
 
-  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
-  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
-  const [availabilityLoading, setAvailabilityLoading] = useState(false);
-
   /* ── calendar state ── */
   const today = useMemo(() => {
     const t = new Date(); t.setHours(0, 0, 0, 0); return t;
   }, []);
   const [calendarYear, setCalendarYear] = useState(today.getFullYear());
   const [calendarMonth, setCalendarMonth] = useState(today.getMonth());
-
-  const loadAvailability = useCallback(async (date:string)=>{
-    try{
-      setAvailabilityLoading(true);
-
-      const res = await fetch(
-        `/api/availability?date=${date}&service=${formData.service}&therapist=${formData.therapist}`
-      );
-
-      const data = await res.json();
-
-      if(data.success){
-        setAvailableSlots(data.availableSlots || []);
-        setBookedSlots(data.bookedSlots || []);
-      }
-
-    }catch(error){
-      console.error(error);
-    }finally{
-      setAvailabilityLoading(false);
-    }
-
-  },[]);
 
   /* ── add-on total ── */
   const addonTotal = useMemo(() => {
@@ -272,28 +248,10 @@ export default function ContactPage() {
   const handleDateSelect = useCallback((day: number) => {
     const ds = toDateString(calendarYear, calendarMonth, day);
     setFormData(prev => ({ ...prev, date: ds, time: '' }));
-
-    loadAvailability(ds);
   }, [calendarYear, calendarMonth]);
-
-  useEffect(()=>{
-    if(formData.date){
-      loadAvailability(formData.date);
-    }
-  },[
-    formData.service,
-    formData.therapist
-  ]);
 
   /* ── time slots for selected date ── */
   const timeSlots = useMemo(() => {
-
-    return availableSlots;
-
-  },[availableSlots]);
-
-  /* disabled old slot generator */
-  const oldTimeSlots = useMemo(() => {
     if (!formData.date) return [];
     const d = new Date(formData.date + 'T00:00:00');
     const day = d.getDay(); // 0=Sun
@@ -552,7 +510,7 @@ export default function ContactPage() {
                             <label className="block text-sm font-semibold text-white mb-3">Preferred Time</label>
                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
                               {timeSlots.map(slot => {
-                                const booked = bookedSlots.includes(slot.replace(/\\s?(AM|PM)/i,''));
+                                const booked = isSlotBooked(formData.date, slot);
                                 const selected = formData.time === slot;
                                 let cls = 'time-slot';
                                 if (booked) cls += ' disabled';
