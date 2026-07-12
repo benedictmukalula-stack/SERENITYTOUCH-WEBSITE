@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id              String   @id @default(uuid())
+
+  bookingId       String   @unique
+
+  name            String
+  email           String
+  phone           String?
+
+  serviceId       String
+  serviceName     String
+
+  therapistId     String?
+  therapistName   String?
+
+  date            String
+  time            String
+
+  bookingType     String   @default("in_spa")
+
+  calloutZone     String?
+  calloutAddress  String?
+
+  addons          String?
+
+  totalAmount     Float
+
+  paymentMethod   String
+  paymentStatus   String
+
+  notes           String?
+
+  status          String   @default("confirmed")
+
+  createdAt       DateTime @default(now())
+
+  service         Service  @relation(fields: [serviceId], references: [id])
+}

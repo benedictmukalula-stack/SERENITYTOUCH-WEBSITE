@@ -49,7 +49,9 @@ async function checkSlotConflict(
 async function autoAssignTherapist(){
 
  const therapist = await db.therapist.findFirst({
-   where:{},
+   where:{
+    active:true
+   },
    orderBy:{
     sortOrder:"asc"
    }
@@ -60,16 +62,8 @@ async function autoAssignTherapist(){
 
 
 export async function POST(request: NextRequest) {
-
-  
-
   try {
-
-    console.log("🔥 READING REQUEST BODY");
-
     const body = await request.json();
-
-    console.log("🔥 REQUEST BODY:", JSON.stringify(body, null, 2));
     const {
       name,
       email,
@@ -95,18 +89,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Look up service by slug
-    console.log("🔥 LOOKING FOR SERVICE:", service);
-
     const serviceRecord = await db.service.findUnique({
       where: { slug: service },
       include: {
         addons: {
+          where: { active: true },
           select: { id: true, name: true, price: true },
         },
       },
     });
-
-    console.log("🔥 SERVICE FOUND:", serviceRecord?.name);
 
     if (!serviceRecord) {
       return NextResponse.json(
@@ -147,7 +138,7 @@ export async function POST(request: NextRequest) {
     // Manual therapist selection
     if (therapist && therapist !== 'any') {
       const therapistRecord = await db.therapist.findFirst({
-        where: { id: therapist },
+        where: { id: therapist, active: true },
       });
 
       if (therapistRecord) {
@@ -244,6 +235,7 @@ export async function POST(request: NextRequest) {
       let candidates =
         await db.therapist.findMany({
           where:{
+            active:true,
             name:{
               in: preferred
             }
@@ -266,13 +258,15 @@ console.log("Candidates before fallback:", candidates.length);
       if(candidates.length===0){
 console.log("Fallback triggered");
         candidates =
-        await db.therapist.findMany();
+        await db.therapist.findMany({
+          where:{active:true}
+        });
       }
 
 console.log("CANDIDATE LIST");
 console.table(candidates.map(c=>({id:c.id,name:c.name})));// check availability
       for(const candidate of candidates){
-
+console.log("CHECKING:",candidate.name,candidate.id);
 
 
         const existing =
@@ -298,7 +292,7 @@ console.table(candidates.map(c=>({id:c.id,name:c.name})));// check availability
         console.log("Existing:", !!existing);
 
         if (!existing) {
-          
+          console.log("SELECTED:", candidate.name);
           therapistId=candidate.id;
           therapistName=candidate.name;
           break;
@@ -330,8 +324,6 @@ console.table(candidates.map(c=>({id:c.id,name:c.name})));// check availability
     ).join('')}`;
 
     // Create booking in database
-    console.log("🔥 CREATING BOOKING DATABASE RECORD");
-
     const booking = await db.booking.create({
       data: {
         bookingId,
@@ -419,10 +411,7 @@ console.table(candidates.map(c=>({id:c.id,name:c.name})));// check availability
       { headers: CORS_HEADERS }
     );
   } catch (error) {
-
-    console.error("🔥🔥🔥 BOOKING FAILED");
-    console.error(error);
-
+    console.error('[Booking POST]', error);
     return NextResponse.json(
       { success: false, error: 'Failed to create booking. Please try again or contact us via WhatsApp.' },
       { status: 500, headers: CORS_HEADERS }

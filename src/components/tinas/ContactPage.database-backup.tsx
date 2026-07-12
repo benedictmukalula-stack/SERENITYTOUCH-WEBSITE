@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MapPin, Phone, Mail, Clock, Loader2, CheckCircle, AlertCircle, MessageCircle,
@@ -32,7 +32,19 @@ const contactInfo = [
   { icon: Clock, label: 'Hours', value: 'Mon-Fri: 9AM-6PM\nSat: 10AM-5PM\nSun: Closed', link: null },
 ];
 
-
+const serviceOptions = [
+  { value: 'headscalp', label: 'Head & Scalp Massage (30 min) — K400' },
+  { value: 'foot', label: 'Foot Massage (45 min) — K500' },
+  { value: 'backneck', label: 'Back, Neck & Shoulder (45 min) — K600' },
+  { value: 'swedish', label: 'Swedish Massage (60 min) — K800' },
+  { value: 'deeptissue', label: 'Deep Tissue Massage (90 min) — K1,200' },
+  { value: 'thai', label: 'Thai Massage (90 min) — K1,100' },
+  { value: 'aromatherapy', label: 'Aromatherapy Massage (60 min) — K900' },
+  { value: 'reflexology', label: 'Reflexology (60 min) — K850' },
+  { value: 'pregnancy', label: 'Pregnancy Massage (60 min) — K900' },
+  { value: 'fullbody', label: 'Full Body Massage (90 min) — K1,000' },
+  { value: 'couples', label: 'Couples Massage (90 min) — K2,000' },
+];
 
 const therapistOptions = [
   { value: 'any', label: 'No Preference (First Available)' },
@@ -49,6 +61,7 @@ const calloutZones = [
   { id: 'zone4', label: 'Outside Lusaka', desc: '30km+ — custom quote', fee: 0, areas: 'Kabwe, Chongwe, Kafue, etc.' },
 ];
 
+const servicePrices: Record<string, number> = { headscalp: 400, foot: 500, backneck: 600, swedish: 800, deeptissue: 1200, thai: 1100, aromatherapy: 900, reflexology: 850, pregnancy: 900, fullbody: 1000, couples: 2000 };
 
 const paymentMethods = [
   { id: 'mobile_money', label: 'Mobile Money', icon: Smartphone, desc: 'MTN Mobile Money & Airtel Money' },
@@ -181,42 +194,6 @@ const defaultFormData = {
 
 export default function ContactPage() {
   const [formData, setFormData] = useState(defaultFormData);
-
-const [serviceOptions, setServiceOptions] = useState<
-{value:string; label:string; price:number}[]
->([]);
-
-const servicePrices = useMemo(() => {
-  const map: Record<string,number> = {};
-  serviceOptions.forEach(s => {
-    map[s.value] = s.price;
-  });
-  return map;
-}, [serviceOptions]);
-
-useEffect(() => {
-  fetch('/api/services')
-    .then(res => res.json())
-    .then(data => {
-      if(data.success){
-        const mapped = data.services.map((s:any)=>({
-          value:s.slug,
-          label:`${s.name} (${s.duration}) — K${s.price.toLocaleString()}`,
-          price:s.price
-        }));
-
-        setServiceOptions(mapped);
-
-        setFormData((prev:any)=>({
-          ...prev,
-          service: mapped[0]?.value || ''
-        }));
-      }
-    })
-    .catch(console.error);
-}, []);
-
-
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [showPayment, setShowPayment] = useState(false);

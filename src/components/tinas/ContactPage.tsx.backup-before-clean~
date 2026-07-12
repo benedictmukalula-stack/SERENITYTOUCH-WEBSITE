@@ -32,6 +32,7 @@ const contactInfo = [
   { icon: Clock, label: 'Hours', value: 'Mon-Fri: 9AM-6PM\nSat: 10AM-5PM\nSun: Closed', link: null },
 ];
 
+const serviceOptions: {value:string; label:string; price:number}[] = [];
 
 
 const therapistOptions = [
@@ -49,6 +50,7 @@ const calloutZones = [
   { id: 'zone4', label: 'Outside Lusaka', desc: '30km+ — custom quote', fee: 0, areas: 'Kabwe, Chongwe, Kafue, etc.' },
 ];
 
+const servicePrices: Record<string, number> = {};
 
 const paymentMethods = [
   { id: 'mobile_money', label: 'Mobile Money', icon: Smartphone, desc: 'MTN Mobile Money & Airtel Money' },

@@ -1,10 +1,9 @@
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,8 +16,8 @@ model Service {
   duration    String
   durationMin Int
   description String
-  benefits    String         @default("")
-  image       String         @default("")
+  benefits    String?
+  image       String?        @default("")
   active      Boolean        @default(true)
   sortOrder   Int            @default(0)
   createdAt   DateTime       @default(now())
@@ -69,34 +68,34 @@ model Member {
 }
 
 model Booking {
-  id             String     @id @default(cuid())
-  bookingId      String     @unique
+  id             String        @id @default(cuid())
+  bookingId      String        @unique
   name           String
   email          String
-  phone          String     @default("")
-  status         String     @default("confirmed")
+  phone          String        @default("")
+  status         String        @default("confirmed")
   serviceName    String
   date           String
-  time           String     @default("")
-  bookingType    String     @default("in_spa")
-  calloutZone    String     @default("")
-  calloutAddress String     @default("")
-  addons         String     @default("[]")
+  time           String        @default("")
+  bookingType    String        @default("in_spa")
+  calloutZone    String        @default("")
+  calloutAddress String        @default("")
+  addons         String        @default("[]")
   totalAmount    Int
-  paymentMethod  String     @default("cash")
-  paymentStatus  String     @default("pending")
-  notes          String     @default("")
+  paymentMethod  String        @default("cash")
+  paymentStatus  String        @default("pending")
+  notes          String        @default("")
   confirmedAt    DateTime?
   cancelledAt    DateTime?
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
   serviceId      String
   therapistId    String?
-  therapistName  String     @default("First Available")
+  therapistName  String        @default("First Available")
   memberId       String?
-  member         Member?    @relation(fields: [memberId], references: [id])
-  therapist      Therapist? @relation(fields: [therapistId], references: [id])
-  service        Service    @relation(fields: [serviceId], references: [id])
+  member         Member?       @relation(fields: [memberId], references: [id])
+  therapist      Therapist?    @relation(fields: [therapistId], references: [id])
+  service        Service       @relation(fields: [serviceId], references: [id])
   bookingSlots   BookingSlot[]
 }
 
@@ -255,20 +254,18 @@ model PointsConfig {
   updatedAt   DateTime @updatedAt
 }
 
-
 model BookingSlot {
-  id          String   @id @default(cuid())
+  id          String @id @default(cuid())
   bookingId   String
   therapistId String
 
-  startTime   DateTime
-  endTime     DateTime
+  startTime DateTime
+  endTime   DateTime
 
-  status      String   @default("BOOKED")
+  status String @default("BOOKED")
 
-  booking     Booking   @relation(fields:[bookingId], references:[id], onDelete: Cascade)
-  therapist   Therapist @relation(fields:[therapistId], references:[id])
+  booking   Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  therapist Therapist @relation(fields: [therapistId], references: [id])
 
   createdAt DateTime @default(now())
 }
-

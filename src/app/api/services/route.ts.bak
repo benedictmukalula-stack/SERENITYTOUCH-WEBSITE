@@ -25,6 +25,9 @@ export async function GET() {
       },
       include: {
         addons: {
+          where: {
+            active: true,
+          },
           orderBy: {
             name: "asc",
           },
